@@ -1,3 +1,7 @@
+# Script principal de configuração do Alembic.
+# Liga o Alembic à engine SQLAlchemy e ao metadata dos modelos.
+# Garante que as migrações refletem o estado atual dos modelos.
+
 from __future__ import annotations
 
 from logging.config import fileConfig
@@ -7,7 +11,7 @@ from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
 # importa configurações do projeto
-from app.config import settings
+from backend.app.core.config import settings
 from app.db import Base
 
 # importa modelos (importante para autogenerate funcionar)
