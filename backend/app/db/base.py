@@ -1,9 +1,17 @@
-# Ponto de importação central dos modelos SQLAlchemy.
-# Exemplo:
-# from app.models.user import User
-# from app.models.course import Course
+from sqlalchemy.orm import DeclarativeBase
 
-from app.db.session import Base
-from app.models import user, course  # importa todos os modelos
+class Base(DeclarativeBase):
+    pass
 
-# Isto serve para o Alembic detectar os modelos ao gerar migrações
+# Registre os modelos para o Alembic enxergar
+from app.models.user import User      
+from app.models.role import Role      
+from app.models.course import Course  
+from app.models.area import Area
+from app.models.quiz import Quiz
+from app.models.project import Project
+from app.models.quiz_attempt import QuizAttempt
+from app.models.question import Question
+from app.models.question_option import QuestionOption
+from app.models.option import Option
+from app.models.answer import Answer
