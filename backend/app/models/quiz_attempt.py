@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, DateTime
 from app.db.base import Base
-from app.models.common import IdMixin, TimestampMixin
+from app.models.common import IdMixin
 import datetime as dt
 
 if TYPE_CHECKING:
@@ -11,7 +11,7 @@ if TYPE_CHECKING:
     from app.models.quiz import Quiz
     from app.models.answer import Answer
 
-class QuizAttempt(IdMixin, TimestampMixin, Base):
+class QuizAttempt(IdMixin, Base):
     __tablename__ = "quiz_attempts"
     score: Mapped[float] = mapped_column(nullable=False, default=0.0)
     finished_at: Mapped[dt.datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)

@@ -13,11 +13,11 @@ if TYPE_CHECKING:
 class User(IdMixin, TimestampMixin, Base):
     __tablename__ = "users"
     name: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
-    email: Mapped[str] = mapped_column(String(255), unique=True, index=True)
+    email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
-    role_id: Mapped[str | None] = mapped_column(ForeignKey("roles.id", ondelete="CASCADE"), index=True, nullable=True)
+    role_id: Mapped[str] = mapped_column(ForeignKey("roles.id", ondelete="SET NULL"), index=True, nullable=True)
 
-    role: Mapped[Role] = relationship(
+    role: Mapped[Role | None] = relationship(
         "Role", 
         back_populates="users", 
         passive_deletes=True

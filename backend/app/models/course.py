@@ -12,11 +12,11 @@ if TYPE_CHECKING:
 
 class Course(IdMixin, TimestampMixin, Base):
     __tablename__ = "courses"
-    name: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
+    title: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     description: Mapped[str | None] = mapped_column(Text(), nullable=True)
-    area_id: Mapped[str | None] = mapped_column(ForeignKey("areas.id", ondelete="CASCADE"), index=True, nullable=True)
+    area_id: Mapped[str | None] = mapped_column(ForeignKey("areas.id", ondelete="SET NULL"), index=True, nullable=True)
 
-    area: Mapped[Area] = relationship(
+    area: Mapped[Area | None] = relationship(
         "Area", 
         back_populates="courses", 
         passive_deletes=True

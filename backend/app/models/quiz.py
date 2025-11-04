@@ -14,10 +14,10 @@ class Quiz(IdMixin, TimestampMixin, Base):
     __tablename__ = "quizzes"
     title: Mapped[str] = mapped_column(String(200), unique=True, nullable=False)
     description: Mapped[str | None] = mapped_column(Text(), nullable=True)
-    creator_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
-    course_id: Mapped[str | None] = mapped_column(ForeignKey("courses.id", ondelete="CASCADE"), index=True, nullable=True)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    course_id: Mapped[str] = mapped_column(ForeignKey("courses.id", ondelete="CASCADE"), index=True, nullable=False)
 
-    creator: Mapped[User] = relationship(
+    user: Mapped[User] = relationship(
         "User", 
         back_populates="quizzes", 
         passive_deletes=True

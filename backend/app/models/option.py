@@ -11,7 +11,7 @@ if TYPE_CHECKING:
 
 class Option(IdMixin, TimestampMixin, Base):
     __tablename__ = "options"
-    text: Mapped[str] = mapped_column(String(255), nullable=False, unique=True)
+    text: Mapped[str | None] = mapped_column(String(255), nullable=False, unique=True)
 
     question_options: Mapped[list[QuestionOption]] = relationship(
         "QuestionOption", 
@@ -23,6 +23,5 @@ class Option(IdMixin, TimestampMixin, Base):
     answers: Mapped[list[Answer]] = relationship(
         "Answer", 
         back_populates="selected_option", 
-        cascade="all, delete-orphan",
         passive_deletes=True
     )

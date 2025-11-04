@@ -1,8 +1,8 @@
 """init all tables
 
-Revision ID: c105fc7e702f
+Revision ID: 2b059439732c
 Revises: 
-Create Date: 2025-11-04 17:19:06.568383
+Create Date: 2025-11-04 18:30:49.404115
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'c105fc7e702f'
+revision: str = '2b059439732c'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -48,15 +48,15 @@ def upgrade() -> None:
     )
     op.create_index(op.f('ix_roles_name'), 'roles', ['name'], unique=True)
     op.create_table('courses',
-    sa.Column('name', sa.String(length=50), nullable=False),
+    sa.Column('title', sa.String(length=50), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('area_id', sa.String(length=36), nullable=True),
     sa.Column('id', sa.String(length=36), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-    sa.ForeignKeyConstraint(['area_id'], ['areas.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['area_id'], ['areas.id'], ondelete='SET NULL'),
     sa.PrimaryKeyConstraint('id'),
-    sa.UniqueConstraint('name')
+    sa.UniqueConstraint('title')
     )
     op.create_index(op.f('ix_courses_area_id'), 'courses', ['area_id'], unique=False)
     op.create_table('users',
@@ -67,7 +67,7 @@ def upgrade() -> None:
     sa.Column('id', sa.String(length=36), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-    sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['role_id'], ['roles.id'], ondelete='SET NULL'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('name')
     )
@@ -79,7 +79,7 @@ def upgrade() -> None:
     sa.Column('project_url', sa.String(length=255), nullable=True),
     sa.Column('file_path', sa.String(length=255), nullable=True),
     sa.Column('owner_id', sa.String(length=36), nullable=False),
-    sa.Column('course_id', sa.String(length=36), nullable=True),
+    sa.Column('course_id', sa.String(length=36), nullable=False),
     sa.Column('id', sa.String(length=36), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
@@ -93,18 +93,18 @@ def upgrade() -> None:
     op.create_table('quizzes',
     sa.Column('title', sa.String(length=200), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
-    sa.Column('creator_id', sa.String(length=36), nullable=False),
-    sa.Column('course_id', sa.String(length=36), nullable=True),
+    sa.Column('user_id', sa.String(length=36), nullable=False),
+    sa.Column('course_id', sa.String(length=36), nullable=False),
     sa.Column('id', sa.String(length=36), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['course_id'], ['courses.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['creator_id'], ['users.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('title')
     )
     op.create_index(op.f('ix_quizzes_course_id'), 'quizzes', ['course_id'], unique=False)
-    op.create_index(op.f('ix_quizzes_creator_id'), 'quizzes', ['creator_id'], unique=False)
+    op.create_index(op.f('ix_quizzes_user_id'), 'quizzes', ['user_id'], unique=False)
     op.create_table('questions',
     sa.Column('text', sa.Text(), nullable=False),
     sa.Column('quiz_id', sa.String(length=36), nullable=False),
@@ -132,16 +132,16 @@ def upgrade() -> None:
     op.create_table('answers',
     sa.Column('attempt_id', sa.String(length=36), nullable=False),
     sa.Column('question_id', sa.String(length=36), nullable=False),
-    sa.Column('selected_option_id', sa.String(length=36), nullable=False),
+    sa.Column('option_id', sa.String(length=36), nullable=True),
     sa.Column('id', sa.String(length=36), nullable=False),
     sa.ForeignKeyConstraint(['attempt_id'], ['quiz_attempts.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['option_id'], ['options.id'], ondelete='SET NULL'),
     sa.ForeignKeyConstraint(['question_id'], ['questions.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['selected_option_id'], ['options.id'], ondelete='SET NULL'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_index(op.f('ix_answers_attempt_id'), 'answers', ['attempt_id'], unique=False)
+    op.create_index(op.f('ix_answers_option_id'), 'answers', ['option_id'], unique=False)
     op.create_index(op.f('ix_answers_question_id'), 'answers', ['question_id'], unique=False)
-    op.create_index(op.f('ix_answers_selected_option_id'), 'answers', ['selected_option_id'], unique=False)
     op.create_table('questions_options',
     sa.Column('question_id', sa.String(length=36), nullable=False),
     sa.Column('option_id', sa.String(length=36), nullable=False),
@@ -161,8 +161,8 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_questions_options_question_id'), table_name='questions_options')
     op.drop_index(op.f('ix_questions_options_option_id'), table_name='questions_options')
     op.drop_table('questions_options')
-    op.drop_index(op.f('ix_answers_selected_option_id'), table_name='answers')
     op.drop_index(op.f('ix_answers_question_id'), table_name='answers')
+    op.drop_index(op.f('ix_answers_option_id'), table_name='answers')
     op.drop_index(op.f('ix_answers_attempt_id'), table_name='answers')
     op.drop_table('answers')
     op.drop_index(op.f('ix_quiz_attempts_user_id'), table_name='quiz_attempts')
@@ -170,7 +170,7 @@ def downgrade() -> None:
     op.drop_table('quiz_attempts')
     op.drop_index(op.f('ix_questions_quiz_id'), table_name='questions')
     op.drop_table('questions')
-    op.drop_index(op.f('ix_quizzes_creator_id'), table_name='quizzes')
+    op.drop_index(op.f('ix_quizzes_user_id'), table_name='quizzes')
     op.drop_index(op.f('ix_quizzes_course_id'), table_name='quizzes')
     op.drop_table('quizzes')
     op.drop_index(op.f('ix_projects_owner_id'), table_name='projects')

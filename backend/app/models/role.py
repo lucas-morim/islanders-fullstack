@@ -16,6 +16,5 @@ class Role(IdMixin, TimestampMixin, Base):
     users: Mapped[list[User]] = relationship(
         "User", 
         back_populates="role", 
-        cascade="all, delete-orphan",
         passive_deletes=True
     )
