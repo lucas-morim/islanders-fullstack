@@ -15,10 +15,10 @@ class Project(IdMixin, TimestampMixin, Base):
     description: Mapped[str | None] = mapped_column(Text(), nullable=True)
     project_url: Mapped[str | None] = mapped_column(String(255), nullable=True)
     file_path: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    owner_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
+    user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
     course_id: Mapped[str] = mapped_column(ForeignKey("courses.id", ondelete="CASCADE"), index=True, nullable=False)
 
-    owner: Mapped[User] = relationship(
+    user: Mapped[User] = relationship(
         "User", 
         back_populates="projects", 
         passive_deletes=True
