@@ -1,109 +1,108 @@
 <div class="relative w-full">
-
-
-  <div class="relative w-full h-[300px] sm:h-[400px] md:h-[500px]">
+  <div class="relative w-full h-[800px] sm:h-[800px] md:h-[800px]">
     <video autoplay muted loop class="absolute top-0 left-0 w-full h-full object-cover z-0">
       <source src="assets/Islanders.mp4" type="video/mp4">
       O teu browser não suporta vídeo.
     </video>
 
     <section
-      class="relative z-10 flex flex-col justify-center items-center h-full text-center text-white pt-20 px-4 sm:px-6 md:px-8">
-      <h1 class="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-bold drop-shadow-lg mb-4">
-        ISLAVERSE
-      </h1>
-      <h2 class="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-bold drop-shadow-lg">
-        Bem Vindo, Islander
-      </h2>
+      class="relative z-10 flex flex-col justify-center items-center h-full text-center text-white px-4 sm:px-6 md:px-8">
+
+      <img src="assets/islaverse.png" alt="Bem Vindo Islander" class="w-96 sm:w-64 md:w-80 lg:w-[600px] drop-shadow-lg">
+
+      <a href="https://islagaia.pt" target="_blank" rel="noopener noreferrer">
+        <img src="assets/islalogo.png" alt="Logo ISLA"
+          class="absolute -bottom-10 right-[-60px] w-16 sm:w-20 md:w-24 lg:w-80 drop-shadow-md cursor-pointer transition-transform hover:scale-105">
+      </a>
     </section>
+
+
   </div>
 
-
-  <div class="relative w-full h-[300px] sm:h-[400px] md:h-[500px] mt-8 sm:mt-12 md:mt-16">
-    <img src="assets/isla.jpg" alt="Foto Destacada" class="w-full h-full object-cover">
-
-    <!-- Texto sobre a imagem -->
+  <div class="relative w-full h-[300px] sm:h-[400px] md:h-[500px] mt-8 sm:mt-12 md:mt-16"> <img src="assets/isla.jpg"
+      alt="Foto Destacada" class="w-full h-full object-cover">
     <div
       class="absolute inset-0 flex flex-col justify-start items-center text-white text-center px-4 pt-8 sm:pt-12 md:pt-16">
-      <h2 class="text-2xl sm:text-4xl md:text-5xl font-bold drop-shadow-lg">
-        Conheça a nossa <span class="text-red-600">faculdade!</span>
+      <h2 class="text-2xl sm:text-4xl md:text-5xl font-poppins drop-shadow-lg relative inline-block">
+        Conheça a nossa <span class="text-redIsla">faculdade!</span>
+        <span class="absolute left-0 right-0 -bottom-2 sm:-bottom-3 md:-bottom-4 h-1 bg-redIsla"></span>
       </h2>
-      <div class="w-16 sm:w-32 md:w-[900px] h-1 bg-red-600 mt-4 sm:mt-6 md:mt-4"></div>
     </div>
 
-
   </div>
-
-
-
   <div class="w-full mt-8 sm:mt-12 md:mt-16 flex flex-col items-end px-4 sm:px-6 md:px-8">
-    <p class="text-base sm:text-3xl md:text-4xl lg:text-5xl font-bold drop-shadow-lg mb-2">
-      Cursos em <span class="text-red-600">destaque</span>
+    <p class="text-base sm:text-3xl md:text-4xl lg:text-5xl font-poppins drop-shadow-lg mb-2">
+      Cursos em <span class="text-redIsla relative inline-block">
+        destaque
+        <span class="absolute left-0 -bottom-1 sm:-bottom-2 md:-bottom-3 w-full h-1 bg-redIsla "></span>
+
+      </span>
     </p>
-    <div class="w-16 sm:w-32 md:w-52 h-1 bg-black rounded"></div>
   </div>
 
 
   <div class="w-full mt-8 sm:mt-12 md:mt-16 px-4 sm:px-6 md:px-8 flex flex-row gap-4 overflow-x-auto">
 
-    <div class="flex-none w-72 sm:flex-1 bg-gray-100 rounded-lg shadow-md p-2 flex flex-col">
+    <a routerLink="/curso/multimedia"
+      class="flex-none w-72 sm:flex-1 min-w-[18rem] bg-gray-100 rounded-lg shadow-md p-2 flex flex-col hover:shadow-lg transition">
       <img src="assets/Multimedia.png" alt="Multimédia"
         class="w-full h-40 sm:h-48 md:h-56 object-cover rounded-lg mb-2">
-      <p class="text-sm sm:text-base md:text-lg font-semibold mb-2">Multimédia</p>
-      <div class="w-70 sm:w-24 md:w-[330px] h-1 bg-black rounded mb-2"></div>
-      <p class="text-xs sm:text-sm md:text-base text-black font-semibold mb-2">⏰ 240H</p>
-    </div>
+      <p class="text-sm sm:text-base md:text-lg font-poppins mb-2">Multimédia</p>
+      <div class="w-full h-[1px] bg-black rounded mb-2"></div>
 
+      <p class="text-xs sm:text-sm md:text-base text-black font-poppins mb-2">⏰ 240H</p>
+    </a>
 
-    <div class="flex-none w-72 sm:flex-1 bg-gray-100 rounded-lg shadow-md p-2 flex flex-col">
-      <img src="assets/Engenharia.png" alt="Multimédia"
+    <a href="https://www.islagaia.pt/pt/licenciaturas/engenharia-informatica-pt" target="_blank"
+      class="flex-none w-72 sm:flex-1 min-w-[18rem] bg-gray-100 rounded-lg shadow-md p-2 flex flex-col hover:shadow-lg transition">
+      <img src="assets/Engenharia.png" alt="Engenharia Informática"
         class="w-full h-40 sm:h-48 md:h-56 object-cover rounded-lg mb-2">
-      <p class="text-sm sm:text-base md:text-lg font-semibold mb-2">Engenharia Informática</p>
-      <div class="w-70 sm:w-24 md:w-[330px] h-1 bg-black rounded mb-2"></div>
-      <p class="text-xs sm:text-sm md:text-base text-black font-semibold mb-2">⏰ 240H</p>
-    </div>
+      <p class="text-sm sm:text-base md:text-lg font-poppins mb-2">Engenharia Informática</p>
+      <div class="w-full h-[1px] bg-black rounded mb-2"></div>
+      <p class="text-xs sm:text-sm md:text-base text-black font-poppins mb-2">⏰ 240H</p>
+    </a>
 
-    <div class="flex-none w-72 sm:flex-1 bg-gray-100 rounded-lg shadow-md p-2 flex flex-col">
-      <img src="assets/Gestao.png" alt="Multimédia" class="w-full h-40 sm:h-48 md:h-56 object-cover rounded-lg mb-2">
-      <p class="text-sm sm:text-base md:text-lg font-semibold mb-2">Gestão</p>
-      <div class="w-24 sm:w-32 md:w-[330px] h-1 bg-black rounded mb-2"></div>
-      <p class="text-xs sm:text-sm md:text-base text-black font-semibold mb-2">⏰ 240H</p>
-    </div>
+    <a routerLink="/curso/gestao"
+      class="flex-none w-72 sm:flex-1 min-w-[18rem] bg-gray-100 rounded-lg shadow-md p-2 flex flex-col hover:shadow-lg transition">
+      <img src="assets/Gestao.png" alt="Gestão" class="w-full h-40 sm:h-48 md:h-56 object-cover rounded-lg mb-2">
+      <p class="text-sm sm:text-base md:text-lg font-poppins mb-2">Gestão</p>
+      <div class="w-full h-[1px] bg-black rounded mb-2"></div>
+      <p class="text-xs sm:text-sm md:text-base text-black font-poppins mb-2">⏰ 240H</p>
+    </a>
 
-    <div class="flex-none w-72 sm:flex-1 bg-gray-100 rounded-lg shadow-md p-2 flex flex-col">
-      <img src="assets/Comunicacao.png" alt="Multimédia"
+    <a routerLink="/curso/comunicacao"
+      class="flex-none w-72 sm:flex-1 min-w-[18rem] bg-gray-100 rounded-lg shadow-md p-2 flex flex-col hover:shadow-lg transition">
+      <img src="assets/Comunicacao.png" alt="Comunicação Digital"
         class="w-full h-40 sm:h-48 md:h-56 object-cover rounded-lg mb-2">
-      <p class="text-sm sm:text-base md:text-lg font-semibold mb-2">Comunicação Digital</p>
-      <div class="w-70 sm:w-24 md:w-[330px] h-1 bg-black rounded mb-2"></div>
-      <p class="text-xs sm:text-sm md:text-base text-black font-semibold mb-2">⏰ 240H</p>
-    </div>
+      <p class="text-sm sm:text-base md:text-lg font-poppins mb-2">Comunicação Digital</p>
+      <div class="w-full h-[1px] bg-black rounded mb-2"></div>
+      <p class="text-xs sm:text-sm md:text-base text-black font-poppins mb-2">⏰ 240H</p>
+    </a>
+
+
   </div>
 
-  <div class="w-full mt-8 sm:mt-12 md:mt-16 px-4 sm:px-6 md:px-8">
-    <p class="text-sm sm:text-base md:text-lg font-semibold mb-2 text-gray-800 text-left">
-      Veja todos os nossos cursos
-      <span class="bg-black text-white px-3 py-1">AQUI</span>
+
+  <div class="w-full mt-12 sm:mt-12 md:mt-16 px-4 sm:px-6 md:px-8">
+    <p class="text-sm sm:text-base md:text-lg font-poppins mb-2 text-gray-800 text-left"> Veja todos os nossos cursos
+      <a routerLink="/course" class="bg-black text-white px-3 py-1 hover:bg-gray-800 transition">AQUI</a>
+
     </p>
   </div>
-
-  <div class="relative w-full h-[300px] sm:h-[400px] md:h-[500px] mt-12 sm:mt-16 md:mt-20">
-    <video autoplay muted loop class="absolute top-0 left-0 w-full h-full object-cover z-0">
-      <source src="assets/Islanders.mp4" type="video/mp4">
-      O teu browser não suporta vídeo.
+  <div class="relative w-full h-[300px] sm:h-[400px] md:h-[500px] mt-12 sm:mt-16 md:mt-20"> <video autoplay muted loop
+      class="absolute top-0 left-0 w-full h-full object-cover z-0">
+      <source src="assets/Islanders.mp4" type="video/mp4"> O teu browser não suporta vídeo.
     </video>
-
     <section class="relative z-10 h-full w-full text-white grid grid-rows-2 grid-cols-1 md:grid-cols-2 gap-4 px-8">
       <div class="flex justify-start items-center row-span-1">
-        <h2 class="text-2xl sm:text-4xl md:text-5xl font-bold drop-shadow-lg">Experimente a sensação de um curso online
+        <h2 class="text-2xl sm:text-4xl md:text-5xl font-poppins drop-shadow-lg">Experimente a sensação de um curso
+          online
         </h2>
       </div>
-      
-      <div class="flex justify-end items-end row-span-1 relative top-48">
-        <p class="bg-black px-3 py-1 text-lg sm:text-xl md:text-2xl drop-shadow-lg">
-          Comece a <span class="font-bold">DEMO</span>
+      <div class="flex justify-end items-start row-span-1 mt-14 sm:mt-8 md:mt-80">
+        <p routerLink="/destino" class="bg-black px-3 py-1 text-lg sm:text-xl md:text-2xl drop-shadow-lg"> Comece a <a
+            routerLink="/destino" class="font-poppins hover:text-gray-300 transition">DEMO</a>
         </p>
       </div>
-
     </section>
-
   </div>
