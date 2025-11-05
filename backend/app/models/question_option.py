@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, Boolean
-from app.db.base import Base
+from app.db.session import Base
 
 if TYPE_CHECKING:
     from app.models.question import Question

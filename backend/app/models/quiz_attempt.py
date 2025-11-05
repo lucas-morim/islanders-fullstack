@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import ForeignKey, DateTime
-from app.db.base import Base
+from app.db.session import Base
 from app.models.common import IdMixin
 import datetime as dt
 

@@ -1,7 +1,4 @@
-from sqlalchemy.orm import DeclarativeBase
-
-class Base(DeclarativeBase):
-    pass
+from app.db.session import Base
 
 # Registre os modelos para o Alembic enxergar
 from app.models.user import User      
