@@ -25,7 +25,7 @@ class User(IdMixin, TimestampMixin, Base):
 
     projects: Mapped[list[Project]] = relationship(
         "Project", 
-        back_populates="owner", 
+        back_populates="user", 
         cascade="all, delete-orphan",
         passive_deletes=True
     )

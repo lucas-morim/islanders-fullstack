@@ -1,8 +1,8 @@
 """init all tables
 
-Revision ID: 2b059439732c
+Revision ID: baa2b4410ce2
 Revises: 
-Create Date: 2025-11-04 18:30:49.404115
+Create Date: 2025-11-05 19:21:57.644164
 
 """
 from typing import Sequence, Union
@@ -12,7 +12,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = '2b059439732c'
+revision: str = 'baa2b4410ce2'
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -78,18 +78,18 @@ def upgrade() -> None:
     sa.Column('description', sa.Text(), nullable=True),
     sa.Column('project_url', sa.String(length=255), nullable=True),
     sa.Column('file_path', sa.String(length=255), nullable=True),
-    sa.Column('owner_id', sa.String(length=36), nullable=False),
+    sa.Column('user_id', sa.String(length=36), nullable=False),
     sa.Column('course_id', sa.String(length=36), nullable=False),
     sa.Column('id', sa.String(length=36), nullable=False),
     sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['course_id'], ['courses.id'], ondelete='CASCADE'),
-    sa.ForeignKeyConstraint(['owner_id'], ['users.id'], ondelete='CASCADE'),
+    sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id'),
     sa.UniqueConstraint('title')
     )
     op.create_index(op.f('ix_projects_course_id'), 'projects', ['course_id'], unique=False)
-    op.create_index(op.f('ix_projects_owner_id'), 'projects', ['owner_id'], unique=False)
+    op.create_index(op.f('ix_projects_user_id'), 'projects', ['user_id'], unique=False)
     op.create_table('quizzes',
     sa.Column('title', sa.String(length=200), nullable=False),
     sa.Column('description', sa.Text(), nullable=True),
@@ -121,8 +121,6 @@ def upgrade() -> None:
     sa.Column('user_id', sa.String(length=36), nullable=False),
     sa.Column('quiz_id', sa.String(length=36), nullable=False),
     sa.Column('id', sa.String(length=36), nullable=False),
-    sa.Column('created_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
-    sa.Column('updated_at', sa.DateTime(timezone=True), server_default=sa.text('now()'), nullable=False),
     sa.ForeignKeyConstraint(['quiz_id'], ['quizzes.id'], ondelete='CASCADE'),
     sa.ForeignKeyConstraint(['user_id'], ['users.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
@@ -173,7 +171,7 @@ def downgrade() -> None:
     op.drop_index(op.f('ix_quizzes_user_id'), table_name='quizzes')
     op.drop_index(op.f('ix_quizzes_course_id'), table_name='quizzes')
     op.drop_table('quizzes')
-    op.drop_index(op.f('ix_projects_owner_id'), table_name='projects')
+    op.drop_index(op.f('ix_projects_user_id'), table_name='projects')
     op.drop_index(op.f('ix_projects_course_id'), table_name='projects')
     op.drop_table('projects')
     op.drop_index(op.f('ix_users_role_id'), table_name='users')
