@@ -15,7 +15,7 @@ async def list_areas(
 ):
     return await area_service.list(db, skip=skip, limit=limit)
 
-router.get("/{area_id}", response_model=AreaOut)
+@router.get("/{area_id}", response_model=AreaOut)
 async def get_area(
     area_id: str,
     db: AsyncSession = Depends(get_db),
