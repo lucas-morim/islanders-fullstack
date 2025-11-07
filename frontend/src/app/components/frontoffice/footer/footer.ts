@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 
 
 @Component({
-  selector: 'app-footer',
+  selector: 'frontoffice-footer',
   standalone: true,
   imports: [],
   templateUrl: './footer.html',
