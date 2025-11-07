@@ -1,7 +1,16 @@
+// src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { Home } from './pages/frontoffice/home/home';
 
 export const routes: Routes = [
-{ path: '', component: Home},
-{ path: '**', redirectTo: '' }
+  {
+    path: '',
+    loadChildren: () =>
+      import('./pages/frontoffice/frontoffice.routes').then(m => m.routes),
+  },
+  {
+    path: 'backoffice',
+    loadChildren: () =>
+      import('./pages/backoffice/backoffice.routes').then(m => m.routes),
+  },
+  { path: '**', redirectTo: '' }
 ];
