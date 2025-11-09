@@ -9,7 +9,8 @@ class AreaRepository:
         return result.scalars().all()
     
     async def get(self, db: AsyncSession, area_id: str) -> Optional[Area]:
-        return await db.get(Area, area_id)
+        area = await db.get(Area, area_id)
+        return area
     
     async def get_by_name(self, db: AsyncSession, name: str) -> Area | None:
         stmt = select(Area).where(Area.name == name)
@@ -33,6 +34,8 @@ class AreaRepository:
         await db.refresh(area)
         return area
     
-    async def delete(self, db: AsyncSession, area: Area) -> None:
+    async def delete(self, db: AsyncSession, area: Area) -> None: #trocar para bool?
+        if not area:
+            return None
         await db.delete(area)
         await db.commit()
