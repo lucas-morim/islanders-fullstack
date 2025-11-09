@@ -1,0 +1,60 @@
+:root {
+  --admin-header-height: 56px;
+}
+
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 1040;
+  height: var(--admin-header-height);
+  background: var(--app-header-bg);
+  color: var(--app-header-fg);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1); 
+  margin-bottom: 20px;
+}
+
+.toplink {
+  text-decoration: none;
+  color: var(--app-header-fg);
+  opacity: .85;
+}
+.toplink:hover,
+.toplink.active {
+  color: #4e4a4a;
+  opacity: 1;
+}
+
+.icon-btn i { opacity: .8; }
+.icon-btn:hover i { opacity: 1; }
+
+.badge-count {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  font-weight: 700;
+  font-size: .75rem;
+  line-height: 1;
+  padding: .25rem .45rem;
+}
+.icon-btn { position: relative; line-height: 1; }
+
+.vr {
+  width: 1px;
+  height: 24px;
+  background: rgba(255,255,255,.25);
+}
+
+.avatar {
+  position: relative;
+  display: inline-block;
+}
+.status-dot {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #2ecc71;                 
+  border: 2px solid var(--app-header-bg);
+}

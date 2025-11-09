@@ -1,0 +1,6 @@
+:root { --admin-sidebar-width: 260px; }
+main { margin-left: 0; margin-top: -140px;} 
+
+@media (min-width: 992px) {
+  main { margin-left: var(--admin-sidebar-width); }
+}

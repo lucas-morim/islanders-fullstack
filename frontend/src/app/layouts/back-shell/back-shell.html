@@ -1,1 +1,14 @@
-<p>back-shell works!</p>
+<div class="d-flex flex-column min-vh-100">
+  <div class="d-flex flex-grow-1">
+    <app-backoffice-sidebar class="d-none d-lg-block"></app-backoffice-sidebar>
+  </div>
+
+  <main class="flex-grow-1">
+    <div class="container-fluid">
+      <app-backoffice-header></app-backoffice-header>
+      <router-outlet></router-outlet>
+    </div>
+  </main>
+
+  <app-backoffice-footer></app-backoffice-footer>
+</div>
