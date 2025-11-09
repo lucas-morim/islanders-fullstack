@@ -4,15 +4,14 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 from app.repositories.crud.user_repo import UserRepository
 from app.models.user import User
-from app.schemas.user import UserCreate, UserUpdate
+from app.schemas.user import UserCreate
 
 # configuração de hashing com argon2
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
 
-
 class UserService:
-    def __init__(self):
-        self.repo = UserRepository()
+    def __init__(self, repo=UserRepository()):
+        self.repo = repo
 
     async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[User]:
         return await self.repo.list(db, skip=skip, limit=limit)
@@ -83,6 +82,4 @@ class UserService:
     #         return None
     #     return user
 
-
-# Instância do serviço
 service = UserService()

@@ -10,8 +10,7 @@ class UserRepository:
         return result.scalars().all()
 
     async def get(self, db: AsyncSession, user_id: str) -> Optional[User]:
-        user = await db.get(User, user_id)
-        return user
+        return await db.get(User, user_id)
 
     async def get_by_email(self, db: AsyncSession, email: str) -> Optional[User]:
         result = await db.execute(select(User).where(User.email == email))

@@ -9,8 +9,7 @@ class AreaRepository:
         return result.scalars().all()
     
     async def get(self, db: AsyncSession, area_id: str) -> Optional[Area]:
-        area = await db.get(Area, area_id)
-        return area
+        return await db.get(Area, area_id)
     
     async def get_by_name(self, db: AsyncSession, name: str) -> Area | None:
         stmt = select(Area).where(Area.name == name)
