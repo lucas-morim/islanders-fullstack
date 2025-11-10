@@ -1,7 +1,5 @@
 import { Component, Inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { DOCUMENT } from '@angular/common';
-import { Renderer2 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({

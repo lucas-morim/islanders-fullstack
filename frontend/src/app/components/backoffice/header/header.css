@@ -1,16 +1,30 @@
 :root {
-  --admin-header-height: 56px;
+  --admin-header-height: 70px;
+  --admin-sidebar-width: 260px;
+  --app-header-bg: #fff;
+  --app-header-fg: #212529;
 }
 
 .app-header {
-  position: sticky;
+  position: fixed;
   top: 0;
-  z-index: 1040;
-  height: var(--admin-header-height);
+  left: 0;         
+  right: 0;
+  z-index: 1035;   
+  height: 67px;
   background: var(--app-header-bg);
   color: var(--app-header-fg);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1); 
-  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(0,0,0,.1);
+  display: flex;
+  align-items: center;
+}
+
+@media (min-width: 992px) {
+  .app-header {
+    left: var(--admin-sidebar-width);
+    right: 0;
+    width: calc(100% - var(--admin-sidebar-width));
+  }
 }
 
 .toplink {

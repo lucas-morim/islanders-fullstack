@@ -1,0 +1,123 @@
+<div class="d-flex align-items-center justify-content-between mb-3">
+  <h2 class="mb-0">Users</h2>
+  <div class="btn-group">
+    <button class="btn btn-primary" (click)="newUser()">Novo usuário</button>
+    <button class="btn btn-outline-secondary" (click)="exportCsv()">Exportar</button>
+  </div>
+</div>
+
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-5">
+        <label class="form-label">Buscar</label>
+        <input type="search" class="form-control" placeholder="Nome, usuário ou e-mail"
+              (ngModelChange)="page.set(1)">
+      </div>
+      <div class="col-6 col-md-3">
+        <label class="form-label">Função</label>
+        <select class="form-select" (ngModelChange)="page.set(1)">
+          <option value="">Todas</option>
+          <option>Admin</option>
+          <option>Manager</option>
+          <option>Editor</option>
+          <option>Viewer</option>
+        </select>
+      </div>
+      <div class="col-6 col-md-2">
+        <label class="form-label">Status</label>
+        <select class="form-select" (ngModelChange)="page.set(1)">
+          <option value="">Todos</option>
+          <option>Ativo</option>
+          <option>Pendente</option>
+          <option>Suspenso</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-2 d-flex gap-2">
+        <button class="btn btn-outline-secondary w-100" (click)="resetFilters()">Limpar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- loading -->
+<div *ngIf="loading()" class="alert alert-info">Carregando usuários…</div>
+
+<!-- vazio -->
+<div *ngIf="!loading() && filtered().length === 0" class="card shadow-sm">
+  <div class="card-body text-center py-5">
+    <p class="text-muted mb-2">Nenhum usuário encontrado.</p>
+    <button class="btn btn-primary" (click)="newUser()">Criar primeiro usuário</button>
+  </div>
+</div>
+
+<!-- tabela -->
+<div class="card shadow-sm" *ngIf="filtered().length > 0">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Usuário</th>
+          <th class="d-none d-md-table-cell">E-mail</th>
+          <th>Função</th>
+          <th>Status</th>
+          <th class="text-end">Criado em</th>
+          <th class="text-end">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let u of paginated()">
+          <td>
+            <div class="d-flex align-items-center gap-2">
+              <img [src]="u.avatar || 'assets/img/avatars/default.png'" alt="" class="avatar rounded-circle">
+              <div class="d-flex flex-column">
+                <span class="fw-semibold">{{ u.name }}</span>
+                <small class="text-muted">@{{ u.username }}</small>
+              </div>
+            </div>
+          </td>
+          <td class="d-none d-md-table-cell">{{ u.email }}</td>
+          <td><span [class]="roleClass(u.role)">{{ u.role }}</span></td>
+          <td><span class="badge" [ngClass]="badgeClass(u.status)">{{ u.status }}</span></td>
+          <td class="text-end">
+            <time [attr.datetime]="u.createdAt">{{ u.createdAt | date:'dd/MM/yyyy HH:mm' }}</time>
+          </td>
+          <td class="text-end">
+            <div class="btn-group btn-group-sm">
+              <a class="btn btn-outline-secondary" [routerLink]="['/backoffice/users', u.id]">Ver</a>
+              <button class="btn btn-outline-primary" (click)="edit(u)">Editar</button>
+              <button class="btn btn-outline-danger" (click)="remove(u)">Apagar</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- paginação -->
+  <div class="card-body d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+    <div class="text-muted small">
+      Mostrando
+      <strong>{{ paginated().length }}</strong>
+      de
+      <strong>{{ filtered().length }}</strong>
+      usuários
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <select class="form-select form-select-sm w-auto" (ngModelChange)="page.set(1)">
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="20">20</option>
+      </select>
+
+      <div class="btn-group">
+        <button class="btn btn-sm btn-outline-secondary" (click)="changePage(page()-1)" [disabled]="page() <= 1">Anterior</button>
+        <button class="btn btn-sm btn-outline-secondary" disabled>
+          Página {{ page() }} / {{ totalPages() }}
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" (click)="changePage(page()+1)" [disabled]="page() >= totalPages()">Próxima</button>
+      </div>
+    </div>
+  </div>
+</div>
