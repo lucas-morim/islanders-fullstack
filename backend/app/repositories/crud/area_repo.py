@@ -33,7 +33,7 @@ class AreaRepository:
         await db.refresh(area)
         return area
     
-    async def delete(self, db: AsyncSession, area: Area) -> None: #trocar para bool?
+    async def delete(self, db: AsyncSession, area: Area) -> bool:
         if not area:
             return None
         await db.delete(area)
