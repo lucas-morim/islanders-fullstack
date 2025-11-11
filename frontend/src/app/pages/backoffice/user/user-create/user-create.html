@@ -1,0 +1,113 @@
+<section class="page-header sticky-top-under-app">
+    <div class="d-flex align-items-center justify-content-between">
+        <h2 class="mb-0">Novo usuário</h2>
+        <div class="d-flex gap-2">
+        <button class="btn btn-outline-secondary" type="button" (click)="cancel()">Cancelar</button>
+        <button class="btn btn-primary" type="button" [disabled]="!canSubmit()" (click)="submit()">
+            <span *ngIf="!submitting(); else saving">Salvar</span>
+        </button>
+        <ng-template #saving>
+            <span class="spinner-border spinner-border-sm me-1"></span> Salvando…
+        </ng-template>
+        </div>
+    </div>
+</section>
+
+<form [formGroup]="form" novalidate>
+<div class="card shadow-sm">
+    <div class="card-body">
+    <div class="row g-3">
+
+        <div class="col-12 col-md-3">
+        <label class="form-label">Avatar</label>
+        <div class="avatar-uploader">
+            <img *ngIf="avatarPreview(); else placeholder" [src]="avatarPreview()" alt="Preview" class="avatar-preview rounded-circle">
+            <ng-template #placeholder>
+            <div class="avatar-placeholder rounded-circle">?</div>
+            </ng-template>
+        </div>
+        <input class="form-control mt-2" type="file" accept="image/*" (change)="onAvatarChange($event)">
+        <div class="form-text">PNG/JPG até 2MB</div>
+        </div>
+
+        <div class="col-12 col-md-9">
+        <div class="row g-3">
+            <div class="col-12 col-lg-6">
+            <label class="form-label">Nome</label>
+            <input class="form-control" formControlName="name" placeholder="Ex.: Maria Silva">
+            <div class="invalid-feedback d-block" *ngIf="f['name'].touched && f['name'].errors">
+                {{ f['name'].errors['required'] ? 'Nome é obrigatório.' : '' }}
+                {{ f['name'].errors['minlength'] ? 'Mínimo de 3 caracteres.' : '' }}
+            </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+            <label class="form-label">Usuário</label>
+            <div class="input-group">
+                <span class="input-group-text">@</span>
+                <input class="form-control" formControlName="username" placeholder="Ex.: maria.silva">
+            </div>
+            <div class="invalid-feedback d-block" *ngIf="f['username'].touched && f['username'].errors">
+                {{ f['username'].errors['required'] ? 'Usuário é obrigatório.' : '' }}
+                {{ f['username'].errors['pattern'] ? 'Use letras/números/pontos/traços (mín. 3).' : '' }}
+            </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+            <label class="form-label">E-mail</label>
+            <input type="email" class="form-control" formControlName="email" placeholder="nome@dominio.com">
+            <div class="invalid-feedback d-block" *ngIf="f['email'].touched && f['email'].errors">
+                {{ f['email'].errors['required'] ? 'E-mail é obrigatório.' : '' }}
+                {{ f['email'].errors['email'] ? 'Informe um e-mail válido.' : '' }}
+            </div>
+            </div>
+
+            <div class="col-6 col-lg-3">
+            <label class="form-label">Função</label>
+            <select class="form-select" formControlName="role">
+                <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+            </select>
+            </div>
+
+            <div class="col-6 col-lg-3">
+            <label class="form-label">Status</label>
+            <select class="form-select" formControlName="status">
+                <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+            </select>
+            </div>
+
+            <div class="col-12 col-lg-6">
+            <label class="form-label">Senha</label>
+            <input type="password" class="form-control" formControlName="password" placeholder="Mín. 6 caracteres">
+            <div class="invalid-feedback d-block" *ngIf="f['password'].touched && f['password'].errors">
+                {{ f['password'].errors['required'] ? 'Senha é obrigatória.' : '' }}
+                {{ f['password'].errors['minlength'] ? 'Mínimo de 6 caracteres.' : '' }}
+            </div>
+            </div>
+
+            <div class="col-12 col-lg-6">
+            <label class="form-label">Confirmar senha</label>
+            <input type="password" class="form-control" formControlName="confirm" placeholder="Repita a senha">
+            <div class="invalid-feedback d-block" *ngIf="f['confirm'].touched && (f['confirm'].errors || form.errors?.['mismatch'])">
+                {{ f['confirm'].errors?.['required'] ? 'Confirmação é obrigatória.' : '' }}
+                {{ form.errors?.['mismatch'] ? 'As senhas não conferem.' : '' }}
+            </div>
+            </div>
+        </div>
+        </div>
+
+    </div>
+    </div>
+
+    <div class="card-body d-flex justify-content-end gap-2 border-top bg-white">
+    <button class="btn btn-outline-secondary" type="button" (click)="cancel()">Cancelar</button>
+    <button class="btn btn-primary" type="button" [disabled]="!canSubmit()" (click)="submit()">
+        <span *ngIf="!submitting(); else saving2">Salvar</span>
+    </button>
+    <ng-template #saving2>
+        <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
+        Salvando…
+    </ng-template>
+    </div>
+</div>
+</form>

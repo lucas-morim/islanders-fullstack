@@ -1,0 +1,24 @@
+/* OFFSET do componente: respeita header fixo e sidebar sem tocar no layout global */
+:host {
+  display: block;
+  --hdr: var(--admin-header-height, 72px);
+  --sbw: var(--admin-sidebar-width, 260px);
+  padding-top: 20px;        /* evita sobrepor o header */
+}
+
+/* topo “grudado” dentro do componente */
+.sticky-top-under-app {
+  position: sticky;
+  top: 0;                            /* cola no topo do componente (não do viewport) */
+  z-index: 100;
+  background: var(--bs-body-bg, #fff);
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+}
+
+/* botões responsivos no mobile */
+@media (max-width: 575.98px) {
+  .page-header .btn-group { width: 100%; }
+  .page-header .btn-group .btn { flex: 1 1 auto; }
+}

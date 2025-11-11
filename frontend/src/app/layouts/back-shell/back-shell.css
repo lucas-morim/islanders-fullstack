@@ -1,16 +1,17 @@
 :root {
-  --admin-header-height: 56px; 
+  --admin-header-height: 72px;    
   --admin-sidebar-width: 260px;
 }
 
+
 main {
-  padding-top: var(--admin-header-height); 
+  padding-top: var(--admin-header-height);
   margin-left: 0;
-  margin-top: -100px;
+  min-height: calc(100vh - var(--admin-header-height));
+  background: var(--bs-body-bg, #fff);
 }
 
-@media (min-width: 992px) {
-  main { margin-left: var(--admin-sidebar-width); } 
-}
+
+
 
 body { margin: 0; }
