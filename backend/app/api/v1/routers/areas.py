@@ -13,21 +13,32 @@ async def list_areas(
     skip: int = Query(0, ge=0),
     limit: int = Query(100, ge=1, le=100)
 ):
-    return await area_service.list(db, skip=skip, limit=limit)
+    return await area_service.list(
+        db,
+        skip=skip,
+        limit=limit
+    )
 
 @router.get("/{area_id}", response_model=AreaOut)
 async def get_area(
     area_id: str,
     db: AsyncSession = Depends(get_db)
 ):
-    return await area_service.get(db, area_id)
+    return await area_service.get(
+        db,
+        area_id
+    )
 
 @router.post("/", response_model=AreaOut, status_code=status.HTTP_201_CREATED)
 async def create_area(
     payload: AreaCreate,
     db: AsyncSession = Depends(get_db)
 ):
-    return await area_service.create(db, name=payload.name, description=payload.description, course_ids=payload.course_ids)
+    return await area_service.create(
+        db,
+        name=payload.name,
+        description=payload.description
+    )
 
 @router.put("/{area_id}", response_model=AreaOut)
 async def update_area(
@@ -35,7 +46,12 @@ async def update_area(
     payload: AreaUpdate,
     db: AsyncSession = Depends(get_db)
 ):
-    return await area_service.update(db, area_id, name=payload.name, description=payload.description, course_ids=payload.course_ids)
+    return await area_service.update(
+        db,
+        area_id,
+        name=payload.name,
+        description=payload.description
+        )
 
 @router.delete("/{area_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_area(
