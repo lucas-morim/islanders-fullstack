@@ -6,6 +6,8 @@ from app.api.v1.routers.users import router as users_router
 from app.api.v1.routers.courses import router as courses_router
 from app.api.v1.routers.options import router as options_router
 from app.api.v1.routers.questions import router as questions_router
+from app.api.v1.routers.quizzes import router as quizzes_router
+from app.api.v1.routers.quiz_attempts import router as quiz_attempts_router
 
 api_router = APIRouter()
 api_router.include_router(areas_router, prefix="/areas", tags=["Areas"])
@@ -14,3 +16,5 @@ api_router.include_router(users_router, prefix="/users", tags=["Users"])
 api_router.include_router(courses_router, prefix="/courses", tags=["Courses"])
 api_router.include_router(options_router, prefix="/options", tags=["Options"])
 api_router.include_router(questions_router, prefix="/questions", tags=["Questions"])
+api_router.include_router(quizzes_router, prefix="/quizzes", tags=["Quizzes"])
+api_router.include_router(quiz_attempts_router, prefix="/quiz_attempts", tags=["Quiz Attempts"])
