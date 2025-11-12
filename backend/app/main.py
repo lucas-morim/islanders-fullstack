@@ -6,8 +6,10 @@
 # - Pode incluir documentação Swagger personalizada
 
 from app.core.config import settings
+from app.api.v1 import api_router
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from app.db import base 
 
 app = FastAPI(title="Islanders University API", version="0.1.0")
 
@@ -20,6 +22,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/health")
-def health():
-    return {"status": "ok"}
+# Inclui todos os routers da API
+app.include_router(api_router, prefix="/api/v1")
+
+@app.get("/")
+async def root():
+    return {"message": "Welcome to Islanders University API"}
