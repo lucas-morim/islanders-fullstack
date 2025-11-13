@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, ForeignKey
+from sqlalchemy import String, ForeignKey, Enum
 from app.db.session import Base
 from app.models.common import IdMixin, TimestampMixin
 
@@ -13,9 +13,12 @@ if TYPE_CHECKING:
 
 class User(IdMixin, TimestampMixin, Base):
     __tablename__ = "users"
-    name: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
+    name: Mapped[str] = mapped_column(String(120), unique=False, nullable=False)
+    username: Mapped[str] = mapped_column(String(120), unique=True, nullable=False)
     email: Mapped[str] = mapped_column(String(255), unique=True, index=True, nullable=False)
     password: Mapped[str] = mapped_column(String(255), nullable=False)
+    status: Mapped[str] = mapped_column(Enum ("active", "inactive", name = "status_enum"), default="active", nullable=False)
+    photo: Mapped[str | None] = mapped_column(String(255), nullable=True)
     role_id: Mapped[str] = mapped_column(ForeignKey("roles.id", ondelete="SET NULL"), index=True, nullable=True)
 
     role: Mapped[Role | None] = relationship(
