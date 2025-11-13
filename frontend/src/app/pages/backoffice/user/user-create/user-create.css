@@ -2,7 +2,7 @@
   display: block;
   --hdr: var(--admin-header-height, 72px);
   --sbw: var(--admin-sidebar-width, 260px);
-  padding-top: 20px;
+  padding-top: 50px;
   padding-left: 100px;
 }
 

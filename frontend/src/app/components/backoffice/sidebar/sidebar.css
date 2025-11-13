@@ -18,6 +18,13 @@
   font-weight: 600;
 }
 
+.sidebar-logo {
+  height: 50px;       
+  width: auto;
+  object-fit: contain;
+}
+
+
 @media (max-width: 991.98px) {
   :host {
     width: 100%;

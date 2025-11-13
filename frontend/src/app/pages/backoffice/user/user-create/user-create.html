@@ -2,10 +2,6 @@
     <div class="d-flex align-items-center justify-content-between">
         <h2 class="mb-0">Novo usuário</h2>
         <div class="d-flex gap-2">
-        <button class="btn btn-outline-secondary" type="button" (click)="cancel()">Cancelar</button>
-        <button class="btn btn-primary" type="button" [disabled]="!canSubmit()" (click)="submit()">
-            <span *ngIf="!submitting(); else saving">Salvar</span>
-        </button>
         <ng-template #saving>
             <span class="spinner-border spinner-border-sm me-1"></span> Salvando…
         </ng-template>
