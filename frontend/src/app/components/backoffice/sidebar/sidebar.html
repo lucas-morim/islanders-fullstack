@@ -1,0 +1,28 @@
+<div class="sidebar sidebar-fixed border-end" id="sidebar" style="width: var(--admin-sidebar-width)">
+  <div class="sidebar-header border-bottom py-3 px-3 text-center">
+    <a routerLink="/backoffice/dashboard" class="d-inline-flex align-items-center text-decoration-none">
+      <img src="assets/logo.png" alt="Logo" class="sidebar-logo me-2">
+      <span class="fw-bold text-dark">Backoffice</span>
+    </a>
+  </div>
+
+  <ul class="sidebar-nav pt-2">
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center"
+         routerLink="/backoffice/dashboard"
+         routerLinkActive="active">
+        <i class="cil-speedometer me-2"></i>
+        <span>Dashboard</span>
+      </a>
+    </li>
+
+    <li class="nav-item">
+      <a class="nav-link d-flex align-items-center"
+         routerLink="/backoffice/users"
+         routerLinkActive="active">
+        <i class="cil-user me-2"></i>
+        <span>Usuários</span>
+      </a>
+    </li>
+  </ul>
+</div>

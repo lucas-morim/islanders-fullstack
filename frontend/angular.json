@@ -27,8 +27,12 @@
               "src/favicon.ico"
             ],
             "styles": [
+              "node_modules/@coreui/coreui/dist/css/coreui.min.css",
+              "node_modules/@coreui/icons/css/all.min.css",
               "src/styles.css"
-            ]
+            ],
+            "scripts": ["node_modules/@coreui/coreui/dist/js/coreui.bundle.min.js"]
+
           },
           "configurations": {
             "production": {

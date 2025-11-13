@@ -1,1 +1,54 @@
-<p>header works!</p>
+<header class="app-header header-sticky">
+  <div class="container-fluid d-flex align-items-center gap-3 py-2">
+
+    <nav class="d-flex align-items-center gap-4">
+      <a class="toplink fw-semibold"
+         routerLink="/backoffice/dashboard"
+         routerLinkActive="active">Dashboard</a>
+
+      <a class="toplink"
+         routerLink="/backoffice/users"
+         routerLinkActive="active">Users</a>
+
+      <a class="toplink"
+         routerLink="/backoffice/settings"
+         routerLinkActive="active">Settings</a>
+    </nav>
+
+    <div class="ms-auto d-flex align-items-center gap-3">
+
+      <button class="icon-btn btn p-0 text-dark">
+        <i class="cil-bell fs-5"></i>
+        <span class="badge rounded-pill bg-danger badge-count">5</span>
+      </button>
+
+      <button class="icon-btn btn p-0 text-dark d-none d-sm-inline-flex">
+        <i class="cil-list fs-5"></i>
+        <span class="badge rounded-pill bg-warning text-dark badge-count">5</span>
+      </button>
+
+      <button class="icon-btn btn p-0 text-dakr d-none d-sm-inline-flex">
+        <i class="cil-envelope-closed fs-5"></i>
+        <span class="badge rounded-pill bg-primary badge-count">5</span>
+      </button>
+
+      <div class="vr d-none d-md-block"></div>
+
+      <button class="icon-btn btn p-0 text-dark d-none d-sm-inline-flex">
+        <i class="cil-apps fs-5"></i>
+      </button>
+
+      <button class="icon-btn btn p-0 text-dark d-none d-sm-inline-flex">
+        <i class="cil-moon fs-5"></i>
+      </button>
+
+      <button class="btn p-0 border-0 bg-transparent">
+        <span class="avatar">
+          <img src="https://images.unsplash.com/photo-1502685104226-ee32379fefbe?w=200&h=200&fit=crop" 
+              alt="Perfil" width="36" height="36" class="rounded-circle">
+          <span class="status-dot"></span>
+        </span>
+      </button>
+    </div>
+  </div>
+</header>
