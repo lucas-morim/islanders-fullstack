@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
+
 from app.core.deps import get_db
 from app.schemas.user import UserCreate, UserUpdate, UserOut
 from app.services.user_service import service as user_service
@@ -41,7 +42,10 @@ async def update_user(
         name=payload.name,
         email=payload.email,
         password=payload.password,
-        role_id=payload.role_id
+        role_id=payload.role_id,
+        username=payload.username,
+        photo=payload.photo,
+        status=payload.status,
     )
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
