@@ -2,6 +2,7 @@ from __future__ import annotations
 import enum
 from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
+import datetime as dt
 
 class StatusEnum(str, enum.Enum):
     active = "active"
@@ -40,6 +41,8 @@ class UserUpdate(BaseModel):
 class UserOut(UserBase):
     id: str
     role_id: Optional[str] = None
+    created_at: dt.datetime
+    updated_at: dt.datetime
 
     class Config:
         from_attributes = True
