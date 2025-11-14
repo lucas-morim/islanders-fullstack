@@ -14,6 +14,7 @@ export interface UserOut {
   photo?: string | null;
   status: StatusEnum;
   created_at: string;
+  updated_at: string;
   role_id?: string | null;
 }
 

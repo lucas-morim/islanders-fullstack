@@ -59,18 +59,24 @@
             </div>
 
             <div class="col-6 col-lg-3">
-            <label class="form-label">Função</label>
-            <select class="form-select" formControlName="role">
-                <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
-            </select>
+                <label class="form-label">Função</label>
+                <select class="form-select" formControlName="role_id">
+                    <option value="">Selecione…</option>
+                    <option *ngFor="let r of roles()" [value]="r.id">
+                    {{ r.name }}
+                    </option>
+                </select>
             </div>
 
+
             <div class="col-6 col-lg-3">
-            <label class="form-label">Status</label>
-            <select class="form-select" formControlName="status">
-                <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
-            </select>
+                <label class="form-label">Status</label>
+                <select class="form-select" formControlName="status">
+                    <option value="active">Ativo</option>
+                    <option value="inactive">Inativo</option>
+                </select>
             </div>
+
 
             <div class="col-12 col-lg-6">
             <label class="form-label">Senha</label>

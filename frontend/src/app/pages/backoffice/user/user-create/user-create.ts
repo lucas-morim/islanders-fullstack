@@ -1,10 +1,9 @@
-import { Component, OnInit, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors, FormGroup } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
-
-type Role = 'Admin' | 'Manager' | 'Editor' | 'Viewer';
-type Status = 'Ativo' | 'Pendente' | 'Suspenso';
+import { UsersService, UserCreatePayload, StatusEnum } from '../user.service';
+import { RoleService, RoleOut } from '../../role/role.service';
 
 @Component({
   standalone: true,
@@ -14,41 +13,68 @@ type Status = 'Ativo' | 'Pendente' | 'Suspenso';
   styleUrls: ['./user-create.css'],
 })
 export class UserCreate implements OnInit {
+  private fb = inject(FormBuilder);
+  private usersSvc = inject(UsersService);
+  private rolesSvc = inject(RoleService);
+  private router = inject(Router);
+
   loading = signal(false);
   submitting = signal(false);
   avatarPreview = signal<string | null>(null);
 
-  roles: Role[] = ['Admin', 'Manager', 'Editor', 'Viewer'];
-  statuses: Status[] = ['Ativo', 'Pendente', 'Suspenso'];
+  roles = signal<RoleOut[]>([]);
 
-  form!: FormGroup;  // <-- declara, mas não inicializa aqui
-
-  get f() { return this.form.controls; }
-  get canSubmit() { return computed(() => this.form.valid && !this.submitting()); }
-
-  constructor(private fb: FormBuilder, private router: Router) {}
-
-  ngOnInit(): void {
-    this.form = this.fb.group({
+  form = this.fb.group(
+    {
       name: ['', [Validators.required, Validators.minLength(3)]],
       username: ['', [Validators.required, Validators.pattern(/^[a-z0-9._-]{3,}$/i)]],
       email: ['', [Validators.required, Validators.email]],
-      role: ['Viewer' as Role, Validators.required],
-      status: ['Ativo' as Status, Validators.required],
+
+      role_id: [''], 
+
+      status: ['active' as StatusEnum, Validators.required], 
+      photo: [''], //ARRUMAR PARA RECEBER A URL DA FOTO APOS UPLOAD
+
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirm: ['', [Validators.required]],
-      avatar: [null as File | null],
-    }, { validators: [matchPasswordsValidator] });
+      
+    },
+    { validators: [matchPasswordsValidator] }
+  );
+
+  get f() {
+    return this.form.controls;
+  }
+
+  get canSubmit() {
+    return computed(() => this.form.valid && !this.submitting() && !this.loading());
+  }
+
+  async ngOnInit() {
+    this.loading.set(true);
+    try {
+      const roles = await this.rolesSvc.list(0, 100);
+      this.roles.set(roles);
+    } catch (e) {
+      console.error('Erro ao carregar roles', e);
+    } finally {
+      this.loading.set(false);
+    }
   }
 
   onAvatarChange(ev: Event) {
     const input = ev.target as HTMLInputElement;
     const file = input.files?.[0];
-    if (!file) { this.form.patchValue({ avatar: null }); this.avatarPreview.set(null); return; }
-    this.form.patchValue({ avatar: file });
+    if (!file) {
+      this.avatarPreview.set(null);
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => this.avatarPreview.set(reader.result as string);
     reader.readAsDataURL(file);
+
+    // por enquanto, o backend só recebe `photo` como string (URL/caminho).
+    // Se for usar upload real, a gente cria outro endpoint depois.
   }
 
   async submit() {
@@ -56,14 +82,31 @@ export class UserCreate implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
+
     this.submitting.set(true);
+    try {
+      const v = this.form.value;
 
-    // Simula chamada de API — troque pelo seu service (UsersService.create)
-    await new Promise(r => setTimeout(r, 800));
+      const payload: UserCreatePayload = {
+        name: v.name!,
+        email: v.email!,
+        username: v.username!,
+        password: v.password!,
+        status: (v.status as StatusEnum) ?? 'active',
+        created_at: new Date().toISOString(),
+        photo: v.photo ? v.photo : null,
+        role_id: v.role_id ? v.role_id : null,
+      };
 
-    this.submitting.set(false);
-    // navega de volta à listagem:
-    this.router.navigate(['/backoffice/users']);
+      await this.usersSvc.create(payload);
+
+      this.router.navigate(['/backoffice/users']);
+    } catch (e) {
+      console.error('Erro ao criar usuário', e);
+      alert('Não foi possível criar o usuário. Tente novamente.');
+    } finally {
+      this.submitting.set(false);
+    }
   }
 
   cancel() {
@@ -71,7 +114,6 @@ export class UserCreate implements OnInit {
   }
 }
 
-/** Validador de confirmação de senha */
 function matchPasswordsValidator(group: AbstractControl): ValidationErrors | null {
   const pass = group.get('password')?.value;
   const conf = group.get('confirm')?.value;
