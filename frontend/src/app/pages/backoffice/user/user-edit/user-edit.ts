@@ -133,7 +133,7 @@ export class UserEdit implements OnInit {
       };
 
       await this.usersSvc.update(this.userId, payload);
-
+      alert('Usuário atualizado com sucesso.');
       this.router.navigate(['/backoffice/users']);
     } catch (e) {
       console.error('Erro ao atualizar usuário', e);

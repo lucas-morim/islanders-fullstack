@@ -27,6 +27,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./user/user-edit/user-edit').then(c => c.UserEdit),
       },
+      {
+        path: 'roles',
+        loadComponent: () =>
+          import('./role/roles/roles').then(c => c.Roles),
+      },
+      {
+        path: 'roles/create',
+        loadComponent: () =>
+          import('./role/role-create/role-create').then(c => c.RoleCreate),
+      },
+      {
+        path: 'roles/:id/edit',
+        loadComponent: () =>
+          import('./role/role-edit/role-edit').then(c => c.RoleEdit),
+      },
     ],
   },
 ];
