@@ -46,7 +46,7 @@ frontend/*.launch
 # =============== PYTHON (backend) ===============
 
 /backend/__pycache__/
-/backend/app/schemas/__pycache__/
+/backend/app/schemas/__pycache__
 /backend/.venv/
 /backend/env/
 /backend/*.pyc
