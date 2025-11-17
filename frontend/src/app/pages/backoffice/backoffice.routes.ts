@@ -1,18 +1,32 @@
-// src/app/pages/backoffice/backoffice.routes.ts
 import { Routes } from '@angular/router';
-import { BackShell } from '../../layouts/back-shell/back-shell';
-import { Dashboard } from './dashboard/dashboard';
 
 export const routes: Routes = [
   {
     path: '',
-    component: BackShell,
-    //canActivate: [adminGuard],     
+    loadComponent: () =>
+      import('../../layouts/back-shell/back-shell').then(c => c.BackShell),
     children: [
-      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: Dashboard },
-      // futuros CRUDs:
-      // { path: 'users', loadComponent: () => import('./users/users.component').then(m => m.UsersComponent) },
-    ]
-  }
+      { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
+      {
+        path: 'dashboard',
+        loadComponent: () =>
+          import('./dashboard/dashboard').then(c => c.Dashboard),
+      },
+      {
+        path: 'users',
+        loadComponent: () =>
+          import('./user/users/users').then(c => c.Users),
+      },
+      {
+        path: 'users/create',
+        loadComponent: () =>
+          import('./user/user-create/user-create').then(c => c.UserCreate),
+      },
+      {
+        path: 'users/:id/edit',
+        loadComponent: () =>
+          import('./user/user-edit/user-edit').then(c => c.UserEdit),
+      },
+    ],
+  },
 ];

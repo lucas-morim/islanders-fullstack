@@ -2,7 +2,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import Text, ForeignKey
-from app.db.base import Base
+from app.db.session import Base
 from app.models.common import IdMixin, TimestampMixin
 
 if TYPE_CHECKING:
@@ -27,14 +27,6 @@ class Question(IdMixin, TimestampMixin, Base):
         back_populates="question", 
         cascade="all, delete-orphan",
         passive_deletes=True
-    )
-
-    # N:N “direto” com Option (apenas leitura, via tabela secondary). VALIDAR DEPOIS!!!
-    options: Mapped[list[Option]] = relationship(
-        "Option",
-        secondary="questions_options",
-        back_populates="questions",
-        viewonly=True,  # manipule via QuestionOption
     )
 
     answers: Mapped[list[Answer]] = relationship(

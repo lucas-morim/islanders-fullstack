@@ -1,3 +1,8 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+:root {
+  --admin-sidebar-width: 260px;
+  --admin-header-height: 56px;
+}

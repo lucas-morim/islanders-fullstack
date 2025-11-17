@@ -1,0 +1,17 @@
+:root {
+  --admin-header-height: 72px;    
+  --admin-sidebar-width: 260px;
+}
+
+
+main {
+  padding-top: var(--admin-header-height);
+  margin-left: 0;
+  min-height: calc(100vh - var(--admin-header-height));
+  background: var(--bs-body-bg, #fff);
+}
+
+
+
+
+body { margin: 0; }

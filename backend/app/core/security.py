@@ -28,6 +28,9 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 60
 
 
 # Funções de hashing e verificação de senha ------------------------------
+#### USAMOS argon2, podemos verificar na user_service.py ####
+
+# Dúvida: Seria melhor criar aqui a criptografia da password e chamar na service?
 
 def hash_password(password: str) -> str:
     """Recebe uma senha e devolve uma versão hash (segura)"""
