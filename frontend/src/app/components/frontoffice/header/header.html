@@ -1,9 +1,11 @@
-<header class="flex-col font-poppins text-white px-4 sm:px-6 md:px-6 py-3 sm:py-4 bg-transparent absolute top-0 w-full z-20">
+<header
+  class="flex-col font-poppins text-black px-4 sm:px-6 md:px-6 py-3 sm:py-4 bg-transparent absolute top-0 w-full z-20">
   <div class="flex justify-between items-center w-full">
 
     <a routerLink="/" class="block">
-      <img src="assets/logo.png" alt="Logo" class="h-8 sm:h-10 md:h-10 -translate-x-2 hover:opacity-80 transition">
+      <img [src]="logo" alt="Logo" class="h-8 sm:h-10 md:h-10 -translate-x-2 hover:opacity-80 transition">
     </a>
+
 
     <div class="flex gap-1 sm:gap-4">
 <a routerLink="/backoffice/dashboard"
@@ -38,5 +40,5 @@
     </div>
   </div>
 
-  <div class="mt-3 sm:mt-4 w-full h-0.5 bg-white/50 "></div>
+  <div class="mt-3 sm:mt-4 w-full h-0.5 bg-black "></div>
 </header>
