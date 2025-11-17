@@ -1,9 +1,6 @@
 from __future__ import annotations
 import enum
 from typing import Optional
-from __future__ import annotations
-import enum
-from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 import datetime as dt
 
