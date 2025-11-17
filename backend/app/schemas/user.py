@@ -1,6 +1,9 @@
 from __future__ import annotations
 import enum
 from typing import Optional
+from __future__ import annotations
+import enum
+from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 import datetime as dt
 
@@ -15,14 +18,20 @@ class UserBase(BaseModel):
     username: str = Field(max_length=120)
     photo: Optional[str] = Field(default=None, max_length=255)
     status: StatusEnum = StatusEnum.active 
+    username: str = Field(max_length=120)
+    photo: Optional[str] = Field(default=None, max_length=255)
+    status: StatusEnum = StatusEnum.active 
 
     class Config:
         from_attributes = True  
+        from_attributes = True  
+
 
 
 class UserCreate(UserBase):
     password: str = Field(min_length=6, max_length=255)
     role_id: Optional[str] = None
+
 
 
 class UserUpdate(BaseModel):
@@ -31,8 +40,15 @@ class UserUpdate(BaseModel):
     username: Optional[str] = Field(default=None, max_length=120)
     photo: Optional[str] = Field(default=None, max_length=255)
     status: Optional[StatusEnum] = None
+    username: Optional[str] = Field(default=None, max_length=120)
+    photo: Optional[str] = Field(default=None, max_length=255)
+    status: Optional[StatusEnum] = None
     password: Optional[str] = Field(default=None, min_length=6, max_length=255)
     role_id: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
 
     class Config:
         from_attributes = True
