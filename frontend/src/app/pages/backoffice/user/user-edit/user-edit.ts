@@ -1,39 +1,9 @@
 import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, AbstractControl, ValidationErrors } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-
-type Role = 'Admin' | 'Manager' | 'Editor' | 'Viewer';
-type Status = 'Ativo' | 'Pendente' | 'Suspenso';
-
-interface UserDTO {
-  id: number;
-  name: string;
-  username: string;
-  email: string;
-  role: Role;
-  status: Status;
-  avatarUrl?: string | null;
-}
-
-function optionalPasswordMatch(group: AbstractControl): ValidationErrors | null {
-  const pass = group.get('password')?.value as string | null;
-  const conf = group.get('confirm')?.value as string | null;
-  if (!pass && !conf) return null;                
-  if ((pass && !conf) || (!pass && conf)) {
-    group.get('confirm')?.setErrors({ required: true });
-    return { required: true };
-  }
-  if ((pass?.length ?? 0) < 6) {
-    group.get('password')?.setErrors({ minlength: true });
-    return { minlength: true };
-  }
-  if (pass !== conf) {
-    group.get('confirm')?.setErrors({ mismatch: true });
-    return { mismatch: true };
-  }
-  return null;
-}
+import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
+import { UsersService, UserOut, UserUpdatePayload, StatusEnum } from '../user.service';
+import { RoleService, RoleOut } from '../../role/role.service';
 
 @Component({
   standalone: true,
@@ -44,85 +14,101 @@ function optionalPasswordMatch(group: AbstractControl): ValidationErrors | null 
 })
 export class UserEdit implements OnInit {
   private fb = inject(FormBuilder);
+  private usersSvc = inject(UsersService);
+  private rolesSvc = inject(RoleService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
 
-  loading = signal(true);
+  loading = signal(false);
   submitting = signal(false);
   avatarPreview = signal<string | null>(null);
-  currentUserId!: number;
-  currentAvatarUrl: string | null = null;
 
-  roles: Role[] = ['Admin', 'Manager', 'Editor', 'Viewer'];
-  statuses: Status[] = ['Ativo', 'Pendente', 'Suspenso'];
+  roles = signal<RoleOut[]>([]);
+  userId = '';
 
-  form!: FormGroup;
+  createdAt: string | null = null;
+  updatedAt: string | null = null;
 
-  get f() { return this.form.controls; }
-  get canSubmit() { return computed(() => this.form.valid && !this.submitting()); }
+  form = this.fb.group(
+    {
+      name: ['', [Validators.required, Validators.minLength(3)]],
+      username: ['', [Validators.required, Validators.pattern(/^[a-z0-9._-]{3,}$/i)]],
+      email: ['', [Validators.required, Validators.email]],
 
-  ngOnInit(): void {
-    // pega ID da rota
-    const idStr = this.route.snapshot.paramMap.get('id');
-    this.currentUserId = Number(idStr);
+      role_id: [''],                                
+      status: ['active' as StatusEnum, Validators.required],
+      photo: [''],                                 
 
-    // cria form (vazio por enquanto)
-  this.form = this.fb.group({
-    name: ['', [Validators.required, Validators.minLength(3)]],
-    username: [{ value: '', disabled: true }],
-    email: ['', [Validators.required, Validators.email]],
-    role: ['Viewer' as Role, Validators.required],
-    status: ['Ativo' as Status, Validators.required],
-    password: [''],
-    confirm: [''],
-    avatar: [null as File | null],
-  }, { validators: [optionalPasswordMatch] });
+      password: ['', [Validators.minLength(6)]],    
+      confirm: [''],
+    },
+    { validators: [matchPasswordsValidator] }
+  );
 
-
-    this.loadUser(this.currentUserId);
+  get f() {
+    return this.form.controls;
   }
 
-  async loadUser(id: number) {
+  get canSubmit() {
+    return computed(() => this.form.valid && !this.submitting() && !this.loading());
+  }
+
+  async ngOnInit() {
+    this.userId = this.route.snapshot.paramMap.get('id') || '';
+    if (!this.userId) {
+      alert('Usuário não encontrado.');
+      this.router.navigate(['/backoffice/users']);
+      return;
+    }
+
     this.loading.set(true);
-    // TODO: substitua por service real
-    const mock: UserDTO = {
-      id,
-      name: 'Maria Silva',
-      username: 'maria.silva',
-      email: 'maria@site.com',
-      role: 'Admin',
-      status: 'Ativo',
-      avatarUrl: 'assets/img/avatars/maria.jpg',
-    };
-    await new Promise(r => setTimeout(r, 300));
+    try {
+      const [roles, user] = await Promise.all([
+        this.rolesSvc.list(0, 100),
+        this.usersSvc.getOne(this.userId),
+      ]);
 
-    this.currentAvatarUrl = mock.avatarUrl ?? null;
-    this.avatarPreview.set(this.currentAvatarUrl);
+      this.roles.set(roles);
+      this.patchFormWithUser(user);
+    } catch (e) {
+      console.error('Erro ao carregar usuário/roles', e);
+      alert('Não foi possível carregar dados do usuário.');
+      this.router.navigate(['/backoffice/users']);
+    } finally {
+      this.loading.set(false);
+    }
+  }
 
+  private patchFormWithUser(u: UserOut) {
     this.form.patchValue({
-      name: mock.name,
-      username: mock.username,
-      email: mock.email,
-      role: mock.role,
-      status: mock.status,
+      name: u.name,
+      username: u.username,
+      email: u.email,
+      role_id: u.role_id ?? '',
+      status: u.status,         
+      photo: u.photo ?? '',
     });
 
-    this.loading.set(false);
+    this.avatarPreview.set(u.photo ?? null);
+    this.createdAt = u.created_at;
+    this.updatedAt = u.updated_at;
   }
 
   onAvatarChange(ev: Event) {
     const input = ev.target as HTMLInputElement;
-    const file = input.files?.[0] ?? null;
-    this.form.patchValue({ avatar: file });
-    if (!file) { this.avatarPreview.set(this.currentAvatarUrl); return; }
+    const file = input.files?.[0];
+
+    if (!file) {
+      this.avatarPreview.set(null);
+      return;
+    }
+
+    // por enquanto é só preview visual
     const reader = new FileReader();
     reader.onload = () => this.avatarPreview.set(reader.result as string);
     reader.readAsDataURL(file);
-  }
 
-  removeAvatar() {
-    this.form.patchValue({ avatar: null });
-    this.avatarPreview.set(null);
+    // quando tiver endpoint de upload, aqui é onde vamos enviar o File
   }
 
   async submit() {
@@ -130,24 +116,46 @@ export class UserEdit implements OnInit {
       this.form.markAllAsTouched();
       return;
     }
+
     this.submitting.set(true);
+    try {
+      const v = this.form.value;
 
-    const v = this.form.getRawValue();
-    const fd = new FormData();
-    fd.append('name', v.name);
-    fd.append('email', v.email);
-    fd.append('role', v.role);
-    fd.append('status', v.status);
-    if (v.password) fd.append('password', v.password);
-    if (v.avatar) fd.append('avatar', v.avatar);
+      const payload: UserUpdatePayload = {
+        name: v.name ?? null,
+        email: v.email ?? null,
+        username: v.username ?? null,
+        status: (v.status as StatusEnum) ?? null,
+        role_id: v.role_id || null,
+        updated_at: new Date().toISOString(),
+        photo: v.photo || null,
+        password: v.password ? v.password : null, 
+      };
 
-    await new Promise(r => setTimeout(r, 600));
+      await this.usersSvc.update(this.userId, payload);
 
-    this.submitting.set(false);
-    this.router.navigate(['/backoffice/users']);
+      this.router.navigate(['/backoffice/users']);
+    } catch (e) {
+      console.error('Erro ao atualizar usuário', e);
+      alert('Não foi possível salvar o usuário. Tente novamente.');
+    } finally {
+      this.submitting.set(false);
+    }
   }
 
   cancel() {
     this.router.navigate(['/backoffice/users']);
   }
+}
+
+function matchPasswordsValidator(group: AbstractControl): ValidationErrors | null {
+  const pass = group.get('password')?.value;
+  const conf = group.get('confirm')?.value;
+  if (!pass && !conf) return null;
+
+  if (pass && conf && pass !== conf) {
+    group.get('confirm')?.setErrors({ mismatch: true });
+    return { mismatch: true };
+  }
+  return null;
 }

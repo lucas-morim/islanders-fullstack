@@ -1,20 +1,22 @@
-import { Component, computed, signal } from '@angular/core';
+import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
+import { UsersService, UserOut } from  '../user.service';
+import { RoleService, RoleOut } from '../../role/role.service';
 
-type Role = 'Admin' | 'Manager' | 'Editor' | 'Viewer';
-type Status = 'Ativo' | 'Pendente' | 'Suspenso';
+type StatusLabel = 'Ativo' | 'Inativo';
 
-interface User {
-  id: number;
+interface UserRow {
+  id: string;
   name: string;
   username: string;
   email: string;
-  role: Role;
-  status: Status;
-  createdAt: string; 
-  avatar?: string;
+  role_id: string | null;
+  roleName: string;      
+  status: StatusLabel;
+  created_at: string;
+  avatar?: string | null;
 }
 
 @Component({
@@ -24,109 +26,111 @@ interface User {
   templateUrl: './users.html',
   styleUrls: ['./users.css'],
 })
-export class Users {
-  private seed: User[] = [
-    { id: 1, name: 'Maria Silva', username: 'maria.silva', email: 'maria@site.com', role: 'Admin',   status: 'Ativo',    createdAt: '2025-11-05T10:34:00Z', avatar: 'assets/img/avatars/maria.jpg' },
-    { id: 2, name: 'João Pereira', username: 'joao',        email: 'joao@site.com',  role: 'Editor',  status: 'Ativo',    createdAt: '2025-10-28T09:00:00Z' },
-    { id: 3, name: 'Ana Souza',    username: 'ana',         email: 'ana@site.com',   role: 'Viewer',  status: 'Pendente', createdAt: '2025-11-08T15:12:00Z' },
-    { id: 4, name: 'Rafael Lima',  username: 'rafa',        email: 'rafa@site.com',  role: 'Manager', status: 'Suspenso', createdAt: '2025-09-12T18:45:00Z' },
-    { id: 5, name: 'Carla Dias',   username: 'carla',       email: 'carla@site.com', role: 'Editor',  status: 'Ativo',    createdAt: '2025-11-01T12:10:00Z' },
-    { id: 6, name: 'Pedro Alves',  username: 'pedro',       email: 'pedro@site.com', role: 'Viewer',  status: 'Ativo',    createdAt: '2025-10-02T08:05:00Z' },
-  ];
+export class Users implements OnInit {
+  private usersSvc = inject(UsersService);
+  private rolesSvc = inject(RoleService);
+  private router = inject(Router);
 
   loading = signal(false);
-  users = signal<User[]>(this.seed);
 
-  // Filtros e busca
+  roles = signal<RoleOut[]>([]);
+  rolesMap = computed(() => {
+    const map = new Map<string, string>();
+    for (const r of this.roles()) map.set(r.id, r.name);
+    return map;
+  });
+
+  users = signal<UserRow[]>([]);
+
   q = signal('');
-  role = signal<Role | ''>('');
-  status = signal<Status | ''>('');
+  roleId = signal<string>('');         
+  status = signal<StatusLabel | ''>(''); 
 
-  // Paginação
   page = signal(1);
-  pageSize = signal(5);
+  pageSize = signal(10);
 
-  // Derivados
   filtered = computed(() => {
     const term = this.q().toLowerCase().trim();
-    const role = this.role();
+    const roleId = this.roleId();
     const status = this.status();
+
     return this.users().filter(u => {
       const matchesTerm =
         !term ||
         u.name.toLowerCase().includes(term) ||
         u.username.toLowerCase().includes(term) ||
         u.email.toLowerCase().includes(term);
-      const matchesRole = !role || u.role === role;
+
+      const matchesRole = !roleId || u.role_id === roleId;
       const matchesStatus = !status || u.status === status;
+
       return matchesTerm && matchesRole && matchesStatus;
     });
   });
 
   totalPages = computed(() => Math.max(1, Math.ceil(this.filtered().length / this.pageSize())));
-
   paginated = computed(() => {
-    const p = this.page();
-    const size = this.pageSize();
-    const start = (p - 1) * size;
-    return this.filtered().slice(start, start + size);
+    const start = (this.page() - 1) * this.pageSize();
+    return this.filtered().slice(start, start + this.pageSize());
   });
 
-  // Ações UI
+  async ngOnInit() {
+    this.loading.set(true);
+    try {
+      const roles = await this.rolesSvc.list(0, 100);
+      this.roles.set(roles);
+
+      const data: UserOut[] = await this.usersSvc.list(0, 100);
+      this.users.set(data.map(u => ({
+        id: u.id,
+        name: u.name,
+        username: u.username,
+        email: u.email,
+        role_id: u.role_id ?? null,
+        roleName: u.role_id ? (this.rolesMap().get(u.role_id) ?? 'Guest') : 'Guest',
+        status: u.status === 'active' ? 'Ativo' : 'Inativo',
+        created_at: u.created_at, 
+        avatar: u.photo ?? null,
+      })));
+      this.page.set(1);
+    } finally {
+      this.loading.set(false);
+    }
+  }
+
   resetFilters() {
     this.q.set('');
-    this.role.set('');
+    this.roleId.set('');
     this.status.set('');
     this.page.set(1);
   }
 
-  newUser() {
-    // navegue ou abra modal
-    console.log('Novo usuário');
-  }
+  newUser() { this.router.navigate(['/backoffice/users/create']); }
+  exportCsv() { /* … */ }
+  view(u: UserRow) { this.router.navigate(['/backoffice/users', u.id]); }
+  edit(u: UserRow) { this.router.navigate(['/backoffice/users', u.id, 'edit']); }
 
-  exportCsv() {
-    // substitua por export real
-    console.log('Exportar CSV');
-  }
-
-  view(user: User) {
-    console.log('Ver', user.id);
-  }
-
-  edit(user: User) {
-    console.log('Editar', user.id);
-  }
-
-  remove(user: User) {
-    if (confirm(`Remover ${user.name}?`)) {
-      this.users.set(this.users().filter(u => u.id !== user.id));
-      // reajusta página se necessário
+  async remove(u: UserRow) {
+    if (!confirm(`Remover ${u.name}?`)) return;
+    const prev = this.users();
+    this.users.set(prev.filter(x => x.id !== u.id));
+    try {
+      await this.usersSvc.delete(u.id);
       const tp = this.totalPages();
       if (this.page() > tp) this.page.set(tp);
+    } catch {
+      this.users.set(prev);
+      alert('Não foi possível remover.');
     }
   }
 
-  // Helpers
-  changePage(p: number) {
+    changePage(p: number) {
     const max = this.totalPages();
     this.page.set(Math.min(Math.max(1, p), max));
   }
 
-  badgeClass(status: Status): string {
-    switch (status) {
-      case 'Ativo': return 'text-bg-success';
-      case 'Pendente': return 'text-bg-warning';
-      case 'Suspenso': return 'text-bg-secondary';
-    }
-  }
-
-  roleClass(role: Role): string {
-    switch (role) {
-      case 'Admin': return 'badge bg-danger-subtle text-danger border';
-      case 'Manager': return 'badge bg-primary-subtle text-primary border';
-      case 'Editor': return 'badge bg-info-subtle text-info border';
-      case 'Viewer': return 'badge bg-secondary-subtle text-secondary border';
-    }
+  badgeClass(status: StatusLabel): string {
+    return status === 'Ativo' ? 'bg-success text-white' : 'bg-secondary text-white';
   }
 }
+  

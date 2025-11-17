@@ -1,9 +1,8 @@
-<!-- TOPO fixo logo abaixo do header -->
 <section class="page-header sticky-top-under-app">
   <div class="d-flex align-items-center justify-content-between">
     <h2 class="mb-0">Editar usuário</h2>
     <div class="d-flex gap-2">
-      <ng-template #saving>
+      <ng-template #savingTop>
         <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
         Salvando…
       </ng-template>
@@ -18,7 +17,6 @@
     <div class="card-body">
       <div class="row g-3">
 
-        <!-- avatar -->
         <div class="col-12 col-md-3">
           <label class="form-label">Avatar</label>
           <div class="avatar-uploader">
@@ -31,13 +29,9 @@
           </div>
 
           <input class="form-control mt-2" type="file" accept="image/*" (change)="onAvatarChange($event)">
-          <div class="d-flex gap-2 mt-2">
-            <button type="button" class="btn btn-outline-danger btn-sm" (click)="removeAvatar()">Remover avatar</button>
-          </div>
           <div class="form-text">PNG/JPG até 2MB</div>
         </div>
 
-        <!-- dados -->
         <div class="col-12 col-md-9">
           <div class="row g-3">
             <div class="col-12 col-lg-6">
@@ -52,6 +46,10 @@
             <div class="col-12 col-lg-6">
               <label class="form-label">Usuário</label>
               <input class="form-control" formControlName="username">
+              <div class="invalid-feedback d-block" *ngIf="f['username'].touched && f['username'].errors">
+                {{ f['username'].errors['required'] ? 'Usuário é obrigatório.' : '' }}
+                {{ f['username'].errors['pattern'] ? 'Use letras/números/pontos/traços (mín. 3).' : '' }}
+              </div>
             </div>
 
             <div class="col-12 col-lg-6">
@@ -65,32 +63,40 @@
 
             <div class="col-6 col-lg-3">
               <label class="form-label">Função</label>
-              <select class="form-select" formControlName="role">
-                <option *ngFor="let r of roles" [value]="r">{{ r }}</option>
+              <select class="form-select" formControlName="role_id">
+                <option value="">Selecione…</option>
+                <option *ngFor="let r of roles()" [value]="r.id">
+                  {{ r.name }}
+                </option>
               </select>
             </div>
 
             <div class="col-6 col-lg-3">
               <label class="form-label">Status</label>
               <select class="form-select" formControlName="status">
-                <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+                <option value="active">Ativo</option>
+                <option value="inactive">Inativo</option>
               </select>
             </div>
 
             <div class="col-12 col-lg-6">
               <label class="form-label">Nova senha (opcional)</label>
               <input type="password" class="form-control" formControlName="password" placeholder="Mín. 6 caracteres">
+              <div class="invalid-feedback d-block"
+                   *ngIf="f['password'].touched && f['password'].errors">
+                {{ f['password'].errors['minlength'] ? 'Mínimo de 6 caracteres.' : '' }}
+              </div>
             </div>
 
             <div class="col-12 col-lg-6">
               <label class="form-label">Confirmar nova senha</label>
               <input type="password" class="form-control" formControlName="confirm" placeholder="Repita a senha">
-              <div class="invalid-feedback d-block" *ngIf="form.errors">
-                <ng-container *ngIf="form.errors['required']">Preencha ambos os campos de senha.</ng-container>
-                <ng-container *ngIf="form.errors['minlength']">A senha deve ter pelo menos 6 caracteres.</ng-container>
-                <ng-container *ngIf="form.errors['mismatch']">As senhas não conferem.</ng-container>
+              <div class="invalid-feedback d-block"
+                   *ngIf="f['confirm'].touched && form.errors?.['mismatch']">
+                As senhas não conferem.
               </div>
             </div>
+
           </div>
         </div>
 
