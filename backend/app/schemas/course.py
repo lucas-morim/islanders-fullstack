@@ -5,7 +5,7 @@ from datetime import datetime
 class CourseBase(BaseModel):
     title: str = Field(..., max_length=50)
     description: Optional[str] = None
-    area_ids: Optional[List[str]] = None  # agora aceita vários ids de Areas
+    area_ids: Optional[List[str]] = None
 
     class Config:
         from_attributes = True

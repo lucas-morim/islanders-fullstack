@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, Text
+from sqlalchemy import String, Text, Enum, ForeignKey, Integer, Float
 from app.db.session import Base
 from app.models.common import IdMixin, TimestampMixin
 
@@ -10,15 +10,25 @@ if TYPE_CHECKING:
     from app.models.project import Project
     from app.models.quiz import Quiz
     from app.models.area_course import AreaCourse
-
+    from app.models.modality import Modality
 
 class Course(IdMixin, TimestampMixin, Base):
     __tablename__ = "courses"
 
     title: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     description: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    status: Mapped[str] = mapped_column(Enum ("active", "inactive", name = "status_enum"), default="active", nullable=False)
+    modality_id: Mapped[str] = mapped_column(ForeignKey("modalities.id", ondelete="SET NULL"), index=True, nullable=True)
+    num_hours: Mapped [int] = mapped_column(Integer, nullable=False)
+    credits: Mapped [int] = mapped_column(Integer, nullable=False)
+    price: Mapped [float] = mapped_column(Float, nullable=False)
 
-    # varias com varias
+    modality: Mapped[Modality | None] = relationship(
+        "Modality", 
+        back_populates="courses", 
+        passive_deletes=True
+    )
+
     area_courses: Mapped[list[AreaCourse]] = relationship(
         "AreaCourse",
         back_populates="course",
