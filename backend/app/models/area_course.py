@@ -27,4 +27,4 @@ class AreaCourse(Base):
         back_populates="area_courses",
         passive_deletes=True
         #overlaps="areas,courses"
-        )
+        )   
