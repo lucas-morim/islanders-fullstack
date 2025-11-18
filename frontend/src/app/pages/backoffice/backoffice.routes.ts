@@ -42,6 +42,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./role/role-edit/role-edit').then(c => c.RoleEdit),
       },
+      {
+        path: 'areas',
+        loadComponent: () =>
+          import('./area/areas/areas').then(c => c.Areas),
+      },
+      {
+        path: 'areas/create',
+        loadComponent: () =>
+          import('./area/area-create/area-create').then(c => c.AreaCreate),
+      },
+      {
+        path: 'areas/:id/edit',
+        loadComponent: () =>
+          import('./area/area-edit/area-edit').then(c => c.AreaEdit),
+      },
     ],
   },
 ];
