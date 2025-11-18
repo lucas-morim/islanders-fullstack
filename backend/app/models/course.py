@@ -19,9 +19,10 @@ class Course(IdMixin, TimestampMixin, Base):
     description: Mapped[str | None] = mapped_column(Text(), nullable=True)
     status: Mapped[str] = mapped_column(Enum ("active", "inactive", name = "status_enum"), default="active", nullable=False)
     modality_id: Mapped[str] = mapped_column(ForeignKey("modalities.id", ondelete="SET NULL"), index=True, nullable=True)
-    num_hours: Mapped [int] = mapped_column(Integer, nullable=False)
-    credits: Mapped [int] = mapped_column(Integer, nullable=False)
-    price: Mapped [float] = mapped_column(Float, nullable=False)
+    num_hours: Mapped [int] = mapped_column(Integer, nullable=True)
+    credits: Mapped [int] = mapped_column(Integer, nullable=True)
+    price: Mapped [float] = mapped_column(Float, nullable=True)
+    photo: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     modality: Mapped[Modality | None] = relationship(
         "Modality", 
