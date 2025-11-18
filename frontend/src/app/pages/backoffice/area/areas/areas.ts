@@ -1,21 +1,21 @@
 import { Component, signal, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
-import { RoleService, RoleOut } from '../../role/role.service';
+import { AreaService, AreaOut } from '../area.service';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   standalone: true,
-  selector: 'app-roles-page',
+  selector: 'app-areas-page',
   imports: [CommonModule, RouterLink, FormsModule],
-  templateUrl: './roles.html',
-  styleUrls: ['./roles.css']
+  templateUrl: './areas.html',
+  styleUrl: './areas.css',
 })
-export class Roles {
-  private srv = inject(RoleService);
+export class Areas {
+  private srv = inject(AreaService);
 
   loading = signal(false);
-  roles = signal<RoleOut[]>([]);
+  areas = signal<AreaOut[]>([]);
 
   q = signal('');
 
@@ -25,7 +25,7 @@ export class Roles {
   filtered = computed(() => {
     const term = this.q().toLowerCase();
 
-    return this.roles().filter(r =>
+    return this.areas().filter(r =>
       !term ||
       r.name.toLowerCase().includes(term) ||
       (r.description ?? '').toLowerCase().includes(term)
@@ -42,30 +42,30 @@ export class Roles {
   });
 
   async ngOnInit() {
-    this.loading.set(true);
-    try {
-      const data = await this.srv.list(0, 100);
-      this.roles.set(data);
-    } finally {
-      this.loading.set(false);
+      this.loading.set(true);
+      try {
+        const data = await this.srv.list(0, 100);
+        this.areas.set(data);
+      } finally {
+        this.loading.set(false);
+      }
     }
-  }
-
-  resetFilters() {
-    this.q.set('');
-    this.page.set(1);
-  }
-
-  remove(role: RoleOut) {
-    if (!confirm(`Excluir função "${role.name}"?`)) return;
-
-    this.srv.delete(role.id).then(() => {
-      this.roles.set(this.roles().filter(r => r.id !== role.id));
-    });
-  }
-
-  changePage(p: number) {
-    const max = this.totalPages();
-    this.page.set(Math.max(1, Math.min(p, max)));
-  }
+  
+    resetFilters() {
+      this.q.set('');
+      this.page.set(1);
+    }
+  
+    remove(area: AreaOut) {
+      if (!confirm(`Excluir área "${area.name}"?`)) return;
+  
+      this.srv.delete(area.id).then(() => {
+        this.areas.set(this.areas().filter(a => a.id !== area.id));
+      });
+    }
+  
+    changePage(p: number) {
+      const max = this.totalPages();
+      this.page.set(Math.max(1, Math.min(p, max)));
+    }
 }

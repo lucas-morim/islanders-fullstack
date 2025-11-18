@@ -1,6 +1,6 @@
 import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
+import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { RoleService, RoleOut, RoleUpdatePayload } from '../role.service';
 
@@ -47,7 +47,7 @@ export class RoleEdit implements OnInit{
 
     this.loading.set(true);
     try {
-      const role =  await this.rolesSvc.get(this.roleId);
+      const role = await this.rolesSvc.get(this.roleId);
       this.form.patchValue({
         name: role.name,
         description: role.description,
