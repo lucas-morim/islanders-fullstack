@@ -48,6 +48,7 @@ frontend/Thumbs.db
 # Python cache (ignores ANY __pycache__ in backend)
 backend/**/__pycache__/
 backend/**/*.pyc
+backend/app/schemas/__pycache__
 
 # Virtual environments
 backend/.venv/
