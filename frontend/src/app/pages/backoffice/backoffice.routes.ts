@@ -57,6 +57,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./area/area-edit/area-edit').then(c => c.AreaEdit),
       },
+      {
+        path: 'modalities',
+        loadComponent: () =>
+          import('./modality/modalities/modalities').then(c => c.Modalities),
+      },
+      {
+        path: 'modalities/create',
+        loadComponent: () =>
+          import('./modality/modality-create/modality-create').then(c => c.ModalityCreate),
+      },
+      {
+        path: 'modalities/:id/edit',
+        loadComponent: () =>
+          import('./modality/modality-edit/modality-edit').then(c => c.ModalityEdit),
+      },
     ],
   },
 ];
