@@ -12,7 +12,6 @@ class AuthService:
         self.user_service = user_service
 
     async def login(self, db: AsyncSession, payload: UserLogin) -> TokenOut:
-        # Normaliza username
         username = self.user_service._normalize_username(payload.username)
         user = await self.user_service.repo.get_by_username(db, username)
 
