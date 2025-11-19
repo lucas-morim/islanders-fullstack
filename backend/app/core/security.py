@@ -1,66 +1,88 @@
-# Este módulo será responsável pela segurança e autenticação do sistema ISLANDERS.
-# Aqui vão funções de:
-#  - Hashing de senhas (bcrypt)
-#  - Criação e validação de tokens JWT
-#  - Verificação de utilizador autenticado (via dependências)
-#
-# Exemplo (a implementar futuramente):
-# def hash_password(password: str): ...
-# def verify_password(plain, hashed): ...
-# def create_access_token(data): ...
-# def verify_token(token): ...
-
-
-#exemplo explicativo (APENAS UM EXEMPLO):
+# app/core/security.py
 
 from datetime import datetime, timedelta
+from typing import Optional
+
 from jose import jwt, JWTError
-from passlib.context import CryptContext
+from fastapi import Depends, HTTPException, status
+from fastapi.security import OAuth2PasswordBearer
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import selectinload
+from sqlalchemy import select
+
 from app.core.config import settings
+from app.repositories.crud.user_repo import UserRepository
+from app.models.user import User
+from app.core.deps import get_db
 
-# Configuração de hashing (usada para guardar senhas com segurança)
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+SECRET_KEY = getattr(settings, "JWT_SECRET", "supersecretkey")
+ALGORITHM = getattr(settings, "JWT_ALGORITHM", "HS256")
+ACCESS_TOKEN_EXPIRE_MINUTES = int(getattr(settings, "ACCESS_TOKEN_EXPIRE_MINUTES", 60))
 
-# Chave secreta usada para assinar os tokens JWT
-SECRET_KEY = "super_secret_key_change_me"
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 60
-
-
-# Funções de hashing e verificação de senha ------------------------------
-#### USAMOS argon2, podemos verificar na user_service.py ####
-
-# Dúvida: Seria melhor criar aqui a criptografia da password e chamar na service?
-
-def hash_password(password: str) -> str:
-    """Recebe uma senha e devolve uma versão hash (segura)"""
-    return pwd_context.hash(password)
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl=f"{settings.API_PREFIX}/auth/login")
 
 
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    """Verifica se a senha fornecida pelo utilizador corresponde ao hash guardado"""
-    return pwd_context.verify(plain_password, hashed_password)
+def create_access_token(subject: str, role_id: Optional[str] = None, role_name: Optional[str] = None,
+                        expires_delta: Optional[timedelta] = None) -> str:
+    """Create a JWT token. 'subject' is user.id, include role_id and role_name."""
+    now = datetime.utcnow()
+    expire = now + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
+
+    payload = {
+        "sub": subject,
+        "role_id": role_id,
+        "role_name": role_name,
+        "exp": expire,
+        "iat": now,
+    }
+
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
 
 
-# Funções relacionadas com JWT -------------------------------------------
-
-def create_access_token(data: dict, expires_delta: timedelta | None = None) -> str:
-    """
-    Gera um token JWT com dados do utilizador (ex: id, email).
-    """
-    to_encode = data.copy()
-    expire = datetime.utcnow() + (expires_delta or timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES))
-    to_encode.update({"exp": expire})
-    encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
-    return encoded_jwt
-
-
-def verify_token(token: str) -> dict | None:
-    """
-    Verifica se o token JWT é válido e devolve o payload (dados).
-    """
+def decode_token(token: str) -> Optional[dict]:
     try:
         payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
         return payload
     except JWTError:
         return None
+
+
+async def get_current_user(token: str = Depends(oauth2_scheme), db: AsyncSession = Depends(get_db)) -> User:
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+
+    payload = decode_token(token)
+    if payload is None:
+        raise credentials_exception
+
+    user_id = payload.get("sub")
+    if user_id is None:
+        raise credentials_exception
+
+    result = await db.execute(
+        select(User)
+        .options(selectinload(User.role))
+        .where(User.id == user_id)
+    )
+    user = result.scalar_one_or_none()
+    if user is None:
+        raise credentials_exception
+
+    if getattr(user, "status", None) != "active":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Inactive user")
+
+    return user
+
+
+def require_roles(*allowed_role_names: str):
+    """Factory dependency to restrict access by role name."""
+    async def _require(current_user: User = Depends(get_current_user)) -> User:
+        role_name = getattr(current_user.role, "name", None)
+        if role_name is None or role_name not in allowed_role_names:
+            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Forbidden")
+        return current_user
+
+    return _require

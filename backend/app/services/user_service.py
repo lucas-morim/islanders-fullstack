@@ -106,11 +106,4 @@ class UserService:
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         return pwd_context.verify(plain_password, hashed_password)
 
-    ### MÉTODO DE AUTENTICAÇÃO FUTURA (email+pass)
-    # async def authenticate(self, db: AsyncSession, email: str, password: str) -> Optional[User]:
-    #     user = await self.repo.get_by_email(db, email)
-    #     if not user or not self.verify_password(password, user.password):
-    #         return None
-    #     return user
-
 service = UserService()
