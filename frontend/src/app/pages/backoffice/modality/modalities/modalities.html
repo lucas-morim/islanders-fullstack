@@ -1,0 +1,93 @@
+<section class="page-header sticky-top-under-app">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2>Modalidades</h2>
+    <button class="btn btn-primary" routerLink="/backoffice/modalities/create">
+      Nova modalidade
+    </button>
+  </div>
+
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <label class="form-label">Buscar</label>
+      <input type="search" class="form-control"
+             placeholder="Nome ou descrição"
+             [ngModel]="q()"
+             (ngModelChange)="q.set($event); page.set(1)">
+    </div>
+  </div>
+</section>
+
+<div *ngIf="loading()" class="alert alert-info">Carregando modalidades...</div>
+
+<div *ngIf="!loading() && filtered().length === 0" class="card shadow-sm">
+  <div class="card-body text-center py-5">
+    <p class="text-muted mb-2">Nenhuma modalidade encontrada.</p>
+    <button class="btn btn-primary" routerLink="/backoffice/modalities/create">
+      Criar primeira modalidade
+    </button>
+  </div>
+</div>
+
+<div class="card shadow-sm table-card" *ngIf="filtered().length > 0">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Nome</th>
+          <th>Descrição</th>
+          <th>Criado em</th>
+          <th>Atualizdo em</th>
+          <th class="text-end">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of paginated()">
+          <td class="fw-semibold">{{ m.name }}</td>
+          <td class="description-cell">{{ m.description }}</td>
+          <td class="text">
+            <time [attr.datetime]="m.created_at">{{ m.created_at | date:'dd/MM/yyyy HH:mm' }}</time>
+          </td>
+          <td class="text">
+            <time [attr.datetime]="m.updated_at">{{ m.updated_at| date:'dd/MM/yyyy HH:mm' }}</time>
+          </td>
+          
+          <td class="text-end">
+            <div class="btn-group btn-group-sm">
+              <a class="btn btn-outline-secondary" [routerLink]="['/backoffice/modalities', m.id]">Ver</a>
+              <button class="btn btn-outline-primary"
+                [routerLink]="['/backoffice/modalities', m.id, 'edit']">
+                Editar
+              </button>
+              <button class="btn btn-outline-danger" (click)="remove(m)">
+                Apagar
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-body pagination-bar d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+    <div class="text-muted small">
+      Mostrando <strong>{{ paginated().length }}</strong> de
+      <strong>{{ filtered().length }}</strong> funções
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <select class="form-select form-select-sm w-auto" (ngModelChange)="page.set(1)">
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="20">20</option>
+      </select>
+
+      <div class="btn-group">
+        <button class="btn btn-sm btn-outline-secondary" (click)="changePage(page()-1)" [disabled]="page() <= 1">Anterior</button>
+        <button class="btn btn-sm btn-outline-secondary" disabled>
+          Página {{ page() }} / {{ totalPages() }}
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" (click)="changePage(page()+1)" [disabled]="page() >= totalPages()">Próxima</button>
+      </div>
+    </div>
+  </div>
+</div>

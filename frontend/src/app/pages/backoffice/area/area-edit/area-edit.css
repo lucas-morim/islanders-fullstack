@@ -1,0 +1,16 @@
+:host {
+  display: block;
+  --hdr: var(--admin-header-height, 72px);
+  --sbw: var(--admin-sidebar-width, 260px);
+  padding-top: 50px;
+}
+
+:host .sticky-top-under-app {
+  position: sticky;
+  top: 0;             
+  z-index: 100;
+  background: var(--bs-body-bg, #fff);
+  padding: .5rem 0;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+}
+
