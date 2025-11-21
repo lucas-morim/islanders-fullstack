@@ -6,3 +6,14 @@
   --admin-sidebar-width: 260px;
   --admin-header-height: 56px;
 }
+
+.isla-color-text{
+   color: #762123;
+}
+
+.isla-color-bg{
+  background-color: #762123;
+}
+.isla-color-bg:hover {
+  background-color: #952a2b;
+}
