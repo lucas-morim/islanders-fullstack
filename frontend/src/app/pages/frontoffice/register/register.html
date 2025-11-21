@@ -1,0 +1,79 @@
+<div class="w-full h-screen flex">
+  <div class="w-1/2 relative">
+    <div
+      class="w-full pt-4 mt-4 sm:mt-6 md:mt-8 flex flex-col items-start ml-28 sm:ml-36 md:ml-40 lg:ml-56 px-4 sm:px-6 md:px-8">
+
+      <a routerLink="/" class="block absolute top-6 left-6 z-50">
+        <img src="assets/islaverse2.png" alt="Logo"
+          class="h-8 sm:h-10 md:h-10 hover:opacity-80 transition cursor-pointer">
+      </a>
+
+      <div class="relative inline-block mt-20">
+        <p class="text-1xl sm:text-3xl md:text-4xl lg:text-xl font-poppins text-black drop-shadow-lg mb-2 inline-block">
+          Crie a sua conta
+        </p>
+        <span class="absolute bottom-1 left-0 h-0.5 bg-redIsla" style="width: 120px;"></span>
+      </div>
+
+      <form class="mt-4 flex flex-col gap-4 w-full max-w-[280px]">
+
+        <div class="flex flex-col">
+          <label for="nome" class="mb-1 text-sm sm:text-xs font-poppins text-black">
+            Nome:
+          </label>
+          <input type="text" id="nome" placeholder="Introduza o seu nome" required
+            class="px-2 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-redIsla focus:border-redIsla placeholder:text-xs">
+        </div>
+
+        <div class="flex flex-col">
+          <label for="usuario" class="mb-1 text-sm sm:text-xs font-poppins text-black">
+            Utilizador:
+          </label>
+          <input type="text" id="usuario" placeholder="Introduza o seu utilizador" required
+            class="px-2 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-redIsla focus:border-redIsla placeholder:text-xs">
+        </div>
+
+        <div class="flex flex-col">
+          <label for="email" class="mb-1 text-sm sm:text-xs font-poppins text-black">
+            Email:
+          </label>
+          <input type="email" id="email" placeholder="Introduza o seu email" required
+            class="px-2 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-redIsla focus:border-redIsla placeholder:text-xs">
+        </div>
+
+        <div class="flex flex-col">
+          <label for="senha" class="mb-1 text-sm sm:text-xs font-poppins text-black">
+            Senha:
+          </label>
+          <input type="password" id="senha" placeholder="Introduza a sua palavra-passe" required
+            class="px-2 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-redIsla focus:border-redIsla placeholder:text-xs">
+        </div>
+
+        <div class="flex flex-col">
+          <label for="senhaConfirm" class="mb-1 text-sm sm:text-xs font-poppins text-black">
+            Confirmar Senha:
+          </label>
+          <input type="password" id="senhaConfirm" placeholder="Confirme a sua palavra-passe" required
+            class="px-2 py-2 border border-gray-300 focus:outline-none focus:ring-2 focus:ring-redIsla focus:border-redIsla placeholder:text-xs">
+        </div>
+
+        <button type="submit" class="mt-2 px-4 py-2 w-full bg-redIsla text-sm sm:text-xs text-white font-poppins">
+          Entrar
+        </button>
+
+        <p class="-mt-1 ml-[55px] text-xs text-black font-poppins">
+          Já tem uma conta?
+          <a href="" class="text-redIsla relative inline-block hover:underline">Entre Aqui</a>
+        </p>
+
+      </form>
+
+    </div>
+  </div>
+
+
+  <div class="w-1/2 h-full flex items-center justify-center">
+    <img src="assets/pessoas.png" alt="Imagem Login" class="w-full h-full object-cover">
+  </div>
+
+</div>
