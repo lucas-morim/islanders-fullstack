@@ -4,7 +4,7 @@ from fastapi import HTTPException, status
 from datetime import timedelta
 
 from app.services.user_service import service as user_service
-from app.schemas.auth import UserLogin, TokenOut
+from app.schemas.auth_login import UserLogin, TokenOut
 from app.core.security import create_access_token
 
 class AuthService:
