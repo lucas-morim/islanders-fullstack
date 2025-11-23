@@ -1,0 +1,21 @@
+<header
+  class="flex-col font-poppins text-black px-4 sm:px-6 md:px-6 py-3 sm:py-4 bg-transparent absolute top-0 w-full z-20">
+
+  <div class="flex justify-between items-center w-full">
+
+
+     <a routerLink="/" *ngIf="showLogo" class="block">
+      <img [src]="logo" alt="Logo" class="h-8 sm:h-10 md:h-10 -translate-x-2 hover:opacity-80 transition">
+    </a>
+
+
+    <div class="flex w-full items-center justify-center">
+      <a routerLink="/"
+        class="px-4 py-2 mr-40 text-base rounded bg-white/20 hover:bg-white/30 transition inline-block hover:opacity-80">
+        &#8592; Voltar
+      </a>
+    </div>
+
+  </div>
+
+</header>
