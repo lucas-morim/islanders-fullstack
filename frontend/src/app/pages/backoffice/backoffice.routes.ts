@@ -72,6 +72,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./modality/modality-edit/modality-edit').then(c => c.ModalityEdit),
       },
+      {
+        path: 'courses',
+        loadComponent: () =>
+          import('./course/courses/courses').then(c => c.Courses),
+      },
+      {
+        path: 'courses/create',
+        loadComponent: () =>
+          import('./course/course-create/course-create').then(c => c.CourseCreate),
+      },
+      {
+        path: 'courses/:id/edit',
+        loadComponent: () =>
+          import('./course/course-edit/course-edit').then(c => c.CourseEdit),
+      },
     ],
   },
 ];
