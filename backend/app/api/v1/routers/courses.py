@@ -8,7 +8,6 @@ from app.services.course_service import service as course_service
 
 router = APIRouter()
 
-
 @router.get("/", response_model=List[CourseOut])
 async def list_courses(
     db: AsyncSession = Depends(get_db),

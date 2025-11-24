@@ -1,1 +1,133 @@
-<p>courses works!</p>
+<section class="page-header sticky-top-under-app">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="mb-0">Courses</h2>
+    <div class="btn-group">
+      <button class="btn btn-primary isla-color-bg" routerLink="/backoffice/users/create">Novo curso</button>
+      <button class="btn btn-outline-secondary" (click)="exportCsv()">Exportar</button>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <div class="row g-2 align-items-end">
+      <div class="col-12 col-md-5">
+        <label class="form-label">Buscar</label>
+        <input type="search" class="form-control"
+              placeholder="Nome do Curso"
+              [ngModel]="q()"
+              (ngModelChange)="q.set($event); page.set(1)">
+      </div>
+
+      <div class="col-6 col-md-3">
+        <label class="form-label">Áreas</label>
+        <select class="form-select"
+                [ngModel]="areaId()"
+                (ngModelChange)="areaId.set($event); page.set(1)">
+          <option value="">Todas</option>
+          <option *ngFor="let a of areas()" [value]="a.id">{{ a.name }}</option>
+        </select>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <label class="form-label">Status</label>
+        <select class="form-select"
+                [ngModel]="status()"
+                (ngModelChange)="status.set($event); page.set(1)">
+          <option value="">Todos</option>
+          <option>Ativo</option>
+          <option>Inativo</option>
+        </select>
+      </div>
+
+      <div class="col-12 col-md-2 d-flex">
+        <button class="btn btn-outline-secondary w-100" (click)="resetFilters()">Limpar</button>
+      </div>
+    </div>
+
+    </div>
+  </div>
+</section>
+
+<div *ngIf="loading()" class="alert alert-info">Carregando cursos…</div>
+
+<div *ngIf="!loading() && filtered().length === 0" class="card shadow-sm">
+  <div class="card-body text-center py-5">
+    <p class="text-muted mb-2">Nenhum curso encontrado.</p>
+    <button class="btn btn-primary" (click)="newCourse()">Criar primeiro curso</button>
+  </div>
+</div> 
+
+<div class="card shadow-sm table-card" *ngIf="filtered().length > 0">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Título</th>
+          <th class="d-none d-md-table-cell">Descrição</th>
+          <th>Área</th>
+          <th>Modalidade</th>
+          <th>Status</th>
+          <th>Horas</th>
+          <th>Créditos</th>
+          <th>Preço</th>
+          <th class="text-end">Criado em</th>
+          <th class="text-end">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let c of paginated()">
+          <td class="fw-semibold">{{ c.title }}</td>
+          <td class="description-cell">{{ c.description }}</td>
+          <td>
+            <span class="badge bg-secondary-subtle text-secondary border">
+              {{ c.areaName }}
+            </span>
+          </td>
+          <td>
+            <span class="badge bg-secondary-subtle text-secondary border">
+              {{ c.modalityName }}
+            </span>
+          </td>
+          <td><span class="badge" [ngClass]="badgeClass(c.status)">{{ c.status }}</span></td>
+          <td>{{ c.num_hours }}</td>
+          <td>{{ c.credits }}</td>
+          <td>{{ c.price }}</td>
+          <td class="text">
+            <time [attr.datetime]="c.created_at">{{ c.created_at | date:'dd/MM/yyyy HH:mm' }}</time>
+          </td>
+
+          <td class="text-end">
+            <div class="btn-group btn-group-sm">
+              <a class="btn btn-outline-secondary" [routerLink]="['/backoffice/courses', c.id]">Ver</a>
+              <button class="btn btn-outline-primary" [routerLink]="['/backoffice/courses', c.id, 'edit']">Editar</button>
+              <button class="btn btn-outline-danger" (click)="remove(c)">Apagar</button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-body pagination-bar d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+    <div class="text-muted small">
+      Mostrando <strong>{{ paginated().length }}</strong> de
+      <strong>{{ filtered().length }}</strong> usuários
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <select class="form-select form-select-sm w-auto" (ngModelChange)="page.set(1)">
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="20">20</option>
+      </select>
+
+      <div class="btn-group">
+        <button class="btn btn-sm btn-outline-secondary" (click)="changePage(page()-1)" [disabled]="page() <= 1">Anterior</button>
+        <button class="btn btn-sm btn-outline-secondary" disabled>
+          Página {{ page() }} / {{ totalPages() }}
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" (click)="changePage(page()+1)" [disabled]="page() >= totalPages()">Próxima</button>
+      </div>
+    </div>
+  </div>
+</div>
