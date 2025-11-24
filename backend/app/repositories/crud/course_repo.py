@@ -1,12 +1,13 @@
 from typing import Sequence, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from app.models.course import Course
 from app.schemas.course import CourseCreate, CourseUpdate   
 
 class CourseRepository:
     async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Course]:
-        result = await db.execute(select(Course).offset(skip).limit(limit))
+        result = await db.execute(select(Course).options(selectinload(Course.areas)).offset(skip).limit(limit))
         return result.scalars().all()
 
     async def get(self, db: AsyncSession, course_id: str) -> Optional[Course]:

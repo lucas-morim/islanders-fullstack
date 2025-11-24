@@ -97,22 +97,31 @@ export class Courses {
       this.modalities.set(modalities);
 
       const data: CourseOut[] = await this.coursesSvc.list(0, 100);
-      this.courses.set(data.map(c => ({
-        id: c.id,
-        title: c.title,
-        description: c.description ?? null,
-        area_id: c.area_id,
-        areaName: c.area_id ? (this.areasMap().get(c.area_id) ?? 'Geral') : 'Geral',
-        modality_id: c.modality_id,
-        modalityName: c.modality_id ? (this.modalitiesMap().get(c.modality_id) ?? 'Null') : 'Null',
-        status: c.status === 'active' ? 'Ativo' : 'Inativo',
-        num_hours: c.num_hours ?? null,
-        credits: c.credits ?? null,
-        price: c.price ?? null,
-        photo: c.photo ?? null,
-        created_at: c.created_at, 
-        updated_at: c.updated_at,
-      })));
+
+      this.courses.set(
+        data.map(c => {
+          const firstAreaId =
+            c.area_ids && c.area_ids.length > 0 ? c.area_ids[0] : null;
+
+          return {
+            id: c.id,
+            title: c.title,
+            description: c.description ?? null,
+            area_id: firstAreaId,
+            areaName: firstAreaId ? (this.areasMap().get(firstAreaId) ?? 'Geral') : 'Geral',
+            modality_id: c.modality_id ?? null,
+            modalityName: c.modality_id ? (this.modalitiesMap().get(c.modality_id) ?? 'Geral') : 'Geral',
+            status: c.status === 'active' ? 'Ativo' : 'Inativo',
+            num_hours: c.num_hours ?? null,
+            credits: c.credits ?? null,
+            price: c.price ?? null,
+            photo: c.photo ?? null,
+            created_at: c.created_at,
+            updated_at: c.updated_at,
+          } as CourseRow;
+        })
+      );
+
       this.page.set(1);
     } finally {
       this.loading.set(false);

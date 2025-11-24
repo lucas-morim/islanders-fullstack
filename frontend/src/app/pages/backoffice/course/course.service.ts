@@ -10,7 +10,7 @@ export interface CourseOut {
     id: string;
     title: string;
     description?: string | null;
-    area_id?: string | null;
+    area_ids?: string[] | null;
     modality_id?: string | null;
     status: StatusEnum;
     num_hours?: number | null;
