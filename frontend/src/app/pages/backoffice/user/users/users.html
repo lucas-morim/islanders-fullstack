@@ -2,7 +2,7 @@
   <div class="d-flex align-items-center justify-content-between mb-3">
     <h2 class="mb-0">Users</h2>
     <div class="btn-group">
-      <button class="btn btn-primary isla-color-bg" routerLink="/backoffice/users/create">Novo usuário</button>
+      <button class="btn btn-primary isla-color-bg" routerLink="/backoffice/users/create">Novo utilizador</button>
       <button class="btn btn-outline-secondary" (click)="exportCsv()">Exportar</button>
     </div>
   </div>
@@ -48,12 +48,12 @@
   </div>
 </section>
 
-<div *ngIf="loading()" class="alert alert-info">Carregando usuários…</div>
+<div *ngIf="loading()" class="alert alert-info">Carregando utilizadores…</div>
 
 <div *ngIf="!loading() && filtered().length === 0" class="card shadow-sm">
   <div class="card-body text-center py-5">
-    <p class="text-muted mb-2">Nenhum usuário encontrado.</p>
-    <button class="btn btn-primary" (click)="newUser()">Criar primeiro usuário</button>
+    <p class="text-muted mb-2">Nenhum utilizador encontrado.</p>
+    <button class="btn btn-primary" (click)="newUser()">Criar primeiro utilizador</button>
   </div>
 </div>
 
@@ -62,7 +62,7 @@
     <table class="table table-hover align-middle mb-0">
       <thead class="table-light">
         <tr>
-          <th>Usuário</th>
+          <th>Utilizador</th>
           <th class="d-none d-md-table-cell">E-mail</th>
           <th>Função</th>
           <th>Status</th>
@@ -107,7 +107,7 @@
   <div class="card-body pagination-bar d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
     <div class="text-muted small">
       Mostrando <strong>{{ paginated().length }}</strong> de
-      <strong>{{ filtered().length }}</strong> usuários
+      <strong>{{ filtered().length }}</strong> utilizadores
     </div>
 
     <div class="d-flex align-items-center gap-2">
