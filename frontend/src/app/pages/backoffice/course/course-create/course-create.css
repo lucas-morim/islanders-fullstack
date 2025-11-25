@@ -1,0 +1,32 @@
+:host {
+  display: block;
+  --hdr: var(--admin-header-height, 72px);
+  --sbw: var(--admin-sidebar-width, 260px);
+  padding-top: 50px;
+  padding-left: 120px;
+}
+
+:host .sticky-top-under-app {
+  position: sticky;
+  top: 0;             
+  z-index: 100;
+  background: var(--bs-body-bg, #fff);
+  padding: .5rem 0;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+}
+
+.areas-label {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  min-width: 0; 
+}
+
+
+.page-header h1,
+.page-header h2 { margin-top: 0; }
+
+.avatar-uploader { display:flex; align-items:center; justify-content:center; }
+.avatar-preview, .avatar-placeholder { width:96px; height:96px; object-fit:cover; display:inline-block; }
+.avatar-placeholder { background:#eef1f6; color:#6c757d; font-weight:700; font-size:1.5rem; line-height:96px; text-align:center; user-select:none; border:1px dashed #ced4da; box-sizing:border-box; }
+.form-control:focus, .form-select:focus { box-shadow:none; border-color:#86b7fe; }

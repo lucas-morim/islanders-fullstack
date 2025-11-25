@@ -59,6 +59,7 @@ export class Courses {
 
   q = signal('');
   areaId = signal<string>('');         
+  modalityId = signal<string>(''); 
   status = signal<StatusLabel | ''>(''); 
 
   page = signal(1);
@@ -67,6 +68,7 @@ export class Courses {
   filtered = computed(() => {
     const term = this.q().toLowerCase().trim();
     const areaId = this.areaId();
+    const modalityId = this.modalityId();
     const status = this.status();
 
     return this.courses().filter(c => {
@@ -75,9 +77,10 @@ export class Courses {
         c.title.toLowerCase().includes(term)
 
       const matchesArea = !areaId || c.area_id === areaId;
+      const matchesModality = !modalityId || c.modality_id === modalityId;
       const matchesStatus = !status || c.status === status;
 
-      return matchesTerm && matchesArea && matchesStatus;
+      return matchesTerm && matchesArea && matchesModality && matchesStatus;
     });
   });
 
