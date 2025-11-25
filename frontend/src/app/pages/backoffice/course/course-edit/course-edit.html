@@ -1,1 +1,170 @@
-<p>course-edit works!</p>
+<section class="page-header sticky-top-under-app">
+  <div class="d-flex align-items-center justify-content-between">
+    <h2 class="mb-0">Editar curso</h2>
+    <div class="d-flex gap-2">
+      <ng-template #saving>
+        <span class="spinner-border spinner-border-sm me-1"></span> Salvando…
+      </ng-template>
+    </div>
+  </div>
+</section>
+
+<form [formGroup]="form" novalidate>
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="row g-3">
+
+        <div class="col-12 col-md-3">
+          <label class="form-label">Capa do curso</label>
+          <div class="avatar-uploader">
+            <img *ngIf="coverPreview(); else coverPlaceholder"
+                 [src]="coverPreview()"
+                 alt="Preview"
+                 class="avatar-preview rounded">
+            <ng-template #coverPlaceholder>
+              <div class="avatar-placeholder rounded">📘</div>
+            </ng-template>
+          </div>
+          <input class="form-control mt-2"
+                 type="file"
+                 accept="image/*"
+                 (change)="onCoverChange($event)">
+          <div class="form-text">PNG/JPG até 2MB</div>
+        </div>
+
+        <div class="col-12 col-md-9">
+          <div class="row g-3">
+
+            <div class="col-12">
+              <label class="form-label">Título</label>
+              <input class="form-control"
+                     formControlName="title"
+                     placeholder="Ex.: Fundamentos de Anatomia">
+              <div class="invalid-feedback d-block"
+                   *ngIf="f['title'].touched && f['title'].errors">
+                {{ f['title'].errors['required'] ? 'Título é obrigatório.' : '' }}
+                {{ f['title'].errors['maxlength'] ? 'Máximo de 50 caracteres.' : '' }}
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+              <label class="form-label">Modalidade</label>
+              <select class="form-select" formControlName="modality_id">
+                <option value="">Selecione…</option>
+                <option *ngFor="let m of modalities()" [value]="m.id">
+                  {{ m.name }}
+                </option>
+              </select>
+            </div>
+
+            <div class="col-12 col-lg-4">
+              <label class="form-label">Status</label>
+              <select class="form-select" formControlName="status">
+                <option value="active">Ativo</option>
+                <option value="inactive">Inativo</option>
+              </select>
+            </div>
+
+            <div class="col-12 col-lg-4">
+              <label class="form-label">Áreas</label>
+
+              <div class="dropdown w-100">
+                <button
+                  class="btn btn-outline w-100 d-flex justify-content-between align-items-center"
+                  type="button"
+                  data-coreui-toggle="dropdown"
+                  aria-expanded="false">
+
+                  <span class="areas-label flex-grow-1 text-truncate text-start">
+                    {{ selectedAreasLabel() }}
+                  </span>
+
+                  <span class="dropdown-toggle dropdown-caret-only ms-2 flex-shrink-0"></span>
+                </button>
+
+                <ul class="dropdown-menu w-100">
+                  <li *ngFor="let a of areas()">
+                    <label class="dropdown-item d-flex align-items-center gap-2">
+                      <input
+                        type="checkbox"
+                        class="form-check-input"
+                        [checked]="isAreaSelected(a.id)"
+                        (change)="toggleArea(a.id, $event.target.checked)">
+                      <span>{{ a.name }}</span>
+                    </label>
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Descrição</label>
+              <textarea class="form-control"
+                        rows="3"
+                        formControlName="description"
+                        placeholder="Descrição resumida do curso, objetivos, público-alvo…"></textarea>
+            </div>
+
+            <div class="col-12 col-lg-4">
+              <label class="form-label">Carga horária (horas)</label>
+              <input type="number"
+                     class="form-control"
+                     formControlName="num_hours"
+                     placeholder="Ex.: 40">
+              <div class="invalid-feedback d-block"
+                   *ngIf="f['num_hours'].touched && f['num_hours'].errors">
+                {{ f['num_hours'].errors['min'] ? 'Não pode ser negativo.' : '' }}
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+              <label class="form-label">Créditos</label>
+              <input type="number"
+                     class="form-control"
+                     formControlName="credits"
+                     placeholder="Ex.: 4">
+              <div class="invalid-feedback d-block"
+                   *ngIf="f['credits'].touched && f['credits'].errors">
+                {{ f['credits'].errors['min'] ? 'Não pode ser negativo.' : '' }}
+              </div>
+            </div>
+
+            <div class="col-12 col-lg-4">
+              <label class="form-label">Preço</label>
+              <div class="input-group">
+                <span class="input-group-text">€</span>
+                <input type="number"
+                       step="0.01"
+                       class="form-control"
+                       formControlName="price"
+                       placeholder="Ex.: 199.90">
+              </div>
+              <div class="invalid-feedback d-block"
+                   *ngIf="f['price'].touched && f['price'].errors">
+                {{ f['price'].errors['min'] ? 'Não pode ser negativo.' : '' }}
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card-body d-flex justify-content-end gap-2 border-top bg-white">
+      <button class="btn btn-outline-secondary" type="button" (click)="cancel()">Cancelar</button>
+      <button class="btn btn-primary"
+              type="button"
+              [disabled]="!canSubmit()"
+              (click)="submit()">
+        <span *ngIf="!submitting(); else saving2">Salvar alterações</span>
+      </button>
+      <ng-template #saving2>
+        <span class="spinner-border spinner-border-sm me-1"
+              role="status"
+              aria-hidden="true"></span>
+        Salvando…
+      </ng-template>
+    </div>
+  </div>
+</form>
