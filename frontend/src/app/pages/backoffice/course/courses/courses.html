@@ -1,8 +1,8 @@
 <section class="page-header sticky-top-under-app">
   <div class="d-flex align-items-center justify-content-between mb-3">
-    <h2 class="mb-0">Users</h2>
+    <h2 class="mb-0">Courses</h2>
     <div class="btn-group">
-      <button class="btn btn-primary isla-color-bg" routerLink="/backoffice/users/create">Novo utilizador</button>
+      <button class="btn btn-primary isla-color-bg" routerLink="/backoffice/courses/create">Novo curso</button>
       <button class="btn btn-outline-secondary" (click)="exportCsv()">Exportar</button>
     </div>
   </div>
@@ -10,21 +10,31 @@
   <div class="card shadow-sm mb-3">
     <div class="card-body">
       <div class="row g-2 align-items-end">
-      <div class="col-12 col-md-5">
+      <div class="col-12 col-md-3">
         <label class="form-label">Buscar</label>
         <input type="search" class="form-control"
-              placeholder="Nome, usuário ou e-mail"
+              placeholder="Nome do Curso"
               [ngModel]="q()"
               (ngModelChange)="q.set($event); page.set(1)">
       </div>
 
       <div class="col-6 col-md-3">
-        <label class="form-label">Função</label>
+        <label class="form-label">Áreas</label>
         <select class="form-select"
-                [ngModel]="roleId()"
-                (ngModelChange)="roleId.set($event); page.set(1)">
+                [ngModel]="areaId()"
+                (ngModelChange)="areaId.set($event); page.set(1)">
           <option value="">Todas</option>
-          <option *ngFor="let r of roles()" [value]="r.id">{{ r.name }}</option>
+          <option *ngFor="let a of areas()" [value]="a.id">{{ a.name }}</option>
+        </select>
+      </div>
+
+      <div class="col-6 col-md-2">
+        <label class="form-label">Modalidades</label>
+        <select class="form-select"
+                [ngModel]="modalityId()"
+                (ngModelChange)="modalityId.set($event); page.set(1)">
+          <option value="">Todas</option>
+          <option *ngFor="let m of modalities()" [value]="m.id">{{ m.name }}</option>
         </select>
       </div>
 
@@ -48,55 +58,59 @@
   </div>
 </section>
 
-<div *ngIf="loading()" class="alert alert-info">Carregando utilizadores…</div>
+<div *ngIf="loading()" class="alert alert-info">Carregando cursos…</div>
 
 <div *ngIf="!loading() && filtered().length === 0" class="card shadow-sm">
   <div class="card-body text-center py-5">
-    <p class="text-muted mb-2">Nenhum utilizador encontrado.</p>
-    <button class="btn btn-primary" (click)="newUser()">Criar primeiro utilizador</button>
+    <p class="text-muted mb-2">Nenhum curso encontrado.</p>
+    <button class="btn btn-primary" (click)="newCourse()">Criar primeiro curso</button>
   </div>
-</div>
+</div> 
 
 <div class="card shadow-sm table-card" *ngIf="filtered().length > 0">
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
       <thead class="table-light">
         <tr>
-          <th>Utilizador</th>
-          <th class="d-none d-md-table-cell">E-mail</th>
-          <th>Função</th>
+          <th>Título</th>
+          <th class="d-none d-md-table-cell">Descrição</th>
+          <th>Área</th>
+          <th>Modalidade</th>
           <th>Status</th>
-          <th class="text-end">Criado em</th>
-          <th class="text-end">Ações</th>
+          <th>Horas</th>
+          <th>Créditos</th>
+          <th>Preço</th>
+          <th>Criado em</th>
+          <th>Ações</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let u of paginated()">
-          <td>
-            <div class="d-flex align-items-center gap-2">
-              <img [src]="u.avatar || 'assets/img/avatars/default.png'"
-                  class="avatar rounded-circle" alt="Avatar">
-              <div class="d-flex flex-column">
-                <span class="fw-semibold">{{ u.name }}</span>
-                <small class="text-muted">@{{ u.username }}</small>
-              </div>
-            </div>
-          </td>
-          <td class="d-none d-md-table-cell">{{ u.email }}</td>
+        <tr *ngFor="let c of paginated()">
+          <td>{{ c.title }}</td>
+          <td class="description-cell">{{ c.description }}</td>
           <td>
             <span class="badge bg-secondary-subtle text-secondary border">
-              {{ u.roleName }}
+              {{ c.areaName }}
             </span>
           </td>
-          <td><span class="badge" [ngClass]="badgeClass(u.status)">{{ u.status }}</span></td>
-          <td class="text-end">
-            <time [attr.datetime]="u.created_at">{{ u.created_at | date:'dd/MM/yyyy HH:mm' }}</time>
+          <td>
+            <span class="badge bg-secondary-subtle text-secondary border">
+              {{ c.modalityName }}
+            </span>
           </td>
+          <td><span class="badge" [ngClass]="badgeClass(c.status)">{{ c.status }}</span></td>
+          <td>{{ c.num_hours }}</td>
+          <td>{{ c.credits }}</td>
+          <td>{{ c.price }}</td>
+          <td class="text">
+            <time [attr.datetime]="c.created_at">{{ c.created_at | date:'dd/MM/yyyy' }}</time>
+          </td>
+
           <td class="text-end">
             <div class="btn-group btn-group-sm">
-              <a class="btn btn-outline-secondary" [routerLink]="['/backoffice/users', u.id]">Ver</a>
-              <button class="btn btn-outline-primary" [routerLink]="['/backoffice/users', u.id, 'edit']">Editar</button>
-              <button class="btn btn-outline-danger" (click)="remove(u)">Apagar</button>
+              <a class="btn btn-outline-secondary" [routerLink]="['/backoffice/courses', c.id]">Ver</a>
+              <button class="btn btn-outline-primary" [routerLink]="['/backoffice/courses', c.id, 'edit']">Editar</button>
+              <button class="btn btn-outline-danger" (click)="remove(c)">Apagar</button>
             </div>
           </td>
         </tr>
@@ -107,7 +121,7 @@
   <div class="card-body pagination-bar d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
     <div class="text-muted small">
       Mostrando <strong>{{ paginated().length }}</strong> de
-      <strong>{{ filtered().length }}</strong> utilizadores
+      <strong>{{ filtered().length }}</strong> usuários
     </div>
 
     <div class="d-flex align-items-center gap-2">

@@ -1,6 +1,6 @@
 <section class="page-header sticky-top-under-app">
   <div class="d-flex align-items-center justify-content-between">
-    <h2 class="mb-0">Editar usuário</h2>
+    <h2 class="mb-0">Editar utilizador</h2>
     <div class="d-flex gap-2">
       <ng-template #savingTop>
         <span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span>
@@ -10,7 +10,7 @@
   </div>
 </section>
 
-<div *ngIf="loading()" class="alert alert-info my-3">Carregando usuário…</div>
+<div *ngIf="loading()" class="alert alert-info my-3">Carregando utilizadores…</div>
 
 <form *ngIf="!loading()" [formGroup]="form" novalidate>
   <div class="card shadow-sm">
@@ -44,7 +44,7 @@
             </div>
 
             <div class="col-12 col-lg-6">
-              <label class="form-label">Usuário</label>
+              <label class="form-label">Utilizador</label>
               <input class="form-control" formControlName="username">
               <div class="invalid-feedback d-block" *ngIf="f['username'].touched && f['username'].errors">
                 {{ f['username'].errors['required'] ? 'Usuário é obrigatório.' : '' }}

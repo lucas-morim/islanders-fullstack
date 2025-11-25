@@ -18,10 +18,10 @@ class Course(IdMixin, TimestampMixin, Base):
     title: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     description: Mapped[str | None] = mapped_column(Text(), nullable=True)
     status: Mapped[str] = mapped_column(Enum ("active", "inactive", name = "status_enum"), default="active", nullable=False)
-    modality_id: Mapped[str] = mapped_column(ForeignKey("modalities.id", ondelete="SET NULL"), index=True, nullable=True)
-    num_hours: Mapped [int] = mapped_column(Integer, nullable=True)
-    credits: Mapped [int] = mapped_column(Integer, nullable=True)
-    price: Mapped [float] = mapped_column(Float, nullable=True)
+    modality_id: Mapped[str | None] = mapped_column(ForeignKey("modalities.id", ondelete="SET NULL"), index=True, nullable=True)
+    num_hours: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    credits: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    price: Mapped [float | None] = mapped_column(Float, nullable=True)
     photo: Mapped[str | None] = mapped_column(String(255), nullable=True)
 
     modality: Mapped[Modality | None] = relationship(
@@ -35,6 +35,7 @@ class Course(IdMixin, TimestampMixin, Base):
         back_populates="course",
         cascade="all, delete-orphan",
         passive_deletes=True,
+        lazy="selectin"
     )
 
     areas: Mapped[list[Area]] = relationship(
@@ -43,6 +44,7 @@ class Course(IdMixin, TimestampMixin, Base):
         back_populates="courses",
         #overlaps="area_courses" (quando testar o uvicorn aparece uma imagem enorme a avisar que este campo está ligado a outros e com este comando em cada uma das models dá para silenciar esse texto)
         passive_deletes=True,
+        lazy="selectin"
     )
 
     projects: Mapped[list[Project]] = relationship(
@@ -58,3 +60,7 @@ class Course(IdMixin, TimestampMixin, Base):
         cascade="all, delete-orphan",
         passive_deletes=True,
     )
+
+    @property
+    def area_ids(self) -> list[str]:
+        return [area.id for area in self.areas]
