@@ -75,4 +75,13 @@ export class CourseService {
     delete(course_id: string): Promise<void> {
     return firstValueFrom(this.http.delete<void>(`${this.base}/${course_id}`));
     }
+    
+    uploadCover(file: File): Promise<string> {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        return firstValueFrom(
+        this.http.post<{ url: string }>(`${API_BASE}/upload/courses`, formData)
+        ).then(res => res.url);
+    }
 }
