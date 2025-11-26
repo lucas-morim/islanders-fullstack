@@ -79,6 +79,13 @@ export class UserEdit implements OnInit {
     }
   }
 
+  private buildPhotoUrl(path?: string | null): string | null {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    const backendBase = 'http://127.0.0.1:8000';
+    return `${backendBase}${path}`;
+  }
+
   private patchFormWithUser(u: UserOut) {
     this.form.patchValue({
       name: u.name,
@@ -89,12 +96,13 @@ export class UserEdit implements OnInit {
       photo: u.photo ?? '',
     });
 
-    this.avatarPreview.set(u.photo ?? null);
+    const photoUrl = this.buildPhotoUrl(u.photo ?? null);
+    this.avatarPreview.set(photoUrl);
     this.createdAt = u.created_at;
     this.updatedAt = u.updated_at;
   }
 
-  onAvatarChange(ev: Event) {
+  async onAvatarChange(ev: Event) {
     const input = ev.target as HTMLInputElement;
     const file = input.files?.[0];
 
@@ -103,12 +111,17 @@ export class UserEdit implements OnInit {
       return;
     }
 
-    // por enquanto é só preview visual
     const reader = new FileReader();
     reader.onload = () => this.avatarPreview.set(reader.result as string);
     reader.readAsDataURL(file);
 
-    // quando tiver endpoint de upload, aqui é onde vamos enviar o File
+    try {
+      const url = await this.usersSvc.uploadAvatar(file);
+      this.form.patchValue({ photo: url });
+    } catch (e) {
+      console.error('Erro ao enviar avatar', e);
+      alert('Não foi possível enviar a imagem do avatar.');
+    }
   }
 
   async submit() {

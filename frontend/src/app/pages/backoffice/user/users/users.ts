@@ -13,7 +13,7 @@ interface UserRow {
   username: string;
   email: string;
   role_id: string | null;
-  roleName: string;      
+  roleName: string;
   status: StatusLabel;
   created_at: string;
   avatar?: string | null;
@@ -43,11 +43,18 @@ export class Users implements OnInit {
   users = signal<UserRow[]>([]);
 
   q = signal('');
-  roleId = signal<string>('');         
-  status = signal<StatusLabel | ''>(''); 
+  roleId = signal<string>('');
+  status = signal<StatusLabel | ''>('');
 
   page = signal(1);
   pageSize = signal(10);
+
+  private buildAvatarUrl(path?: string | null): string | null {
+    if (!path) return null;
+    if (path.startsWith('http')) return path;
+    const backendBase = 'http://127.0.0.1:8000'; 
+    return `${backendBase}${path}`;
+  }
 
   filtered = computed(() => {
     const term = this.q().toLowerCase().trim();
@@ -81,17 +88,19 @@ export class Users implements OnInit {
       this.roles.set(roles);
 
       const data: UserOut[] = await this.usersSvc.list(0, 100);
-      this.users.set(data.map(u => ({
-        id: u.id,
-        name: u.name,
-        username: u.username,
-        email: u.email,
-        role_id: u.role_id ?? null,
-        roleName: u.role_id ? (this.rolesMap().get(u.role_id) ?? 'Guest') : 'Guest',
-        status: u.status === 'active' ? 'Ativo' : 'Inativo',
-        created_at: u.created_at, 
-        avatar: u.photo ?? null,
-      })));
+      this.users.set(
+        data.map(u => ({
+          id: u.id,
+          name: u.name,
+          username: u.username,
+          email: u.email,
+          role_id: u.role_id ?? null,
+          roleName: u.role_id ? (this.rolesMap().get(u.role_id) ?? 'Guest') : 'Guest',
+          status: u.status === 'active' ? 'Ativo' : 'Inativo',
+          created_at: u.created_at,
+          avatar: this.buildAvatarUrl(u.photo ?? null), 
+        }))
+      );
       this.page.set(1);
     } finally {
       this.loading.set(false);
@@ -124,7 +133,7 @@ export class Users implements OnInit {
     }
   }
 
-    changePage(p: number) {
+  changePage(p: number) {
     const max = this.totalPages();
     this.page.set(Math.min(Math.max(1, p), max));
   }
@@ -133,4 +142,3 @@ export class Users implements OnInit {
     return status === 'Ativo' ? 'bg-success text-white' : 'bg-secondary text-white';
   }
 }
-  
