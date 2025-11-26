@@ -1,26 +1,14 @@
-<header
-  class="flex-col font-poppins text-black px-4 sm:px-6 md:px-6 py-3 sm:py-4 bg-transparent absolute top-0 w-full z-20">
+<header class="flex-col font-poppins text-black px-4 sm:px-6 md:px-6 py-3 sm:py-4 bg-transparent absolute top-0 w-full z-20">
   <div class="flex justify-between items-center w-full">
 
     <a routerLink="/" class="block">
       <img [src]="logo" alt="Logo" class="h-8 sm:h-10 md:h-10 -translate-x-2 hover:opacity-80 transition">
     </a>
 
-
-    <div class="flex gap-1 sm:gap-4">
-
+    <div class="flex gap-1 sm:gap-4 items-center">
       <a routerLink="/backoffice/dashboard"
         class="px-1 py-1 text-[10px] sm:px-4 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition inline-block text-center">
         Dashboard
-      </a>
-      <a routerLink="/login"
-        class="px-1 py-1 text-[10px] sm:px-4 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition inline-block text-center">
-        Login
-      </a>
-
-      <a routerLink="/register"
-        class="px-1 py-1 text-[10px] sm:px-4 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition inline-block text-center">
-        Registar
       </a>
 
       <a routerLink="/about"
@@ -42,8 +30,26 @@
         class="px-1 py-1 text-[10px] sm:px-4 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition inline-block text-center">
         Comunidade
       </a>
+
+      <div class="relative" *ngIf="auth.user() === null; else loggedIn">
+        <img src="assets/avatar-default.png" class="w-10 h-10 rounded-full cursor-pointer" />
+        <div class="absolute right-0 mt-2 w-40 bg-white border shadow-lg rounded">
+          <a routerLink="/login" class="block px-4 py-2 hover:bg-gray-100">Login</a>
+          <a routerLink="/register" class="block px-4 py-2 hover:bg-gray-100">Registar</a>
+        </div>
+      </div>
+
+      <ng-template #loggedIn>
+        <div class="relative">
+          <img [src]="auth.user()?.photo || 'assets/avatar-default.png'" class="w-10 h-10 rounded-full cursor-pointer" />
+          <div class="absolute right-0 mt-2 w-40 bg-white border shadow-lg rounded">
+            <span class="block px-4 py-2">{{ auth.user()?.username }}</span>
+            <button (click)="logout()" class="w-full text-left px-4 py-2 hover:bg-gray-100">Logout</button>
+          </div>
+        </div>
+      </ng-template>
     </div>
   </div>
 
-  <div class="mt-3 sm:mt-4 w-full h-0.5 bg-white "></div>
+  <div class="mt-3 sm:mt-4 w-full h-0.5 bg-white"></div>
 </header>
