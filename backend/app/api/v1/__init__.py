@@ -13,6 +13,7 @@ from app.api.v1.routers.projects import router as projects_router
 from app.api.v1.routers.modalities import router as modalities_router
 from app.api.v1.routers.auth_login import router as auth_login_router
 from app.api.v1.routers.auth_register import router as auth_register_router
+from app.api.v1.routers.uploads import router as uploads_router
 
 api_router = APIRouter()
 
@@ -29,3 +30,4 @@ api_router.include_router(projects_router, prefix="/projects", tags=["Projects"]
 api_router.include_router(modalities_router, prefix="/modalities", tags=["Modalities"])
 api_router.include_router(auth_login_router, prefix="/auth", tags=["Auth"])
 api_router.include_router(auth_register_router, prefix="/auth", tags=["Auth"])
+api_router.include_router(uploads_router, prefix="/upload", tags=["Upload"])

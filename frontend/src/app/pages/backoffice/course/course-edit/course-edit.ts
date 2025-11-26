@@ -105,13 +105,18 @@ export class CourseEdit implements OnInit {
       price: c.price ?? null,
       photo: c.photo ?? '',
     });
+    const backendBase = 'http://127.0.0.1:8000'; 
+    const photoUrl =
+      c.photo
+        ? (c.photo.startsWith('http')
+            ? c.photo
+            : `${backendBase}${c.photo}`)
+        : null; 
 
-    this.coverPreview.set(c.photo ?? null);
+    this.coverPreview.set(photoUrl);
     this.createdAt = c.created_at;
     this.updatedAt = c.updated_at;
   }
-
-  // ===== dropdown de Áreas (multi-select) =====
 
   get areaIdsControl() {
     return this.form.get('area_ids')!;
@@ -151,9 +156,7 @@ export class CourseEdit implements OnInit {
     return `${names.length} áreas selecionadas`;
   }
 
-  // ===== capa / foto =====
-
-  onCoverChange(ev: Event) {
+  async onCoverChange(ev: Event) {
     const input = ev.target as HTMLInputElement;
     const file = input.files?.[0];
 
@@ -166,10 +169,14 @@ export class CourseEdit implements OnInit {
     reader.onload = () => this.coverPreview.set(reader.result as string);
     reader.readAsDataURL(file);
 
-    // quando tiver upload real, aqui vai o envio do File
+    try {
+      const url = await this.coursesSvc.uploadCover(file);
+      this.form.patchValue({ photo: url });
+    } catch (e) {
+      console.error('Erro ao enviar imagem de capa', e);
+      alert('Não foi possível enviar a imagem de capa.');
+    }
   }
-
-  // ===== submit / navegação =====
 
   async submit() {
     if (this.form.invalid) {
