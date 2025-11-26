@@ -5,7 +5,7 @@
       <img [src]="logo" alt="Logo" class="h-8 sm:h-10 md:h-10 -translate-x-2 hover:opacity-80 transition">
     </a>
 
-    <div class="flex gap-3 sm:gap-6 items-center">
+    <div class="flex gap-1 sm:gap-4 items-center">
       <a routerLink="/backoffice/dashboard"
          class="px-3 py-2 sm:px-5 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition text-center">
         Dashboard
@@ -26,6 +26,24 @@
          class="px-3 py-2 sm:px-5 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition text-center">
         Comunidade
       </a>
+
+      <div class="relative" *ngIf="auth.user() === null; else loggedIn">
+        <img src="assets/avatar-default.png" class="w-10 h-10 rounded-full cursor-pointer" />
+        <div class="absolute right-0 mt-2 w-40 bg-white border shadow-lg rounded">
+          <a routerLink="/login" class="block px-4 py-2 hover:bg-gray-100">Login</a>
+          <a routerLink="/register" class="block px-4 py-2 hover:bg-gray-100">Registar</a>
+        </div>
+      </div>
+
+      <ng-template #loggedIn>
+        <div class="relative">
+          <img [src]="auth.user()?.photo || 'assets/avatar-default.png'" class="w-10 h-10 rounded-full cursor-pointer" />
+          <div class="absolute right-0 mt-2 w-40 bg-white border shadow-lg rounded">
+            <span class="block px-4 py-2">{{ auth.user()?.username }}</span>
+            <button (click)="logout()" class="w-full text-left px-4 py-2 hover:bg-gray-100">Logout</button>
+          </div>
+        </div>
+      </ng-template>
     </div>
 
     <div class="relative ml-4">
