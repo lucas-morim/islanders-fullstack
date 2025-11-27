@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { filter } from 'rxjs';
 import { RouterLink } from '@angular/router';
@@ -13,9 +13,10 @@ import { AuthState } from '../../../pages/frontoffice/auth/auth.state';
   styleUrls: ['./header.css'],
 })
 export class Header {
-
-  logo: string = 'assets/islaverse.png';
   auth = inject(AuthState);
+  logo: string = 'assets/islaverse.png';
+
+  dropdownOpen = signal(false);
 
   constructor(private router: Router) {
     this.router.events
@@ -24,12 +25,17 @@ export class Header {
         this.logo = event.url.startsWith('/about')
           ? 'assets/islaverse2.png'
           : 'assets/islaverse.png';
+        this.dropdownOpen.set(false); // fecha dropdown ao navegar
       });
+  }
+
+  toggleDropdown() {
+    this.dropdownOpen.set(!this.dropdownOpen());
   }
 
   logout() {
     this.auth.logout();
     this.router.navigate(['/']);
+    this.dropdownOpen.set(false);
   }
-
 }
