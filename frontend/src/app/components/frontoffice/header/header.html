@@ -5,51 +5,50 @@
       <img [src]="logo" alt="Logo" class="h-8 sm:h-10 md:h-10 -translate-x-2 hover:opacity-80 transition">
     </a>
 
-    <div class="flex gap-1 sm:gap-4 items-center">
+    <div class="flex gap-3 sm:gap-6 items-center">
       <a routerLink="/backoffice/dashboard"
-        class="px-1 py-1 text-[10px] sm:px-4 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition inline-block text-center">
+         class="px-3 py-2 sm:px-5 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition text-center">
         Dashboard
       </a>
-
       <a routerLink="/about"
-        class="px-1 py-1 text-[10px] sm:px-4 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition inline-block text-center">
+         class="px-3 py-2 sm:px-5 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition text-center">
         Saiba Mais
       </a>
-
       <a routerLink="/mission"
-        class="px-1 py-1 text-[10px] sm:px-4 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition inline-block text-center">
+         class="px-3 py-2 sm:px-5 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition text-center">
         Missões
       </a>
-
       <a routerLink="/course"
-        class="px-1 py-1 text-[10px] sm:px-4 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition inline-block text-center">
+         class="px-3 py-2 sm:px-5 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition text-center">
         Cursos Online
       </a>
-
       <a routerLink="/community"
-        class="px-1 py-1 text-[10px] sm:px-4 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition inline-block text-center">
+         class="px-3 py-2 sm:px-5 sm:py-2 sm:text-base rounded bg-white/20 hover:bg-white/30 transition text-center">
         Comunidade
       </a>
+    </div>
 
-      <div class="relative" *ngIf="auth.user() === null; else loggedIn">
-        <img src="assets/avatar-default.png" class="w-10 h-10 rounded-full cursor-pointer" />
-        <div class="absolute right-0 mt-2 w-40 bg-white border shadow-lg rounded">
+    <div class="relative ml-4">
+      <img [src]="auth.user()?.photo || 'assets/avatar-default.png'" 
+           class="w-10 h-10 rounded-full cursor-pointer"
+           (click)="toggleDropdown()" />
+
+      <div *ngIf="dropdownOpen()" class="absolute right-0 mt-2 w-44 bg-white border shadow-lg rounded transition duration-200">
+        <!-- guest -->
+        <ng-container *ngIf="!auth.user(); else loggedIn">
           <a routerLink="/login" class="block px-4 py-2 hover:bg-gray-100">Login</a>
           <a routerLink="/register" class="block px-4 py-2 hover:bg-gray-100">Registar</a>
-        </div>
-      </div>
+        </ng-container>
 
-      <ng-template #loggedIn>
-        <div class="relative">
-          <img [src]="auth.user()?.photo || 'assets/avatar-default.png'" class="w-10 h-10 rounded-full cursor-pointer" />
-          <div class="absolute right-0 mt-2 w-40 bg-white border shadow-lg rounded">
-            <span class="block px-4 py-2">{{ auth.user()?.username }}</span>
-            <button (click)="logout()" class="w-full text-left px-4 py-2 hover:bg-gray-100">Logout</button>
-          </div>
-        </div>
-      </ng-template>
+        <ng-template #loggedIn>
+          <span class="block px-4 py-2">{{ auth.user()?.username }}</span>
+          <button (click)="logout()" class="w-full text-left px-4 py-2 hover:bg-gray-100">Logout</button>
+        </ng-template>
+      </div>
     </div>
+
   </div>
 
+  <!-- TRAÇO ABAIXO -->
   <div class="mt-3 sm:mt-4 w-full h-0.5 bg-white"></div>
 </header>
