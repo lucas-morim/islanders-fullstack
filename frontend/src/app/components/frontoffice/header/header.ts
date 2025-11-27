@@ -12,7 +12,6 @@ import { AuthState } from '../../../pages/frontoffice/auth/auth.state';
   templateUrl: './header.html',
   styleUrls: ['./header.css'],
 })
-
 export class Header {
   auth = inject(AuthState);
   logo: string = 'assets/islaverse.png';
