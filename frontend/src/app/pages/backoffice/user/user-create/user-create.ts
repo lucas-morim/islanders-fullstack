@@ -62,7 +62,7 @@ export class UserCreate implements OnInit {
     }
   }
 
-  onAvatarChange(ev: Event) {
+  async onAvatarChange(ev: Event) {
     const input = ev.target as HTMLInputElement;
     const file = input.files?.[0];
     if (!file) {
@@ -73,8 +73,13 @@ export class UserCreate implements OnInit {
     reader.onload = () => this.avatarPreview.set(reader.result as string);
     reader.readAsDataURL(file);
 
-    // por enquanto, o backend só recebe `photo` como string (URL/caminho).
-    // Se for usar upload real, a gente cria outro endpoint depois.
+    try {
+      const url = await this.usersSvc.uploadAvatar(file);
+      this.form.patchValue({ photo: url });
+    } catch (e) {
+      console.error('Erro ao enviar avatar', e);
+      alert('Não foi possível enviar a imagem do avatar.');
+    }
   }
 
   async submit() {

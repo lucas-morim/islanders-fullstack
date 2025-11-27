@@ -2,11 +2,15 @@ from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.core.config import settings
 import os
 import uuid
+from typing import Literal
 
 router = APIRouter()
 
-@router.post("/courses", summary="Upload de imagem de capa de curso")
-async def upload_course_image(file: UploadFile = File(...)):
+@router.post("/{kind}", summary="Upload de imagem (curso, usuário, etc)")
+async def upload_image(
+    kind: Literal["courses", "users"],  
+    file: UploadFile = File(...)
+):
     if file.content_type not in ("image/jpeg", "image/png", "image/webp"):
         raise HTTPException(status_code=400, detail="Formato de imagem inválido")
 
@@ -16,7 +20,7 @@ async def upload_course_image(file: UploadFile = File(...)):
 
     filename = f"{uuid.uuid4().hex}{ext}"
 
-    upload_dir = os.path.join(settings.MEDIA_ROOT, "courses")
+    upload_dir = os.path.join(settings.MEDIA_ROOT, kind)
     os.makedirs(upload_dir, exist_ok=True)
 
     file_path = os.path.join(upload_dir, filename)
@@ -25,6 +29,7 @@ async def upload_course_image(file: UploadFile = File(...)):
     with open(file_path, "wb") as f:
         f.write(contents)
 
-    url = f"{settings.MEDIA_URL}/courses/{filename}"
+    base = settings.MEDIA_URL.rstrip("/")  
+    url = f"{base}/{kind}/{filename}"
 
     return {"url": url}

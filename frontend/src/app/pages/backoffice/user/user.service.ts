@@ -67,4 +67,13 @@ export class UsersService {
   delete(user_id: string): Promise<void> {
     return firstValueFrom(this.http.delete<void>(`${this.base}/${user_id}`));
   }
+
+  uploadAvatar(file: File): Promise<string> {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    return firstValueFrom(
+      this.http.post<{ url: string }>(`${API_BASE}/upload/users`, formData)
+    ).then(res => res.url);
+  }
 }
