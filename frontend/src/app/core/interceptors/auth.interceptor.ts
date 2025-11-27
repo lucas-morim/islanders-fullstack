@@ -6,7 +6,7 @@ import {
   HttpEvent,
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AuthState } from '../pages/frontoffice/auth/auth.state';
+import { AuthState } from '../../pages/frontoffice/auth/auth.state';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
