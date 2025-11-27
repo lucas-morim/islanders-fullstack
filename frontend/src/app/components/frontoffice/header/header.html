@@ -46,26 +46,6 @@
         </ng-template>
       </div>
     </div>
-
-    <div class="relative ml-4">
-      <img [src]="userPhoto" 
-           class="w-10 h-10 rounded-full cursor-pointer"
-           (click)="toggleDropdown()" />
-
-      <div *ngIf="dropdownOpen()" class="absolute right-0 mt-2 w-44 bg-white border shadow-lg rounded transition duration-200">
-        <!-- guest -->
-        <ng-container *ngIf="!auth.user(); else loggedIn">
-          <a routerLink="/login" class="block px-4 py-2 hover:bg-gray-100">Login</a>
-          <a routerLink="/register" class="block px-4 py-2 hover:bg-gray-100">Registar</a>
-        </ng-container>
-
-        <ng-template #loggedIn>
-          <span class="block px-4 py-2">{{ auth.user()?.username }}</span>
-          <button (click)="logout()" class="w-full text-left px-4 py-2 hover:bg-gray-100">Logout</button>
-        </ng-template>
-      </div>
-    </div>
-
   </div>
 
   <!-- TRAÇO ABAIXO -->
