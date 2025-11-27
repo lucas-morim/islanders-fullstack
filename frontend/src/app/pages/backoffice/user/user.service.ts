@@ -29,7 +29,7 @@ export interface UserCreatePayload {
   role_id?: string | null;
 }
 
-export interface UserUpdatePayload {
+export interface UserUpdatePayload { 
   name?: string | null;
   email?: string | null;
   username?: string | null;
