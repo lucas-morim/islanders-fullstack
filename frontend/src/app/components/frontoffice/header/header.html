@@ -29,7 +29,7 @@
     </div>
 
     <div class="relative ml-4">
-      <img [src]="auth.user()?.photo || 'assets/avatar-default.png'" 
+      <img [src]="userPhoto" 
            class="w-10 h-10 rounded-full cursor-pointer"
            (click)="toggleDropdown()" />
 
