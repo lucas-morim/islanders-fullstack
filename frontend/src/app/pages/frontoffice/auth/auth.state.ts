@@ -41,4 +41,42 @@ export class AuthState {
     localStorage.removeItem('access_token');
     this.user.set(null);
   }
+
+  // helpers das roles para chamar no html
+  hasRole(role: string): boolean {
+    return this.user()?.role?.name === role;
+  }
+
+  isAdmin(): boolean {
+    return this.hasRole('Admin');
+  }
+
+  isProfessor(): boolean {
+    return this.hasRole('Professor');
+  }
+
+  isStudent(): boolean {
+    return this.hasRole('Student');
+  }
+
+  isGuest(): boolean {
+    return !this.isLoggedIn();
+  }
+
+  // helpers de permissão por ação
+  canCreate(): boolean {
+    return this.isAdmin();
+  }
+
+  canEdit(): boolean {
+    return this.isAdmin()
+  }
+
+  canDelete(): boolean {
+    return this.isAdmin();
+  }
+
+  canView(): boolean {
+    return this.isAdmin() || this.isProfessor();
+  }
 }
