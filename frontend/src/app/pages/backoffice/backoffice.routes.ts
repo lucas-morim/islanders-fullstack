@@ -7,23 +7,18 @@ export const routes: Routes = [
     path: '',
     loadComponent: () =>
       import('../../layouts/back-shell/back-shell').then(c => c.BackShell),
-
-    canActivate: [
-      authGuard,
-      roleGuard(['Admin', 'Professor'])
-    ],
+    canActivate: [authGuard, roleGuard(['Admin', 'Professor'])],
 
     children: [
       { path: '', pathMatch: 'full', redirectTo: 'dashboard' },
 
-      // Admin + Professor
       {
         path: 'dashboard',
         loadComponent: () =>
           import('./dashboard/dashboard').then(c => c.Dashboard),
       },
 
-      // Apenas Admin
+      // Users (Admin only)
       {
         path: 'users',
         canActivate: [roleGuard(['Admin'])],
@@ -43,7 +38,7 @@ export const routes: Routes = [
           import('./user/user-edit/user-edit').then(c => c.UserEdit),
       },
 
-      // Também Admin only
+      // Roles (Admin only)
       {
         path: 'roles',
         canActivate: [roleGuard(['Admin'])],
@@ -63,16 +58,14 @@ export const routes: Routes = [
           import('./role/role-edit/role-edit').then(c => c.RoleEdit),
       },
 
-      // Áreas, Modalidades, Courses - admin
+      // Areas (Admin + Professor, Professor não edita)
       {
         path: 'areas',
-        canActivate: [roleGuard(['Admin'])],
         loadComponent: () =>
           import('./area/areas/areas').then(c => c.Areas),
       },
       {
         path: 'areas/create',
-        canActivate: [roleGuard(['Admin'])],
         loadComponent: () =>
           import('./area/area-create/area-create').then(c => c.AreaCreate),
       },
@@ -83,9 +76,9 @@ export const routes: Routes = [
           import('./area/area-edit/area-edit').then(c => c.AreaEdit),
       },
 
+      // Modalities (Admin only + visualização prof)
       {
         path: 'modalities',
-        canActivate: [roleGuard(['Admin'])],
         loadComponent: () =>
           import('./modality/modalities/modalities').then(c => c.Modalities),
       },
@@ -102,21 +95,19 @@ export const routes: Routes = [
           import('./modality/modality-edit/modality-edit').then(c => c.ModalityEdit),
       },
 
+      // Courses (Admin + Professor)
       {
         path: 'courses',
-        canActivate: [roleGuard(['Admin'])],
         loadComponent: () =>
           import('./course/courses/courses').then(c => c.Courses),
       },
       {
         path: 'courses/create',
-        canActivate: [roleGuard(['Admin'])],
         loadComponent: () =>
           import('./course/course-create/course-create').then(c => c.CourseCreate),
       },
       {
         path: 'courses/:id/edit',
-        canActivate: [roleGuard(['Admin'])],
         loadComponent: () =>
           import('./course/course-edit/course-edit').then(c => c.CourseEdit),
       },
