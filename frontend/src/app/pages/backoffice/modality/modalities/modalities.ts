@@ -3,27 +3,27 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ModalityOut, ModalityService } from '../modality.service';
+import { AuthState } from '../../../frontoffice/auth/auth.state';
 
 @Component({
+  standalone: true,
   selector: 'app-modalities',
   imports: [CommonModule, RouterLink, FormsModule],
   templateUrl: './modalities.html',
-  styleUrl: './modalities.css',
+  styleUrls: ['./modalities.css'],
 })
 export class Modalities {
   private srv = inject(ModalityService);
+  auth = inject(AuthState);
 
   loading = signal(false);
   modalities = signal<ModalityOut[]>([]);
-
   q = signal('');
-
   page = signal(1);
   pageSize = signal(10);
 
   filtered = computed(() => {
     const term = this.q().toLowerCase();
-
     return this.modalities().filter(r =>
       !term ||
       r.name.toLowerCase().includes(term) ||
@@ -67,4 +67,10 @@ export class Modalities {
     const max = this.totalPages();
     this.page.set(Math.max(1, Math.min(p, max)));
   }
+
+  // Permissões para template
+  canCreate(): boolean { return this.auth.canCreate(); }
+  canEdit(): boolean { return this.auth.canEdit(); }
+  canDelete(): boolean { return this.auth.canDelete(); }
+  canView(): boolean { return this.auth.canView(); }
 }
