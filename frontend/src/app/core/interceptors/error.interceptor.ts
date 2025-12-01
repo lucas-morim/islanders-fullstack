@@ -1,11 +1,11 @@
-import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { HttpRequest, HttpHandlerFn, HttpEvent } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
-import { throwError } from 'rxjs';
+import { throwError, Observable } from 'rxjs';
+import { Router } from '@angular/router';
 import { AuthState } from '../../pages/frontoffice/auth/auth.state';
 
-export const errorInterceptor: HttpInterceptorFn = (req, next) => {
+export const errorInterceptor = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
   const router = inject(Router);
   const auth = inject(AuthState);
 
@@ -18,7 +18,6 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
         router.navigate(['/login']);
       }
 
-      // sem permissões
       if (status === 403) {
         router.navigate(['/']);
       }

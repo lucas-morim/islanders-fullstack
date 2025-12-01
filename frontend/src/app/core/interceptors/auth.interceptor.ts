@@ -1,8 +1,9 @@
-import { HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
+import { HttpRequest, HttpHandlerFn, HttpEvent } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { AuthState } from '../../pages/frontoffice/auth/auth.state';
 
-export const authInterceptor: HttpInterceptorFn = (req, next) => {
+export const authInterceptor = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
   const auth = inject(AuthState);
   const token = auth.access_token();
 
