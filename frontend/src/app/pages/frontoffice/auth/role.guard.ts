@@ -3,19 +3,22 @@ import { CanActivateFn, Router } from '@angular/router';
 import { AuthState } from './auth.state';
 
 export const roleGuard = (allowedRoles: string[]): CanActivateFn => {
-  const router = inject(Router);
-  const authState = inject(AuthState);
-
   return () => {
-    const user = authState.user();
+    const auth = inject(AuthState);
+    const router = inject(Router);
+
+    const user = auth.user();
+
+    // Se não estiver autenticado - login
     if (!user) {
       router.navigate(['/login']);
       return false;
     }
 
-    const roleName = user?.role?.name ?? null;
-    if (!roleName || !allowedRoles.includes(roleName)) {
-      // redireciona para home
+    const role = user.role?.name;
+
+    // Sem permissão - home
+    if (!allowedRoles.includes(role)) {
       router.navigate(['/']);
       return false;
     }

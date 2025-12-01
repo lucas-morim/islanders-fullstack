@@ -1,17 +1,17 @@
-import { Injectable, inject } from '@angular/core';
-import { CanActivateFn, Router, UrlTree } from '@angular/router';
+import { inject } from '@angular/core';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthState } from './auth.state';
 
-const router = inject(Router);
-const authState = inject(AuthState);
-
 export const authGuard: CanActivateFn = () => {
-  if (authState.loading()) {
-    // bloqueio
-    return false as unknown as UrlTree;
+  const auth = inject(AuthState);
+  const router = inject(Router);
+
+  if (auth.loading()) {
+    return false; 
   }
 
-  if (!authState.isLoggedIn()) {
+  // sem login - redirect
+  if (!auth.isLoggedIn()) {
     router.navigate(['/login']);
     return false;
   }
