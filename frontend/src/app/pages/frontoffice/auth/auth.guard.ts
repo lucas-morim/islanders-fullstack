@@ -6,7 +6,6 @@ export const authGuard: CanActivateFn = async () => {
   const auth = inject(AuthState);
   const router = inject(Router);
 
-  // aguarda até loading = false
   while (auth.loading()) {
     await new Promise(r => setTimeout(r, 50));
   }
