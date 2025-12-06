@@ -22,8 +22,14 @@ export class AuthState {
       const me = await this.auth.me();
       this.user.set(me);
     } catch {
-      this.user.set(null);
-      localStorage.removeItem('access_token');
+      // tenta refresh token se disponível
+      try {
+        await this.refresh();
+      } catch {
+        this.user.set(null);
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+      }
     }
 
     this.loading.set(false);
@@ -39,7 +45,21 @@ export class AuthState {
 
   logout() {
     localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
     this.user.set(null);
+  }
+
+  /* refresh token method */
+  async refresh() {
+    const token = localStorage.getItem('refresh_token');
+    if (!token) throw new Error('No refresh token available');
+
+    const res = await this.auth.refresh(token);
+    if (res.access_token) localStorage.setItem('access_token', res.access_token);
+    if (res.refresh_token) localStorage.setItem('refresh_token', res.refresh_token);
+
+    const me = await this.auth.me();
+    this.user.set(me);
   }
 
   // helpers das roles para chamar no html
@@ -69,7 +89,7 @@ export class AuthState {
   }
 
   canEdit(): boolean {
-    return this.isAdmin()
+    return this.isAdmin();
   }
 
   canDelete(): boolean {

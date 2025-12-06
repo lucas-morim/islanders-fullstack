@@ -7,6 +7,7 @@ const AUTH_BASE = `${API_BASE}/auth/auth`;
 
 export interface TokenOut {
   access_token: string;
+  refresh_token?: string;
   token_type?: string;
 }
 
@@ -26,12 +27,26 @@ export interface RegisterPayload {
 export class AuthService {
   private http = inject(HttpClient);
 
-  login(payload: LoginPayload): Promise<TokenOut> {
-    return firstValueFrom(this.http.post<TokenOut>(`${AUTH_BASE}/login`, payload));
+  async login(payload: LoginPayload): Promise<TokenOut> {
+    const res = await firstValueFrom(this.http.post<TokenOut>(`${AUTH_BASE}/login`, payload));
+    if (res.access_token) {
+      localStorage.setItem('access_token', res.access_token);
+    }
+    if (res.refresh_token) {
+      localStorage.setItem('refresh_token', res.refresh_token);
+    }
+    return res;
   }
 
-  register(payload: RegisterPayload): Promise<TokenOut> {
-    return firstValueFrom(this.http.post<TokenOut>(`${AUTH_BASE}/register`, payload));
+  async register(payload: RegisterPayload): Promise<TokenOut> {
+    const res = await firstValueFrom(this.http.post<TokenOut>(`${AUTH_BASE}/register`, payload));
+    if (res.access_token) {
+      localStorage.setItem('access_token', res.access_token);
+    }
+    if (res.refresh_token) {
+      localStorage.setItem('refresh_token', res.refresh_token);
+    }
+    return res;
   }
 
   me(): Promise<any> {
@@ -40,5 +55,23 @@ export class AuthService {
 
     const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
     return firstValueFrom(this.http.get(`${AUTH_BASE}/me`, { headers }));
+  }
+
+  async refresh(refreshToken?: string): Promise<TokenOut> {
+    const token = refreshToken || localStorage.getItem('refresh_token');
+    if (!token) return Promise.reject('No refresh token');
+    const res = await firstValueFrom(this.http.post<TokenOut>(`${AUTH_BASE}/refresh`, { refresh_token: token }));
+    if (res.access_token) {
+      localStorage.setItem('access_token', res.access_token);
+    }
+    if (res.refresh_token) {
+      localStorage.setItem('refresh_token', res.refresh_token);
+    }
+    return res;
+  }
+
+  logout() {
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
   }
 }
