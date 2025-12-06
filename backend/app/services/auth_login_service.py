@@ -5,7 +5,7 @@ from datetime import timedelta
 
 from app.services.user_service import service as user_service
 from app.schemas.auth_login import UserLogin, TokenOut
-from app.core.security import create_access_token
+from app.core.security import create_access_token, create_refresh_token
 
 class AuthService:
     def __init__(self):
@@ -28,7 +28,8 @@ class AuthService:
             )
 
         access_token = create_access_token(subject=str(user.id), role_id=user.role_id)
-        return TokenOut(access_token=access_token)
+        refresh_token = create_refresh_token(subject=str(user.id))
+        return TokenOut(access_token=access_token, refresh_token=refresh_token)
 
 
     async def me(self, db: AsyncSession, user_id: str):
