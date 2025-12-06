@@ -11,7 +11,9 @@ class Settings(BaseSettings):
     # JWT
     JWT_SECRET: str
     JWT_ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 7
+
 
     MEDIA_ROOT: str = "media"
     MEDIA_URL: str = "/media"
@@ -20,6 +22,7 @@ class Settings(BaseSettings):
         env_file=".env",
         env_file_encoding="utf-8",
         case_sensitive=False,
+        extra = "allow"
     )
 
 settings = Settings()

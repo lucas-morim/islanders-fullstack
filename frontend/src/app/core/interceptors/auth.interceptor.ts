@@ -1,28 +1,38 @@
-import { Injectable, inject } from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { inject } from '@angular/core';
+import { HttpRequest, HttpHandlerFn, HttpEvent, HttpErrorResponse } from '@angular/common/http';
+import { Observable, throwError, from } from 'rxjs';
+import { catchError, switchMap } from 'rxjs/operators';
 import { AuthState } from '../../pages/frontoffice/auth/auth.state';
 
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  private authState = inject(AuthState);
+export const authInterceptor = (req: HttpRequest<any>, next: HttpHandlerFn): Observable<HttpEvent<any>> => {
+  const auth = inject(AuthState);
+  const token = auth.access_token();
 
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    const token = this.authState.access_token();
-
-    if (token) {
-      req = req.clone({
-        setHeaders: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-    }
-
-    return next.handle(req);
+  if (token) {
+    req = req.clone({
+      setHeaders: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
   }
-}
+
+  return next(req).pipe(
+    catchError(err => {
+      if (err instanceof HttpErrorResponse && err.status === 401) {
+        // tenta refresh token
+        return from(auth.refresh()).pipe(
+          switchMap(() => {
+            const newToken = auth.access_token();
+            const newReq = req.clone({
+              setHeaders: {
+                Authorization: `Bearer ${newToken}`,
+              },
+            });
+            return next(newReq);
+          })
+        );
+      }
+      return throwError(() => err);
+    })
+  );
+};

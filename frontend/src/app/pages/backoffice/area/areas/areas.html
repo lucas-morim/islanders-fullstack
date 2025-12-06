@@ -2,7 +2,7 @@
   <div class="d-flex align-items-center justify-content-between mb-3">
     <h2>Areas</h2>
     <button class="btn btn-primary isla-color-bg" routerLink="/backoffice/areas/create">
-      Nova area
+      Nova área
     </button>
   </div>
 
@@ -22,7 +22,7 @@
 <div *ngIf="!loading() && filtered().length === 0" class="card shadow-sm">
   <div class="card-body text-center py-5">
     <p class="text-muted mb-2">Nenhuma área encontrada.</p>
-    <button class="btn btn-primary" routerLink="/backoffice/areas/create">
+    <button *ngIf="canCreate()" class="btn btn-primary" routerLink="/backoffice/areas/create">
       Criar primeira área
     </button>
   </div>
@@ -53,14 +53,9 @@
           
           <td class="text-end">
             <div class="btn-group btn-group-sm">
-              <a class="btn btn-outline-secondary" [routerLink]="['/backoffice/areas', a.id]">Ver</a>
-              <button class="btn btn-outline-primary"
-                [routerLink]="['/backoffice/areas', a.id, 'edit']">
-                Editar
-              </button>
-              <button class="btn btn-outline-danger" (click)="remove(a)">
-                Apagar
-              </button>
+              <a *ngIf="canView()" class="btn btn-outline-secondary" [routerLink]="['/backoffice/areas', a.id]">Ver</a>
+              <button *ngIf="canEdit()" class="btn btn-outline-primary" [routerLink]="['/backoffice/areas', a.id, 'edit']">Editar</button>
+              <button *ngIf="canDelete()" class="btn btn-outline-danger" (click)="remove(a)">Apagar</button>
             </div>
           </td>
         </tr>
