@@ -38,16 +38,19 @@ export class Home implements OnInit {
 
 
 
-      const cards: CourseCard[] = data.map(c => ({
-        id: c.id,
-        name: c.title,
-        description: c.description ?? '',
-        ects: c.credits ?? 0,
-        hours: c.num_hours ?? 0,
-        price: c.price ?? 0,
-        image: `${BACKEND_URL}${c.photo}`,
-        link: `/curso/${c.id}`,
-      }));
+      const cards: CourseCard[] = data
+  .filter(c => c.status === 'active') 
+  .map(c => ({
+    id: c.id,
+    name: c.title,
+    description: c.description ?? '',
+    ects: c.credits ?? 0,
+    hours: c.num_hours ?? 0,
+    price: c.price ?? 0,
+    image: c.photo ? `${BACKEND_URL}${c.photo}` : '',
+    link: `/curso/${c.id}`,
+  }));
+
 
       this.courses.set(cards);
 
