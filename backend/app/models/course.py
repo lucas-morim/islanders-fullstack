@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from app.models.quiz import Quiz
     from app.models.area_course import AreaCourse
     from app.models.modality import Modality
+    
 
 class Course(IdMixin, TimestampMixin, Base):
     __tablename__ = "courses"

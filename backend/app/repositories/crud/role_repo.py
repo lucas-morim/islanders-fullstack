@@ -2,7 +2,6 @@ from typing import Sequence, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.role import Role
-from app.schemas.role import RoleCreate
 
 class RoleRepository:
     async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Role]:

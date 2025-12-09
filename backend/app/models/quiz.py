@@ -10,6 +10,7 @@ if TYPE_CHECKING:
     from app.models.course import Course
     from app.models.question import Question
     from app.models.quiz_attempt import QuizAttempt
+    from app.models.video import Video
 
 class Quiz(IdMixin, TimestampMixin, Base):
     __tablename__ = "quizzes"
@@ -17,6 +18,7 @@ class Quiz(IdMixin, TimestampMixin, Base):
     description: Mapped[str | None] = mapped_column(Text(), nullable=True)
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
     course_id: Mapped[str] = mapped_column(ForeignKey("courses.id", ondelete="CASCADE"), index=True, nullable=False)
+    video_id: Mapped[str | None] = mapped_column(ForeignKey("videos.id", ondelete="SET NULL"), index=True, nullable=False)
 
     user: Mapped[User] = relationship(
         "User", 
@@ -41,5 +43,11 @@ class Quiz(IdMixin, TimestampMixin, Base):
         "QuizAttempt", 
         back_populates="quiz", 
         cascade="all, delete-orphan",
+        passive_deletes=True
+    )
+
+    video: Mapped[Video | None] = relationship(
+        "Video", 
+        back_populates="courses", 
         passive_deletes=True
     )
