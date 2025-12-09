@@ -48,5 +48,12 @@
         <span>Modalidades</span>
       </a>
     </li>
+
+    <li *ngIf="auth.isAdmin() || auth.isProfessor()" class="nav-item">
+      <a class="nav-link d-flex align-items-center" routerLink="/backoffice/videos" routerLinkActive="active">
+        <i class="cil-video me-2"></i>
+        <span>Vídeos</span>
+      </a>
+    </li>
   </ul>
 </div>

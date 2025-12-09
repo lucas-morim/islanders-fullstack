@@ -1,13 +1,13 @@
 :host {
   display: block;
-  width: var(--admin-sidebar-width);
+  width: 260px;
 }
 
 .sidebar.sidebar-fixed {
   position: fixed;
   bottom: 0;
   left: 0;
-  width: var(--admin-sidebar-width);
+  width: 260px;
   z-index: 1030; 
   background-color: #fff;
   border-right: 1px solid #dee2e6;
@@ -31,7 +31,7 @@
   }
 
   .sidebar.sidebar-fixed {
-    top: var(--admin-header-height);
+    top: 260px;
     left: -100%;
     transition: left .2s;
     z-index: 1031;

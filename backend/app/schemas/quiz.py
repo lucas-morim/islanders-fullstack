@@ -14,12 +14,14 @@ class QuizBase(BaseModel):
 class QuizCreate(QuizBase):
     user_id: str
     course_id: str
+    video_id: str
 
 
 class QuizUpdate(BaseModel):
     title: Optional[str] = Field(None, max_length=200)
     description: Optional[str] = None
     course_id: Optional[str] = None
+    video_id: Optional[str] = None
 
     class Config:
         from_attributes = True
@@ -29,5 +31,6 @@ class QuizOut(QuizBase):
     id: str
     user_id: str
     course_id: str
+    video_id: str
     created_at: datetime
     updated_at: datetime

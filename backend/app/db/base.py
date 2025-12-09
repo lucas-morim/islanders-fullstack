@@ -14,3 +14,4 @@ from app.models.question_option import QuestionOption
 from app.models.option import Option
 from app.models.answer import Answer
 from app.models.modality import Modality
+from app.models.video import Video

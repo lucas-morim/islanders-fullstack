@@ -98,12 +98,37 @@
 
             </div>
 
-            <div class="col-12">
+            <div class="col-12"> 
               <label class="form-label">Descrição</label>
               <textarea class="form-control"
                         rows="3"
                         formControlName="description"
                         placeholder="Descrição resumida do curso, objetivos, público-alvo…"></textarea>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Conteúdos Programáticos</label>
+              <textarea class="form-control"
+                        rows="4"
+                        formControlName="content"
+                        placeholder="Conteúdo programático do curso…"></textarea>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Destinatários</label>
+              <textarea class="form-control"
+                        rows="3"
+                        formControlName="target"
+                        placeholder="A quem se destina este curso…"></textarea>
+            </div>
+
+            <div class="col-12 col-lg-6">
+              <label class="form-label">Data/Info de início</label>
+              <input type="text"
+                    class="form-control"
+                    formControlName="start_info"
+                    placeholder="Ex.: 21/05/2026 ou 'Em breve' ou 'A definir'">
+              <div class="form-text">Pode ser uma data ou texto informativo</div>
             </div>
 
             <div class="col-12 col-lg-4">

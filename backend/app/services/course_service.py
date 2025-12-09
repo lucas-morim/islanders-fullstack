@@ -35,7 +35,7 @@ class CourseService:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail="Course title must be unique",
-            )
+            )   
 
         course = await self.repo.create(db, obj_in=obj_in)
 

@@ -12,6 +12,9 @@ class StatusEnum(str, enum.Enum):
 class CourseBase(BaseModel):
     title: str = Field(..., max_length=50)
     description: Optional[str] = None
+    content: Optional[str] = None
+    target: Optional[str] = None
+    start_info: Optional[str] = None
     area_ids: Optional[List[str]] = None
     status: StatusEnum = StatusEnum.active
     num_hours: Optional[int] = Field(None, ge=0)
