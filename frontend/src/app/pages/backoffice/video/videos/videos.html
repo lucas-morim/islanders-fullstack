@@ -1,0 +1,136 @@
+<section class="page-header sticky-top-under-app">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <h2 class="mb-0">Vídeos</h2>
+    <div class="btn-group">
+      <button class="btn btn-primary isla-color-bg" routerLink="/backoffice/videos/create">
+        Novo vídeo
+      </button>
+      <button class="btn btn-outline-secondary">Exportar</button>
+    </div>
+  </div>
+
+  <div class="card shadow-sm mb-3">
+    <div class="card-body">
+      <div class="row g-2 align-items-end">
+        <div class="col-12 col-md-6">
+          <label class="form-label">Buscar</label>
+          <input type="search"
+                 class="form-control"
+                 placeholder="Título ou URL do vídeo"
+                 [ngModel]="q()"
+                 (ngModelChange)="q.set($event); page.set(1)">
+        </div>
+
+        <div class="col-12 col-md-2 d-flex">
+          <button class="btn btn-outline-secondary w-100" (click)="resetFilters()">
+            Limpar
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div *ngIf="loading()" class="alert alert-info">
+  Carregando vídeos…
+</div>
+
+<div *ngIf="!loading() && filtered().length === 0" class="card shadow-sm">
+  <div class="card-body text-center py-5">
+    <p class="text-muted mb-2">Nenhum vídeo encontrado.</p>
+    <button class="btn btn-primary" (click)="newVideo()">Criar primeiro vídeo</button>
+  </div>
+</div>
+
+<div class="card shadow-sm table-card" *ngIf="filtered().length > 0">
+  <div class="table-responsive">
+    <table class="table table-hover align-middle mb-0">
+      <thead class="table-light">
+        <tr>
+          <th>Título</th>
+          <th class="d-none d-md-table-cell">Descrição</th>
+          <th>URL</th>
+          <th class="text-end">Criado em</th>
+          <th class="text-end">Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let v of paginated()">
+          <td>
+            <div class="d-flex flex-column">
+              <span class="fw-semibold">{{ v.title }}</span>
+              <small class="text-muted d-md-none text-truncate">
+                {{ v.description || 'Sem descrição' }}
+              </small>
+            </div>
+          </td>
+
+          <td class="d-none d-md-table-cell">
+            <span class="text-truncate d-inline-block" style="max-width: 260px;">
+              {{ v.description || 'Sem descrição' }}
+            </span>
+          </td>
+
+          <td>
+            <a [href]="v.video_url" target="_blank" rel="noopener noreferrer" class="text-truncate d-inline-block" style="max-width: 240px;">
+              {{ v.video_url }}
+            </a>
+          </td>
+
+          <td class="text-end">
+            <time [attr.datetime]="v.created_at">
+              {{ v.created_at | date:'dd/MM/yyyy HH:mm' }}
+            </time>
+          </td>
+
+          <td class="text-end">
+            <div class="btn-group btn-group-sm">
+              <a class="btn btn-outline-secondary"
+                 [routerLink]="['/backoffice/videos', v.id]">
+                Ver
+              </a>
+              <button class="btn btn-outline-primary"
+                      [routerLink]="['/backoffice/videos', v.id, 'edit']">
+                Editar
+              </button>
+              <button class="btn btn-outline-danger" (click)="remove(v)">
+                Apagar
+              </button>
+            </div>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="card-body pagination-bar d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
+    <div class="text-muted small">
+      Mostrando <strong>{{ paginated().length }}</strong> de
+      <strong>{{ filtered().length }}</strong> vídeos
+    </div>
+
+    <div class="d-flex align-items-center gap-2">
+      <select class="form-select form-select-sm w-auto" (ngModelChange)="page.set(1)">
+        <option [ngValue]="5">5</option>
+        <option [ngValue]="10">10</option>
+        <option [ngValue]="20">20</option>
+      </select>
+
+      <div class="btn-group">
+        <button class="btn btn-sm btn-outline-secondary"
+                (click)="changePage(page() - 1)"
+                [disabled]="page() <= 1">
+          Anterior
+        </button>
+        <button class="btn btn-sm btn-outline-secondary" disabled>
+          Página {{ page() }} / {{ totalPages() }}
+        </button>
+        <button class="btn btn-sm btn-outline-secondary"
+                (click)="changePage(page() + 1)"
+                [disabled]="page() >= totalPages()">
+          Próxima
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

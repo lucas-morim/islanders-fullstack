@@ -15,6 +15,7 @@ from app.api.v1.routers.auth_login import router as auth_login_router
 from app.api.v1.routers.auth_register import router as auth_register_router
 from app.api.v1.routers.uploads import router as uploads_router
 from app.api.v1.routers.auth_refresh import router as auth_refresh_router
+from app.api.v1.routers.videos import router as videos_router
 
 api_router = APIRouter()
 
@@ -22,6 +23,7 @@ api_router.include_router(areas_router, prefix="/areas", tags=["Areas"])
 api_router.include_router(roles_router, prefix="/roles", tags=["Roles"])
 api_router.include_router(users_router, prefix="/users", tags=["Users"])
 api_router.include_router(courses_router, prefix="/courses", tags=["Courses"])
+api_router.include_router(videos_router, prefix="/videos", tags=["Videos"])
 api_router.include_router(options_router, prefix="/options", tags=["Options"])
 api_router.include_router(questions_router, prefix="/questions", tags=["Questions"])
 api_router.include_router(quizzes_router, prefix="/quizzes", tags=["Quizzes"])

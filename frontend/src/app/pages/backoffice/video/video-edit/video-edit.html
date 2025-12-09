@@ -1,0 +1,73 @@
+<section class="page-header sticky-top-under-app">
+  <div class="d-flex align-items-center justify-content-between">
+    <h2 class="mb-0">Editar vídeo</h2>
+  </div>
+</section>
+
+<div *ngIf="loading()" class="alert alert-info my-3">
+  Carregando vídeo…
+</div>
+
+<form *ngIf="!loading()" [formGroup]="form" novalidate>
+  <div class="card shadow-sm">
+
+    <div class="card-body">
+      <div class="row g-3">
+
+        <div class="col-12 col-md-8">
+          <label class="form-label">Título</label>
+          <input class="form-control"
+                 formControlName="title"
+                 placeholder="Ex.: Introdução ao curso de Redes">
+          <div class="invalid-feedback d-block"
+               *ngIf="f['title'].touched && f['title'].errors">
+            {{ f['title'].errors['required'] ? 'Título é obrigatório.' : '' }}
+            {{ f['title'].errors['minlength'] ? 'Mínimo de 3 caracteres.' : '' }}
+            {{ f['title'].errors['maxlength'] ? 'Máximo de 50 caracteres.' : '' }}
+          </div>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">Descrição</label>
+          <textarea class="form-control"
+                    rows="3"
+                    formControlName="description"
+                    placeholder="Descrição do vídeo (opcional)…"></textarea>
+        </div>
+
+        <div class="col-12">
+          <label class="form-label">URL do vídeo</label>
+          <input type="text"
+                 class="form-control"
+                 formControlName="video_url"
+                 placeholder="Ex.: https://youtu.be/abc123">
+          <div class="invalid-feedback d-block"
+               *ngIf="f['video_url'].touched && f['video_url'].errors">
+            {{ f['video_url'].errors['required'] ? 'URL é obrigatória.' : '' }}
+            {{ f['video_url'].errors['maxlength'] ? 'Máximo de 500 caracteres.' : '' }}
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card-body d-flex justify-content-end gap-2 border-top bg-white">
+      <button class="btn btn-outline-secondary" type="button" (click)="cancel()">
+        Cancelar
+      </button>
+
+      <button class="btn btn-primary" type="button"
+              [disabled]="!canSubmit()"
+              (click)="submit()">
+        <span *ngIf="!submitting(); else saving">Salvar</span>
+      </button>
+
+      <ng-template #saving>
+        <span class="spinner-border spinner-border-sm me-1"
+              role="status" aria-hidden="true"></span>
+        Salvando…
+      </ng-template>
+    </div>
+
+  </div>
+</form>

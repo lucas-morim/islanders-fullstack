@@ -111,6 +111,22 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./course/course-edit/course-edit').then(c => c.CourseEdit),
       },
+
+            {
+        path: 'videos',
+        loadComponent: () =>
+          import('./video/videos/videos').then(c => c.Videos),
+      },
+      {
+        path: 'videos/create',
+        loadComponent: () =>
+          import('./video/video-create/video-create').then(c => c.VideoCreate),
+      },
+      {
+        path: 'videos/:id/edit',
+        loadComponent: () =>
+          import('./video/video-edit/video-edit').then(c => c.VideoEdit),
+      },
     ],
   },
 ];

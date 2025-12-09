@@ -18,7 +18,7 @@ class Quiz(IdMixin, TimestampMixin, Base):
     description: Mapped[str | None] = mapped_column(Text(), nullable=True)
     user_id: Mapped[str] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), index=True, nullable=False)
     course_id: Mapped[str] = mapped_column(ForeignKey("courses.id", ondelete="CASCADE"), index=True, nullable=False)
-    video_id: Mapped[str | None] = mapped_column(ForeignKey("videos.id", ondelete="SET NULL"), index=True, nullable=False)
+    video_id: Mapped[str | None] = mapped_column(ForeignKey("videos.id", ondelete="SET NULL"), index=True, nullable=True)
 
     user: Mapped[User] = relationship(
         "User", 
@@ -48,6 +48,6 @@ class Quiz(IdMixin, TimestampMixin, Base):
 
     video: Mapped[Video | None] = relationship(
         "Video", 
-        back_populates="courses", 
+        back_populates="quizzes", 
         passive_deletes=True
     )
