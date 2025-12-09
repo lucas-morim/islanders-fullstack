@@ -3,13 +3,21 @@
   --hdr: var(--admin-header-height, 72px);
   --sbw: var(--admin-sidebar-width, 260px);
   padding-top: 50px;
-  padding-left: 120px;
+  padding-left: 100px;
+}
+
+:host {
+  display: block;
+  --hdr: var(--admin-header-height, 72px);
+  --sbw: var(--admin-sidebar-width, 260px);
+  padding-top: 50px;
+  padding-left: 150px;
 }
 
 :host .sticky-top-under-app {
   position: sticky;
-  top: 0;             
-  z-index: 100;
+  top: var(--hdr);            
+  z-index: 1020;             
   background: var(--bs-body-bg, #fff);
   padding: .5rem 0;
   border-bottom: 1px solid rgba(0,0,0,.05);

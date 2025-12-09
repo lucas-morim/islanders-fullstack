@@ -35,6 +35,9 @@
     form = this.fb.group({
       title: ['', [Validators.required, Validators.maxLength(50)]],
       description: [''],
+      content: [''],
+      target: [''],
+      start_info: [''],
       modality_id: [''],
       area_ids: [[] as string[]], 
 
@@ -86,6 +89,9 @@
         const payload: CourseCreatePayload = {
           title: v.title!,
           description: v.description ?? null,
+          content: v.content ?? null,
+          target: v.target ?? null,
+          start_info: v.start_info ?? null,
           status: (v.status as StatusEnum) ?? 'active',
           modality_id: v.modality_id || null,
           area_ids: v.area_ids && v.area_ids.length ? v.area_ids : null,

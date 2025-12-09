@@ -17,6 +17,9 @@ class Course(IdMixin, TimestampMixin, Base):
 
     title: Mapped[str] = mapped_column(String(50), unique=True, nullable=False)
     description: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    content: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    target: Mapped[str | None] = mapped_column(Text(), nullable=True)
+    start_info: Mapped[str | None] = mapped_column(Text(), nullable=True)
     status: Mapped[str] = mapped_column(Enum ("active", "inactive", name = "status_enum"), default="active", nullable=False)
     modality_id: Mapped[str | None] = mapped_column(ForeignKey("modalities.id", ondelete="SET NULL"), index=True, nullable=True)
     num_hours: Mapped[int | None] = mapped_column(Integer, nullable=True)

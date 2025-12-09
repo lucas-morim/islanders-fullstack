@@ -2,16 +2,12 @@
   --admin-header-height: 72px;    
   --admin-sidebar-width: 260px;
 }
-
-
+  
 main {
-  padding-top: var(--admin-header-height);
+  padding-top: 72px;
   margin-left: 0;
-  min-height: calc(100vh - var(--admin-header-height));
-  background: var(--bs-body-bg, #fff);
+  min-height: calc(100vh - 72px);
+  background: #fff;
 }
-
-
-
 
 body { margin: 0; }
