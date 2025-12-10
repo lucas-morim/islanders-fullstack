@@ -2,7 +2,7 @@ import { Component, OnInit, signal, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { CourseService, CourseOut } from '../../backoffice/course/course.service';
 import { ModalityService, ModalityOut } from '../../backoffice/modality/modality.service';
-import { NgFor } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
 interface CourseCard {
   id: string;
@@ -19,7 +19,7 @@ interface CourseCard {
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [RouterLink, NgFor],
+  imports: [RouterLink, CommonModule],
   templateUrl: './home.html',
   styleUrls: ['./home.css']
 })
@@ -61,4 +61,5 @@ export class Home implements OnInit {
       this.loading.set(false);
     }
   }
+  
 }
