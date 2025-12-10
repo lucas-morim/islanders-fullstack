@@ -14,7 +14,6 @@ class QuizBase(BaseModel):
 class QuizCreate(QuizBase):
     user_id: Optional[str] = None  
     course_id: str
-    video_id: str
     video_id: Optional[str] = None
 
 class QuizUpdate(BaseModel):

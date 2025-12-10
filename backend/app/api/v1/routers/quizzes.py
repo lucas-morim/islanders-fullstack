@@ -51,7 +51,8 @@ async def update_quiz(
         quiz_id,
         title=payload.title,
         description=payload.description,
-        course_id=payload.course_id
+        course_id=payload.course_id,
+        video_id=payload.video_id
     )
 
 

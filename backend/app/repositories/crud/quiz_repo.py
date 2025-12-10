@@ -61,13 +61,14 @@ class QuizRepository:
             quiz.description = description
         if course_id is not None:
             quiz.course_id = course_id
-        if video_id is not None:
-            quiz.video_id = video_id
+
+        quiz.video_id = video_id
 
         db.add(quiz)
         await db.commit()
         await db.refresh(quiz)
         return quiz
+
 
     async def delete(self, db: AsyncSession, quiz: Quiz) -> bool:
         if not quiz:

@@ -1,1 +1,91 @@
-<p>quiz-edit works!</p>
+<section class="page-header sticky-top-under-app">
+  <div class="d-flex align-items-center justify-content-between">
+    <h2 class="mb-0">Editar quiz</h2>
+  </div>
+</section>
+
+<div *ngIf="loading()" class="alert alert-info my-3">
+  Carregando quiz, cursos e vídeos…
+</div>
+
+<form *ngIf="!loading()" [formGroup]="form" novalidate>
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="row g-3">
+
+        <!-- TÍTULO -->
+        <div class="col-12 col-md-8">
+          <label class="form-label">Título</label>
+          <input type="text"
+                 class="form-control"
+                 formControlName="title"
+                 placeholder="Ex.: Quiz de revisão de IPv4">
+          <div class="invalid-feedback d-block"
+               *ngIf="f['title'].touched && f['title'].invalid">
+            <span *ngIf="f['title'].errors?.['required']">Título é obrigatório.</span>
+            <span *ngIf="f['title'].errors?.['minlength']">Mínimo de 3 caracteres.</span>
+            <span *ngIf="f['title'].errors?.['maxlength']">Máximo de 200 caracteres.</span>
+          </div>
+        </div>
+
+        <!-- CURSO -->
+        <div class="col-12 col-md-6">
+          <label class="form-label">Curso</label>
+          <select class="form-select" formControlName="course_id">
+            <option value="">Selecione um curso…</option>
+            <option *ngFor="let c of courses()" [value]="c.id">
+              {{ c.title }}
+            </option>
+          </select>
+          <div class="invalid-feedback d-block"
+               *ngIf="f['course_id'].touched && f['course_id'].invalid">
+            Selecione um curso.
+          </div>
+        </div>
+
+        <!-- VÍDEO -->
+        <div class="col-12 col-md-6">
+          <label class="form-label">Vídeo introdutório (opcional)</label>
+          <select class="form-select" formControlName="video_id">
+            <option value="">Sem vídeo</option>
+            <option *ngFor="let v of videos()" [value]="v.id">
+              {{ v.title }}
+            </option>
+          </select>
+          <div class="form-text">
+            Este vídeo será exibido antes do quiz. Pode ser reutilizado em vários quizzes.
+          </div>
+        </div>
+
+        <!-- DESCRIÇÃO -->
+        <div class="col-12">
+          <label class="form-label">Descrição</label>
+          <textarea class="form-control"
+                    rows="3"
+                    formControlName="description"
+                    placeholder="Descrição breve do quiz, objetivos, contexto…"></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="card-body d-flex justify-content-end gap-2 border-top bg-white">
+      <button class="btn btn-outline-secondary" type="button" (click)="cancel()">
+        Cancelar
+      </button>
+
+      <button class="btn btn-primary isla-color-bg"
+              type="button"
+              [disabled]="!canSubmit()"
+              (click)="submit()">
+        <span *ngIf="!submitting(); else saving">Salvar alterações</span>
+      </button>
+
+      <ng-template #saving>
+        <span class="spinner-border spinner-border-sm me-1"
+              role="status" aria-hidden="true"></span>
+        Salvando…
+      </ng-template>
+    </div>
+  </div>
+</form>
