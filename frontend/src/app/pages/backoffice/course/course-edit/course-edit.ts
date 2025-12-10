@@ -42,6 +42,9 @@ export class CourseEdit implements OnInit {
   form = this.fb.group({
     title: ['', [Validators.required, Validators.maxLength(50)]],
     description: [''],
+    content: [''],
+    target: [''],
+    start_info: [''],
 
     modality_id: [''],
     area_ids: [[] as string[]],
@@ -97,6 +100,9 @@ export class CourseEdit implements OnInit {
     this.form.patchValue({
       title: c.title,
       description: c.description ?? '',
+      content: c.content ?? '',
+      target: c.target ?? '',
+      start_info: c.start_info ?? '',
       modality_id: c.modality_id ?? '',
       area_ids: c.area_ids ?? [],
       status: c.status ?? 'active',
@@ -105,13 +111,12 @@ export class CourseEdit implements OnInit {
       price: c.price ?? null,
       photo: c.photo ?? '',
     });
-    const backendBase = 'http://127.0.0.1:8000'; 
+
+    const backendBase = 'http://127.0.0.1:8000';
     const photoUrl =
       c.photo
-        ? (c.photo.startsWith('http')
-            ? c.photo
-            : `${backendBase}${c.photo}`)
-        : null; 
+        ? (c.photo.startsWith('http') ? c.photo : `${backendBase}${c.photo}`)
+        : null;
 
     this.coverPreview.set(photoUrl);
     this.createdAt = c.created_at;
@@ -151,9 +156,7 @@ export class CourseEdit implements OnInit {
       .map((id) => map.get(id) ?? 'Desconhecida')
       .filter(Boolean);
 
-    if (names.length === 1) return names[0];
-    if (names.length <= 3) return names.join(', ');
-    return `${names.length} áreas selecionadas`;
+    return names.join(', ');
   }
 
   async onCoverChange(ev: Event) {
@@ -191,6 +194,9 @@ export class CourseEdit implements OnInit {
       const payload: CourseUpdatePayload = {
         title: v.title ?? null,
         description: v.description ?? null,
+        content: v.content ?? null,
+        target: v.target ?? null,
+        start_info: v.start_info ?? null,
         modality_id: v.modality_id || null,
         area_ids: v.area_ids && v.area_ids.length ? v.area_ids : null,
         status: (v.status as StatusEnum) ?? null,

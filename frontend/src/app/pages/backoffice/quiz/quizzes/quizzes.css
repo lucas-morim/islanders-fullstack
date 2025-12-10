@@ -1,0 +1,43 @@
+.avatar {
+  width: 32px;
+  height: 32px;
+  object-fit: cover;
+}
+
+.form-control:focus,
+.form-select:focus {
+  box-shadow: none;
+  border-color: #86b7fe;
+}
+
+.btn-group .btn {
+  min-width: 64px;
+}
+
+.table-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 440px;
+  margin-top: 40px;
+}
+
+.table-card .table-responsive {
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+.table-card .pagination-bar {
+  border-top: 1px solid rgba(0,0,0,.06);
+  background: var(--bs-body-bg, #fff);
+}
+
+.sticky-top-under-app {
+  position: sticky;
+  top: 100px;
+  z-index: 100;
+  background: var(--bs-body-bg, #fff);
+  padding-top: .5rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+  margin-bottom: 40px;
+}

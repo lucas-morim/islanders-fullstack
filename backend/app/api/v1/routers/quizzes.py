@@ -35,7 +35,8 @@ async def create_quiz(
         title=payload.title,
         description=payload.description,
         user_id=payload.user_id,
-        course_id=payload.course_id
+        course_id=payload.course_id,
+        video_id=payload.video_id
     )
 
 

@@ -35,6 +35,7 @@
         <div class="col-12 col-md-9">
           <div class="row g-3">
 
+            <!-- TÍTULO -->
             <div class="col-12">
               <label class="form-label">Título</label>
               <input class="form-control"
@@ -47,6 +48,7 @@
               </div>
             </div>
 
+            <!-- MODALIDADE -->
             <div class="col-12 col-lg-4">
               <label class="form-label">Modalidade</label>
               <select class="form-select" formControlName="modality_id">
@@ -57,6 +59,7 @@
               </select>
             </div>
 
+            <!-- STATUS -->
             <div class="col-12 col-lg-4">
               <label class="form-label">Status</label>
               <select class="form-select" formControlName="status">
@@ -65,6 +68,7 @@
               </select>
             </div>
 
+            <!-- ÁREAS -->
             <div class="col-12 col-lg-4">
               <label class="form-label">Áreas</label>
 
@@ -97,6 +101,7 @@
               </div>
             </div>
 
+            <!-- DESCRIÇÃO -->
             <div class="col-12">
               <label class="form-label">Descrição</label>
               <textarea class="form-control"
@@ -105,6 +110,35 @@
                         placeholder="Descrição resumida do curso, objetivos, público-alvo…"></textarea>
             </div>
 
+            <!-- CONTEÚDOS PROGRAMÁTICOS -->
+            <div class="col-12">
+              <label class="form-label">Conteúdos Programáticos</label>
+              <textarea class="form-control"
+                        rows="4"
+                        formControlName="content"
+                        placeholder="Conteúdo programático do curso…"></textarea>
+            </div>
+
+            <!-- DESTINATÁRIOS -->
+            <div class="col-12">
+              <label class="form-label">Destinatários</label>
+              <textarea class="form-control"
+                        rows="3"
+                        formControlName="target"
+                        placeholder="A quem se destina este curso…"></textarea>
+            </div>
+
+            <!-- DATA / INFO DE INÍCIO -->
+            <div class="col-12 col-lg-6">
+              <label class="form-label">Data/Info de início</label>
+              <input type="text"
+                     class="form-control"
+                     formControlName="start_info"
+                     placeholder="Ex.: 21/05/2026 ou 'Em breve' ou 'A definir'">
+              <div class="form-text">Pode ser uma data ou texto informativo</div>
+            </div>
+
+            <!-- CARGA HORÁRIA -->
             <div class="col-12 col-lg-4">
               <label class="form-label">Carga horária (horas)</label>
               <input type="number"
@@ -117,6 +151,7 @@
               </div>
             </div>
 
+            <!-- CRÉDITOS -->
             <div class="col-12 col-lg-4">
               <label class="form-label">Créditos</label>
               <input type="number"
@@ -129,6 +164,7 @@
               </div>
             </div>
 
+            <!-- PREÇO -->
             <div class="col-12 col-lg-4">
               <label class="form-label">Preço</label>
               <div class="input-group">
@@ -153,7 +189,7 @@
 
     <div class="card-body d-flex justify-content-end gap-2 border-top bg-white">
       <button class="btn btn-outline-secondary" type="button" (click)="cancel()">Cancelar</button>
-      <button class="btn btn-primary"
+      <button class="btn btn-primary isla-color-bg"
               type="button"
               [disabled]="!canSubmit()"
               (click)="submit()">

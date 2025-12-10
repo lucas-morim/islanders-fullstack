@@ -9,7 +9,12 @@ class QuizService:
     def __init__(self):
         self.repo = QuizRepository()
 
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Quiz]:
+    async def list(
+        self,
+        db: AsyncSession,
+        skip: int = 0,
+        limit: int = 100
+    ) -> Sequence[Quiz]:
         return await self.repo.list(db, skip=skip, limit=limit)
 
     async def get(self, db: AsyncSession, quiz_id: str) -> Quiz:
@@ -21,7 +26,16 @@ class QuizService:
             )
         return quiz
 
-    async def create(self, db: AsyncSession, *, title: str, description: Optional[str], user_id: str, course_id: str) -> Quiz:
+    async def create(
+        self,
+        db: AsyncSession,
+        *,
+        title: str,
+        description: Optional[str],
+        user_id: Optional[str],
+        course_id: str,
+        video_id: Optional[str] = None,
+    ) -> Quiz:
         existing_quiz = await self.repo.get_by_title(db, title)
         if existing_quiz:
             raise HTTPException(
@@ -29,10 +43,26 @@ class QuizService:
                 detail="Quiz title must be unique"
             )
 
-        quiz = await self.repo.create(db, title=title, description=description, user_id=user_id, course_id=course_id)
+        quiz = await self.repo.create(
+            db,
+            title=title,
+            description=description,
+            user_id=user_id or None,      # '' -> None
+            course_id=course_id,
+            video_id=video_id or None,    # '' -> None
+        )
         return quiz
 
-    async def update(self, db: AsyncSession, quiz_id: str, *, title: Optional[str] = None, description: Optional[str] = None, course_id: Optional[str] = None) -> Quiz:
+    async def update(
+        self,
+        db: AsyncSession,
+        quiz_id: str,
+        *,
+        title: Optional[str] = None,
+        description: Optional[str] = None,
+        course_id: Optional[str] = None,
+        video_id: Optional[str] = None,
+    ) -> Quiz:
         quiz = await self.get(db, quiz_id)
 
         if title:
@@ -43,7 +73,14 @@ class QuizService:
                     detail="Quiz title must be unique"
                 )
 
-        quiz = await self.repo.update(db, quiz, title=title, description=description, course_id=course_id)
+        quiz = await self.repo.update(
+            db,
+            quiz,
+            title=title,
+            description=description,
+            course_id=course_id,
+            video_id=video_id,
+        )
         return quiz
 
     async def delete(self, db: AsyncSession, quiz_id: str) -> None:

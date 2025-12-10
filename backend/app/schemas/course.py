@@ -34,6 +34,9 @@ class CourseCreate(CourseBase):
 class CourseUpdate(BaseModel):
     title: Optional[str] = Field(None, max_length=50)
     description: Optional[str] = None
+    content: Optional[str] = None
+    target: Optional[str] = None
+    start_info: Optional[str] = None
     area_ids: Optional[List[str]] = None
     modality_id: Optional[str] = None
     num_hours: Optional[int] = Field(None, ge=0)
