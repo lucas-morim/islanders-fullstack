@@ -19,6 +19,20 @@
   align-items: center;
 }
 
+.app-header .dropdown {
+  position: relative; 
+}
+
+.app-header .dropdown-menu {
+  position: absolute;
+  right: 0;            
+  top: 100%;          
+  margin-top: .5rem;
+  z-index: 2000;       
+  min-width: 180px;
+  max-width: calc(100vw - 1rem); 
+}
+
 @media (min-width: 992px) {
   .app-header {
     left: 260px;
