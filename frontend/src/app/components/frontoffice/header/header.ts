@@ -16,20 +16,28 @@ export class Header {
   logo: string = 'assets/islaverse.png';
   dropdownOpen = signal(false);
 
+ 
+  isDarkPage = false;
+
   constructor(private router: Router) {
     this.router.events
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
-        this.logo = event.url.startsWith('/about')
-          ? 'assets/islaverse2.png'
-          : 'assets/islaverse.png';
-        this.dropdownOpen.set(false); // fecha dropdown ao navegar
+
+      
+        this.isDarkPage = event.url.startsWith('/about') || event.url.startsWith('/course');
+
+       
+        this.logo = this.isDarkPage ? 'assets/islaverse2.png' : 'assets/islaverse.png';
+
+        
+        this.dropdownOpen.set(false);
       });
   }
 
   get userPhoto(): string {
     const photo = this.auth.user()?.photo;
-    return photo ? 'http://127.0.0.1:8000' + photo : 'assets/avatar-default.png';
+    return photo ? 'http://127.0.0.1:8000' + photo : 'assets/perfil.png';
   }
 
   toggleDropdown() {
