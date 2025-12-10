@@ -1,10 +1,10 @@
 import { Component, OnInit, inject } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CourseService, CourseOut } from '../../backoffice/course/course.service';
 import { ModalityService, ModalityOut } from '../../backoffice/modality/modality.service';
-import { NgFor } from '@angular/common';
+import { CommonModule } from '@angular/common';
 
-interface CourseCard {
+interface courseCard {
   id: string;
   name: string;
   description: string;
@@ -13,12 +13,15 @@ interface CourseCard {
   hours: number;
   price: number;
   image: string;
+  date?: string;
+  target?: string;
+  content?: string;
 }
 
 @Component({
   selector: 'app-course',
   standalone: true,
-  imports: [ NgFor],
+  imports: [ CommonModule, RouterLink],
   templateUrl: './course.html',
   styleUrls: ['./course.css']
 })
@@ -27,7 +30,7 @@ export class Course implements OnInit {
   private modalitySvc = inject(ModalityService);
   private route = inject(ActivatedRoute);
 
-  courseCard?: CourseCard;
+  course?: courseCard;
 
   async ngOnInit() {
     const courseId = this.route.snapshot.paramMap.get('id');
@@ -43,7 +46,7 @@ export class Course implements OnInit {
       }
 
       const BACKEND_URL = 'http://127.0.0.1:8000';
-      this.courseCard = {
+      this.course = {
         id: course.id,
         name: course.title,
         description: course.description ?? '',
@@ -51,10 +54,26 @@ export class Course implements OnInit {
         modality_name: modalityName,
         hours: course.num_hours ?? 0,
         price: course.price ?? 0,
-        image: course.photo ? `${BACKEND_URL}${course.photo}` : ''
+        image: course.photo ? `${BACKEND_URL}${course.photo}` : '',
+        date: course.start_info ?? "",
+        target: course.target ?? '',
+        content: course.content ?? '',
       };
     } catch (err) {
       console.error('Erro ao carregar curso ou modalidade:', err);
     }
   }
+
+  get contentList(): string[] {
+  return this.course?.content
+    ? this.course.content.split('\n').map(item => item.trim()).filter(Boolean)
+    : [];
+}
+
+get targetList(): string[] {
+  return this.course?.target
+    ? this.course.target.split('\n').map(item => item.trim()).filter(Boolean)
+    : [];
+}
+
 }
