@@ -15,7 +15,7 @@
     </div>
 
     <div class="relative ml-4">
-      <img [src]="userPhoto" class="w-10 h-10 rounded-full cursor-pointer" (click)="toggleDropdown()" />
+      <img [src]="userPhoto" class="w-16 h-12 rounded-full cursor-pointer" (click)="toggleDropdown()" />
 
       <div *ngIf="dropdownOpenValue()" class="absolute right-0 mt-2 w-44 bg-white border shadow-lg rounded transition duration-200">
         <ng-container *ngIf="auth.isLoggedIn(); else guest">
@@ -30,5 +30,6 @@
     </div>
   </div>
 
-  <div class="mt-3 sm:mt-4 w-full h-0.5 bg-white"></div>
+  <div class="mt-3 sm:mt-4 w-full h-0.5" [ngClass]="isDarkPage ? 'bg-black' : 'bg-white'"></div>
+
 </header>

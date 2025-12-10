@@ -14,11 +14,13 @@ export const routes: Routes = [
         path: 'about',
         loadComponent: () => import('./about/about').then(c => c.About)
       },
+
+      {
+        path: 'course/:id',
+        loadComponent: () => import('./course/course').then(c => c.Course)
+      },
+
       // QUANDO FOR FEITO É SÓ TIRAR O COMENTÁRIO
-      // {
-      //   path: 'course',
-      //   loadComponent: () => import('./course/course').then(c => c.Course)
-      // },
       // {
       //   path: 'mission',
       //   loadComponent: () => import('./mission/mission').then(c => c.Mission)
