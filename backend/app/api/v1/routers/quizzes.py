@@ -1,9 +1,11 @@
-from fastapi import APIRouter, Depends, Query, status
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
 from typing import List
 from app.core.deps import get_db
 from app.schemas.quiz import QuizCreate, QuizOut, QuizUpdate
 from app.services.quiz_service import service as quiz_service
+from app.core.security import get_current_user
+from app.models.user import User
 
 router = APIRouter()
 
@@ -28,13 +30,14 @@ async def get_quiz(
 @router.post("/", response_model=QuizOut, status_code=status.HTTP_201_CREATED)
 async def create_quiz(
     payload: QuizCreate,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)   # pega do token
 ):
     return await quiz_service.create(
         db,
         title=payload.title,
         description=payload.description,
-        user_id=payload.user_id,
+        user_id=current_user.id,   # user id é o get_current_user agora
         course_id=payload.course_id,
         video_id=payload.video_id
     )
@@ -44,8 +47,18 @@ async def create_quiz(
 async def update_quiz(
     quiz_id: str,
     payload: QuizUpdate,
-    db: AsyncSession = Depends(get_db)
+    db: AsyncSession = Depends(get_db),
+    current_user: User = Depends(get_current_user)
 ):
+    quiz = await quiz_service.get(db, quiz_id)
+
+    # Impedir que alguém edite quiz que não é dele
+    if quiz.user_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="You do not have permission to edit this quiz."
+        )
+
     return await quiz_service.update(
         db,
         quiz_id,

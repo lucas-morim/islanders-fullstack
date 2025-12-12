@@ -17,8 +17,7 @@ export interface QuizOut {
 
 export interface QuizCreatePayload {
   title: string;
-  description?: string;
-  user_id?: string | null;      
+  description?: string;    
   course_id: string;
   video_id?: string | null;
   created_at?: string;          
@@ -28,7 +27,6 @@ export interface QuizUpdatePayload {
   id?: string | null;
   title?: string | null;
   description?: string | null;
-  user_id?: string | null;
   course_id?: string | null;
   video_id?: string | null;
   updated_at: string;
