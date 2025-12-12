@@ -76,8 +76,6 @@ export class QuizCreate implements OnInit {
         description: v.description ?? undefined,
         course_id: v.course_id!,
         video_id: v.video_id || null,
-        // user_id: null, // por enquanto, se quiser deixar sem dono
-        created_at: new Date().toISOString(),
       };
 
       await this.quizSvc.create(payload);
