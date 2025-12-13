@@ -18,8 +18,6 @@ class UserBase(BaseModel):
 
     class Config:
         from_attributes = True  
-        from_attributes = True  
-
 
 
 class UserCreate(UserBase):
@@ -36,10 +34,6 @@ class UserUpdate(BaseModel):
     status: Optional[StatusEnum] = None
     password: Optional[str] = Field(default=None, min_length=6, max_length=255)
     role_id: Optional[str] = None
-
-    class Config:
-        from_attributes = True
-
 
     class Config:
         from_attributes = True
