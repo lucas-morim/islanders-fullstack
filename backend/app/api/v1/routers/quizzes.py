@@ -31,13 +31,13 @@ async def get_quiz(
 async def create_quiz(
     payload: QuizCreate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)   # pega do token
+    current_user: User = Depends(get_current_user)   
 ):
     return await quiz_service.create(
         db,
         title=payload.title,
         description=payload.description,
-        user_id=current_user.id,   # user id é o get_current_user agora
+        user_id=current_user.id,   
         course_id=payload.course_id,
         video_id=payload.video_id
     )
@@ -48,16 +48,17 @@ async def update_quiz(
     quiz_id: str,
     payload: QuizUpdate,
     db: AsyncSession = Depends(get_db),
-    current_user: User = Depends(get_current_user)
+    #current_user: User = Depends(get_current_user)
 ):
-    quiz = await quiz_service.get(db, quiz_id)
+    
+    #quiz = await quiz_service.get(db, quiz_id)
 
     # Impedir que alguém edite quiz que não é dele
-    if quiz.user_id != current_user.id:
-        raise HTTPException(
-            status_code=403,
-            detail="You do not have permission to edit this quiz."
-        )
+    #if quiz.user_id != current_user.id:
+        #raise HTTPException(
+            #status_code=403,
+            #detail="You do not have permission to edit this quiz."
+        #)
 
     return await quiz_service.update(
         db,
