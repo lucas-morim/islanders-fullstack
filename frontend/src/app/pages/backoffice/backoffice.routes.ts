@@ -111,8 +111,7 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./course/course-edit/course-edit').then(c => c.CourseEdit),
       },
-
-            {
+      {
         path: 'videos',
         loadComponent: () =>
           import('./video/videos/videos').then(c => c.Videos),
@@ -126,6 +125,21 @@ export const routes: Routes = [
         path: 'videos/:id/edit',
         loadComponent: () =>
           import('./video/video-edit/video-edit').then(c => c.VideoEdit),
+      },
+      {
+        path: 'quizzes',
+        loadComponent: () =>
+          import('./quiz/quizzes/quizzes').then(c => c.Quizzes),
+      },
+      {
+        path: 'quizzes/create',
+        loadComponent: () =>
+          import('./quiz/quiz-create/quiz-create').then(c => c.QuizCreate),
+      },
+      {
+        path: 'quizzes/:id/edit',
+        loadComponent: () =>
+          import('./quiz/quiz-edit/quiz-edit').then(c => c.QuizEdit),
       },
     ],
   },

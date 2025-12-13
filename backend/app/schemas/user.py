@@ -15,8 +15,6 @@ class UserBase(BaseModel):
     username: str = Field(max_length=120)
     photo: Optional[str] = Field(default=None, max_length=255)
     status: StatusEnum = StatusEnum.active 
-    username: str = Field(max_length=120)
-    status: StatusEnum = StatusEnum.active 
 
     class Config:
         from_attributes = True  
@@ -35,8 +33,6 @@ class UserUpdate(BaseModel):
     email: Optional[EmailStr] = Field(default=None, max_length=255)
     username: Optional[str] = Field(default=None, max_length=120)
     photo: Optional[str] = Field(default=None, max_length=255)
-    status: Optional[StatusEnum] = None
-    username: Optional[str] = Field(default=None, max_length=120)
     status: Optional[StatusEnum] = None
     password: Optional[str] = Field(default=None, min_length=6, max_length=255)
     role_id: Optional[str] = None

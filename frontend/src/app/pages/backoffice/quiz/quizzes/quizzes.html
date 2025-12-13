@@ -1,11 +1,11 @@
 <section class="page-header sticky-top-under-app">
   <div class="d-flex align-items-center justify-content-between mb-3">
-    <h2 class="mb-0">Vídeos</h2>
+    <h2 class="mb-0">Quizzes</h2>
     <div class="btn-group">
-      <button class="btn btn-primary isla-color-bg" routerLink="/backoffice/videos/create">
-        Novo vídeo
+      <button class="btn btn-primary isla-color-bg" routerLink="/backoffice/quizzes/create">
+        Novo quiz
       </button>
-      <button class="btn btn-outline-secondary">Exportar</button>
+      <button class="btn btn-outline-secondary" >Exportar</button>
     </div>
   </div>
 
@@ -16,7 +16,7 @@
           <label class="form-label">Buscar</label>
           <input type="search"
                  class="form-control"
-                 placeholder="Título ou URL do vídeo"
+                 placeholder="Título, curso ou vídeo"
                  [ngModel]="q()"
                  (ngModelChange)="q.set($event); page.set(1)">
         </div>
@@ -31,14 +31,16 @@
   </div>
 </section>
 
-<div *ngIf="loading()" class="alert alert-info">
-  Carregando vídeos…
+<div *ngIf="loading()" class="alert alert-info my-3">
+  Carregando quizzes…
 </div>
 
 <div *ngIf="!loading() && filtered().length === 0" class="card shadow-sm">
   <div class="card-body text-center py-5">
-    <p class="text-muted mb-2">Nenhum vídeo encontrado.</p>
-    <button class="btn btn-primary isla-color-bg" (click)="newVideo()">Criar primeiro vídeo</button>
+    <p class="text-muted mb-2">Nenhum quiz encontrado.</p>
+    <button class="btn btn-primary isla-color-bg" (click)="newQuiz()">
+      Criar primeiro quiz
+    </button>
   </div>
 </div>
 
@@ -49,53 +51,57 @@
         <tr>
           <th>Título</th>
           <th class="d-none d-md-table-cell">Descrição</th>
-          <th>URL</th>
+          <th>Curso</th>
+          <th>Vídeo</th>
           <th class="text-end">Criado em</th>
           <th class="text-end">Ações</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let v of paginated()">
+        <tr *ngFor="let qz of paginated()">
           <td>
             <div class="d-flex flex-column">
-              <span class="fw-semibold">{{ v.title }}</span>
+              <span class="fw-semibold">{{ qz.title }}</span>
               <small class="text-muted d-md-none text-truncate">
-                {{ v.description || 'Sem descrição' }}
+                {{ qz.description || 'Sem descrição' }}
               </small>
             </div>
           </td>
 
           <td class="d-none d-md-table-cell">
             <span class="text-truncate d-inline-block" style="max-width: 260px;">
-              {{ v.description || 'Sem descrição' }}
+              {{ qz.description || 'Sem descrição' }}
             </span>
           </td>
 
           <td>
-            <a [href]="v.video_url" target="_blank" rel="noopener noreferrer" class="text-truncate d-inline-block" style="max-width: 240px;">
-              {{ v.video_url }}
-            </a>
+            <span class="badge bg-secondary-subtle text-secondary border">
+              {{ qz.courseName }}
+            </span>
+          </td>
+
+          <td>
+            <ng-container *ngIf="qz.videoTitle; else noVideo">
+              <span class="badge bg-secondary-subtle text-secondary border">
+                {{ qz.videoTitle }}
+              </span>
+            </ng-container>
+            <ng-template #noVideo>
+              <span class="text-muted small">Sem vídeo</span>
+            </ng-template>
           </td>
 
           <td class="text-end">
-            <time [attr.datetime]="v.created_at">
-              {{ v.created_at | date:'dd/MM/yyyy HH:mm' }}
+            <time [attr.datetime]="qz.created_at">
+              {{ qz.created_at | date:'dd/MM/yyyy HH:mm' }}
             </time>
           </td>
 
           <td class="text-end">
             <div class="btn-group btn-group-sm">
-              <a class="btn btn-outline-secondary"
-                 [routerLink]="['/backoffice/videos', v.id]">
-                Ver
-              </a>
-              <button class="btn btn-outline-primary"
-                      [routerLink]="['/backoffice/videos', v.id, 'edit']">
-                Editar
-              </button>
-              <button class="btn btn-outline-danger" (click)="remove(v)">
-                Apagar
-              </button>
+              <button class="btn btn-outline-secondary" (click)="view(qz)">Ver</button>
+              <button class="btn btn-outline-primary" (click)="edit(qz)">Editar</button>
+              <button class="btn btn-outline-danger" (click)="remove(qz)">Apagar</button>
             </div>
           </td>
         </tr>
@@ -106,7 +112,7 @@
   <div class="card-body pagination-bar d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
     <div class="text-muted small">
       Mostrando <strong>{{ paginated().length }}</strong> de
-      <strong>{{ filtered().length }}</strong> vídeos
+      <strong>{{ filtered().length }}</strong> quizzes
     </div>
 
     <div class="d-flex align-items-center gap-2">

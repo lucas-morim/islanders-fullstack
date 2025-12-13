@@ -2,15 +2,26 @@
   display: block;
   --hdr: var(--admin-header-height, 72px);
   --sbw: var(--admin-sidebar-width, 260px);
-  padding-top: 30px;        
+  padding-top: 35px;
+  padding-left: 20px;
 }
 
 .sticky-top-under-app {
   position: sticky;
-  top: 0;                          
+  top: 0;
   z-index: 100;
   background: var(--bs-body-bg, #fff);
-  padding-top: .5rem;
-  padding-bottom: .5rem;
+  padding: .5rem 0;
   border-bottom: 1px solid rgba(0,0,0,.05);
+}
+
+.page-header h1,
+.page-header h2 {
+  margin-top: 0;
+}
+
+.form-control:focus,
+.form-select:focus {
+  box-shadow: none;
+  border-color: #86b7fe;
 }

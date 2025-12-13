@@ -11,9 +11,16 @@
    color: #762123;
 }
 
-.isla-color-bg{
+
+.btn.btn-primary.isla-color-bg {
   background-color: #762123;
+  border-color: #762123;
 }
-.isla-color-bg:hover {
-  background-color: #952a2b;
+
+/* hover e active mais escuros */
+.btn.btn-primary.isla-color-bg:hover,
+.btn.btn-primary.isla-color-bg:active,
+.btn.btn-primary.isla-color-bg:focus {
+  background-color: #952a2b !important;
+  border-color: #952a2b !important;
 }
