@@ -16,6 +16,7 @@ from app.api.v1.routers.uploads import router as uploads_router
 from app.api.v1.routers.auth_refresh import router as auth_refresh_router
 from app.api.v1.routers.videos import router as videos_router
 from app.api.v1.routers.question_option import router as question_option_router
+from app.api.v1.routers.question_option_meta import router as question_option_meta_router
 
 api_router = APIRouter()
 
@@ -26,6 +27,7 @@ api_router.include_router(courses_router, prefix="/courses", tags=["Courses"])
 api_router.include_router(videos_router, prefix="/videos", tags=["Videos"])
 api_router.include_router(options_router, prefix="/options", tags=["Options"])
 api_router.include_router(questions_router, prefix="/questions", tags=["Questions"])
+api_router.include_router(question_option_meta_router, prefix="/questions/options", tags=["Question Option Meta"])
 api_router.include_router(question_option_router, prefix="/questions/{question_id}/options", tags=["Question Options"])
 api_router.include_router(quizzes_router, prefix="/quizzes", tags=["Quizzes"])
 api_router.include_router(quiz_attempts_router, prefix="/quiz_attempts", tags=["Quiz Attempts"])

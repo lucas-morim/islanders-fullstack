@@ -1,0 +1,229 @@
+:host {
+  display: block;
+  padding-top: 35px;
+  padding-left: 20px;
+}
+
+:host .sticky-top-under-app {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: var(--bs-body-bg, #fff);
+  padding: .5rem 0;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+}
+
+.form-control:focus,
+.form-select:focus {
+  box-shadow: none;
+  border-color: #86b7fe;
+}
+
+.selected-wrap {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.modal-backdrop-custom {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6); 
+  backdrop-filter: blur(3px); 
+  z-index: 1040;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.modal-custom {
+  position: fixed;
+  inset: 0;
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.2s ease-out;
+  pointer-events: none; 
+}
+
+.modal-dialog {
+  width: 90%;
+  max-width: 800px;
+  margin: 1rem;
+  pointer-events: auto; 
+  animation: slideUp 0.3s ease-out;
+}
+
+.modal-content {
+  background: #fff;
+  border-radius: 12px; 
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3); 
+  overflow: hidden;
+}
+
+.modal-header {
+  background: #f8f9fa;
+  border-bottom: 1px solid #dee2e6;
+  padding: 1.25rem 1.5rem;
+}
+
+.modal-header .modal-title {
+  font-weight: 600;
+  color: #212529;
+  margin: 0;
+  font-size: 1.25rem;
+}
+
+.modal-header .btn-close {
+  background: transparent url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%23000'%3e%3cpath d='M.293.293a1 1 0 0 1 1.414 0L8 6.586 14.293.293a1 1 0 1 1 1.414 1.414L9.414 8l6.293 6.293a1 1 0 0 1-1.414 1.414L8 9.414l-6.293 6.293a1 1 0 0 1-1.414-1.414L6.586 8 .293 1.707a1 1 0 0 1 0-1.414z'/%3e%3c/svg%3e") center/1em auto no-repeat;
+  border: 0;
+  opacity: 0.7;
+  width: 1.5rem;
+  height: 1.5rem;
+  padding: 0;
+  transition: opacity 0.2s;
+}
+
+.modal-header .btn-close:hover {
+  opacity: 1;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.modal-body {
+  padding: 1.5rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.modal-footer {
+  background: #f8f9fa;
+  border-top: 1px solid #dee2e6;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.modal-footer .btn {
+  min-width: 100px;
+  padding: 0.5rem 1.25rem;
+  font-weight: 500;
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.modal-footer .btn-outline-secondary {
+  border: 1px solid #6c757d;
+  color: #6c757d;
+}
+
+.modal-footer .btn-outline-secondary:hover {
+  background-color: #6c757d;
+  color: white;
+}
+
+.modal-footer .btn-sucess {
+  background-color: #28a745;
+  border: 1px solid #28a745;
+  color: white;
+}
+
+.modal-footer .btn-sucess:hover {
+  background-color: #218838;
+  border-color: #1e7e34;
+}
+
+.options-list {
+  max-height: 320px;
+  overflow-y: auto;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+}
+
+.options-list .list-group-item {
+  padding: 1rem 1.25rem;
+  border-left: 0;
+  border-right: 0;
+  border-color: #dee2e6;
+  transition: background-color 0.2s;
+}
+
+.options-list .list-group-item:hover {
+  background-color: #f8f9fa;
+}
+
+.options-list .list-group-item:first-child {
+  border-top: 0;
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+
+.options-list .list-group-item:last-child {
+  border-bottom: 0;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.form-check-input {
+  width: 1.1em;
+  height: 1.1em;
+  margin-top: 0.1em;
+}
+
+.form-check-input:checked {
+  background-color: #28a745;
+  border-color: #28a745;
+}
+
+.form-check-input:focus {
+  box-shadow: 0 0 0 0.25rem rgba(40, 167, 69, 0.25);
+}
+
+.options-list input[type="checkbox"]:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (max-width: 768px) {
+  .modal-dialog {
+    width: 95%;
+    margin: 0.5rem;
+  }
+  
+  .modal-body {
+    padding: 1rem;
+  }
+  
+  :host {
+    padding-left: 0;
+    padding-right: 0;
+  }
+}
+
+
+
+body.modal-open {
+  overflow: hidden;
+}
