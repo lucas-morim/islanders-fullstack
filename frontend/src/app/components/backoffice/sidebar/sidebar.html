@@ -62,5 +62,12 @@
         <span>Quizzes</span>
       </a>
     </li>
+
+    <li *ngIf="auth.isAdmin() || auth.isProfessor()" class="nav-item">
+      <a class="nav-link d-flex align-items-center" routerLink="/backoffice/questions" routerLinkActive="active">
+        <i class="cil-list-rich me-2"></i>
+        <span>Questions</span>
+      </a>
+    </li>
   </ul>
 </div>

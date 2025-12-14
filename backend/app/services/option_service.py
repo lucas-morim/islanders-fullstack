@@ -1,8 +1,11 @@
 from typing import Sequence, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
+from sqlalchemy import select, func
+
 from app.repositories.crud.option_repo import OptionRepository
 from app.models.option import Option
+from app.models.question_option import QuestionOption  
 
 
 class OptionService:
@@ -48,6 +51,20 @@ class OptionService:
 
     async def delete(self, db: AsyncSession, option_id: str) -> None:
         option = await self.get(db, option_id)
+
+        result = await db.execute(
+            select(func.count())
+            .select_from(QuestionOption)
+            .where(QuestionOption.option_id == option_id)
+        )
+        usage_count = int(result.scalar() or 0)
+
+        if usage_count > 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Option is in use ({usage_count}) and cannot be deleted."
+            )
+
         await self.repo.delete(db, option)
 
 

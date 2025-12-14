@@ -141,6 +141,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./quiz/quiz-edit/quiz-edit').then(c => c.QuizEdit),
       },
+      {
+        path: 'questions',
+        loadComponent: () =>
+          import('./question/questions/questions').then(c => c.Questions),
+      },
+      {
+        path: 'questions/create',
+        loadComponent: () =>
+          import('./question/question-create/question-create').then(c => c.QuestionCreate),
+      },
+      {
+        path: 'questions/:id/edit',
+        loadComponent: () =>
+          import('./question/question-edit/question-edit').then(c => c.QuestionEdit),
+      },
     ],
   },
 ];
