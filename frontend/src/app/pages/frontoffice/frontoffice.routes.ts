@@ -20,15 +20,17 @@ export const routes: Routes = [
         loadComponent: () => import('./course/course').then(c => c.Course)
       },
 
+      {
+        path: 'community',
+        loadComponent: () => import('./community/community').then(c => c.Community)
+      },
+
       // QUANDO FOR FEITO É SÓ TIRAR O COMENTÁRIO
       // {
       //   path: 'mission',
       //   loadComponent: () => import('./mission/mission').then(c => c.Mission)
       // },
-      // {
-      //   path: 'community',
-      //   loadComponent: () => import('./community/community').then(c => c.Community)
-      // },
+
     ],
   },
 
