@@ -6,6 +6,7 @@ from app.schemas.quiz import QuizCreate, QuizOut, QuizUpdate
 from app.services.quiz_service import service as quiz_service
 from app.core.security import get_current_user
 from app.models.user import User
+from app.schemas.quiz_full import QuizFullOut
 
 router = APIRouter()
 
@@ -77,3 +78,17 @@ async def delete_quiz(
 ):
     await quiz_service.delete(db, quiz_id)
     return None
+
+@router.get("/by_course/{course_id}", response_model=QuizOut)
+async def get_quiz_by_course(
+    course_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    return await quiz_service.get_by_course(db, course_id)
+
+@router.get("/{quiz_id}/full", response_model=QuizFullOut)
+async def get_quiz_full(
+    quiz_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    return await quiz_service.get_full(db, quiz_id)

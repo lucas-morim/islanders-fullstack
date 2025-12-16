@@ -67,7 +67,8 @@
 </div>
 
 <div class="w-full max-w-[1300px] mx-auto flex justify-end gap-4 mt-10 mb-10">
-  <button  routerLink="" class="bg-white text-black border border-black font-poppins px-6 py-2 hover:bg-black hover:text-white transition w-full md:w-auto">
+  <button [routerLink]="['/course', course?.id, 'quiz']"
+    class="bg-white text-black border border-black font-poppins px-6 py-2 hover:bg-black hover:text-white transition w-full md:w-auto">
     Faça o Quiz
   </button>
   <button  routerLink="" class="bg-redIsla text-white font-poppins px-6 py-2 hover:bg-black hover:text-white transition w-full md:w-auto">
