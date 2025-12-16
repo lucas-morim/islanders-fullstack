@@ -1,10 +1,12 @@
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Optional
+from datetime import datetime
 
 from app.core.deps import get_db
-from app.schemas.user import UserCreate, UserUpdate, UserOut
+from app.schemas.user import UserCreate, UserUpdate, UserOut, StatusEnum
 from app.services.user_service import service as user_service
+from app.utils.csv_export import stream_csv
 
 router = APIRouter()
 
@@ -15,6 +17,33 @@ async def list_users(
     limit: int = Query(100, ge=1, le=100),
 ):
     return await user_service.list(db, skip=skip, limit=limit)
+
+@router.get("/export/csv")
+async def export_users_csv(
+    db: AsyncSession = Depends(get_db),
+    q: Optional[str] = Query(None),
+    role_id: Optional[str] = Query(None),
+    status: Optional[StatusEnum] = Query(None),
+):
+    users = await user_service.export(db, q=q, role_id=role_id, status=status)
+
+    filename = f"users_{datetime.utcnow().strftime('%Y-%m-%d_%H-%M')}.csv"
+    header = ["ID", "Nome", "Username", "Email", "Função", "Status", "Criado em"]
+
+    return stream_csv(
+        filename,
+        header,
+        users,
+        lambda u: [
+            u.id,
+            u.name,
+            u.username,
+            u.email,
+            (u.role.name if u.role else "Guest"),
+            u.status,
+            u.created_at.isoformat() if u.created_at else "",
+        ],
+    )
 
 @router.get("/{user_id}", response_model=UserOut)
 async def get_user(

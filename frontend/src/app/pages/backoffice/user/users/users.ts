@@ -114,8 +114,34 @@ export class Users implements OnInit {
     this.page.set(1);
   }
 
+  exportCsv() {
+    const statusApi =
+      this.status() === 'Ativo' ? 'active' :
+      this.status() === 'Inativo' ? 'inactive' :
+      undefined;
+
+    this.usersSvc.exportCsv({
+      q: this.q().trim() || undefined,
+      role_id: this.roleId() || undefined,
+      status: statusApi,
+    }).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'users.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: async (err) => {
+        try { console.error(await err.error.text()); } catch { console.error(err); }
+      }
+    });
+  }
+
+
+
   newUser() { this.router.navigate(['/backoffice/users/create']); }
-  exportCsv() { /* … */ }
   view(u: UserRow) { this.router.navigate(['/backoffice/users', u.id]); }
   edit(u: UserRow) { this.router.navigate(['/backoffice/users', u.id, 'edit']); }
 

@@ -76,4 +76,17 @@ export class UsersService {
       this.http.post<{ url: string }>(`${API_BASE}/upload/users`, formData)
     ).then(res => res.url);
   }
+
+  exportCsv(filters: { q?: string; role_id?: string; status?: 'active' | 'inactive' }) {
+    let params = new HttpParams();
+
+    if (filters.q) params = params.set('q', filters.q);
+    if (filters.role_id) params = params.set('role_id', filters.role_id);
+    if (filters.status) params = params.set('status', filters.status);
+
+    return this.http.get(`${API_BASE}/users/export/csv`, {
+      params,
+      responseType: 'blob',
+    });
+  }
 }

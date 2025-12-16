@@ -105,5 +105,15 @@ class UserService:
         await self.repo.delete(db, user)
     def verify_password(self, plain_password: str, hashed_password: str) -> bool:
         return pwd_context.verify(plain_password, hashed_password)
+    
+    async def export(
+        self,
+        db: AsyncSession,
+        *,
+        q: Optional[str] = None,
+        role_id: Optional[str] = None,
+        status: Optional[StatusEnum | str] = None,
+    ) -> Sequence[User]:
+        return await self.repo.export(db, q=q, role_id=role_id, status=status)
 
 service = UserService()
