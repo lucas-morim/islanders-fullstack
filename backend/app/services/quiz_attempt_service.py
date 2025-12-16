@@ -1,9 +1,14 @@
 from typing import Sequence, Optional
-from sqlalchemy.ext.asyncio import AsyncSession
+from datetime import datetime, timezone
 from fastapi import HTTPException, status
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select, func, and_
+
 from app.repositories.crud.quiz_attempt_repo import QuizAttemptRepository
 from app.models.quiz_attempt import QuizAttempt
-import datetime as dt
+from app.models.question import Question
+from app.models.answer import Answer
+from app.models.question_option import QuestionOption
 
 
 class QuizAttemptService:
@@ -13,58 +18,62 @@ class QuizAttemptService:
     async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[QuizAttempt]:
         return await self.repo.list(db, skip=skip, limit=limit)
 
-    async def get(self, db: AsyncSession, quiz_attempt_id: str) -> QuizAttempt:
-        quiz_attempt = await self.repo.get(db, quiz_attempt_id)
-        if not quiz_attempt:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Quiz attempt not found"
+    async def get(self, db: AsyncSession, attempt_id: str) -> QuizAttempt:
+        attempt = await self.repo.get(db, attempt_id)
+        if not attempt:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Quiz attempt not found")
+        return attempt
+
+    async def create(self, db: AsyncSession, *, score: float, finished_at, user_id: str, quiz_id: str) -> QuizAttempt:
+        return await self.repo.create(db, score=score, finished_at=finished_at, user_id=user_id, quiz_id=quiz_id)
+
+    async def update(self, db: AsyncSession, attempt_id: str, *, score: Optional[float] = None, finished_at=None) -> QuizAttempt:
+        attempt = await self.get(db, attempt_id)
+        return await self.repo.update(db, attempt, score=score, finished_at=finished_at)
+
+    async def delete(self, db: AsyncSession, attempt_id: str) -> None:
+        attempt = await self.get(db, attempt_id)
+        await self.repo.delete(db, attempt)
+
+    async def finish(self, db: AsyncSession, attempt_id: str) -> QuizAttempt:
+        attempt = await self.get(db, attempt_id)
+
+        # se já finalizou, não recalcula
+        if attempt.finished_at is not None:
+            return attempt
+
+        # total de questões do quiz
+        total_q = await db.scalar(
+            select(func.count(Question.id)).where(Question.quiz_id == attempt.quiz_id)
+        )
+        total_q = int(total_q or 0)
+
+        if total_q == 0:
+            raise HTTPException(status_code=400, detail="Quiz has no questions")
+
+        # corretas = answers que batem com QuestionOption.is_correct == True
+        correct = await db.scalar(
+            select(func.count(Answer.id))
+            .select_from(Answer)
+            .join(
+                QuestionOption,
+                and_(
+                    QuestionOption.question_id == Answer.question_id,
+                    QuestionOption.option_id == Answer.option_id,
+                )
             )
-        return quiz_attempt
-
-    async def create(
-        self,
-        db: AsyncSession,
-        *,
-        score: float,
-        user_id: str,
-        quiz_id: str,
-        finished_at: Optional[dt.datetime] = None
-    ) -> QuizAttempt:
-        # define a data e hora atual se o user não enviar nenhuma
-        if finished_at is None:
-            finished_at = dt.datetime.now(dt.timezone.utc)
-
-        quiz_attempt = await self.repo.create(
-            db,
-            score=score,
-            finished_at=finished_at,
-            user_id=user_id,
-            quiz_id=quiz_id
+            .where(
+                Answer.attempt_id == attempt.id,
+                QuestionOption.is_correct.is_(True),
+            )
         )
-        return quiz_attempt
+        correct = int(correct or 0)
 
-    async def update(
-        self,
-        db: AsyncSession,
-        quiz_attempt_id: str,
-        *,
-        score: Optional[float] = None,
-        finished_at: Optional[dt.datetime] = None
-    ) -> QuizAttempt:
-        quiz_attempt = await self.get(db, quiz_attempt_id)
+        score = round((correct / total_q) * 100, 2)
+        finished_at = datetime.now(timezone.utc)
 
-        quiz_attempt = await self.repo.update(
-            db,
-            quiz_attempt,
-            score=score,
-            finished_at=finished_at
-        )
-        return quiz_attempt
-
-    async def delete(self, db: AsyncSession, quiz_attempt_id: str) -> None:
-        quiz_attempt = await self.get(db, quiz_attempt_id)
-        await self.repo.delete(db, quiz_attempt)
+        updated = await self.repo.update(db, attempt, score=score, finished_at=finished_at)
+        return updated
 
 
 service = QuizAttemptService()

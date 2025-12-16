@@ -60,3 +60,10 @@ async def delete_quiz_attempt(
 ):
     await quiz_attempt_service.delete(db, attempt_id)
     return None
+
+@router.post("/{attempt_id}/finish", response_model=QuizAttemptOut)
+async def finish_quiz_attempt(
+    attempt_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    return await quiz_attempt_service.finish(db, attempt_id)

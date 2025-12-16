@@ -3,6 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import HTTPException, status
 from app.repositories.crud.quiz_repo import QuizRepository
 from app.models.quiz import Quiz
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
+from app.schemas.quiz_full import QuizFullOut, QuestionFull, OptionMini
 
 
 class QuizService:
@@ -86,6 +89,37 @@ class QuizService:
     async def delete(self, db: AsyncSession, quiz_id: str) -> None:
         quiz = await self.get(db, quiz_id)
         await self.repo.delete(db, quiz)
+
+    async def get_by_course(self, db: AsyncSession, course_id: str) -> Quiz:
+        result = await db.execute(select(Quiz).where(Quiz.course_id == course_id))
+        quiz = result.scalar_one_or_none()
+        if not quiz:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Quiz not found for this course")
+        return quiz
+    
+    async def get_full(self, db: AsyncSession, quiz_id: str) -> QuizFullOut:
+        result = await db.execute(
+            select(Quiz)
+            .where(Quiz.id == quiz_id)
+            .options(
+                selectinload(Quiz.questions)
+                .selectinload("question_options")
+                .selectinload("option")
+            )
+        )
+        quiz = result.scalar_one_or_none()
+        if not quiz:
+            raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Quiz not found")
+
+        questions_out: list[QuestionFull] = []
+        for q in quiz.questions:
+            opts = []
+            for qo in q.question_options:
+                if qo.option:
+                    opts.append(OptionMini(id=qo.option.id, text=qo.option.text))
+            questions_out.append(QuestionFull(id=q.id, text=q.text, options=opts))
+
+        return QuizFullOut(quiz=quiz, questions=questions_out)
 
 
 service = QuizService()

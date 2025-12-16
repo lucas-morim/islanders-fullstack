@@ -19,6 +19,14 @@ export const routes: Routes = [
         path: 'course/:id',
         loadComponent: () => import('./course/course').then(c => c.Course)
       },
+      {
+        path: 'course/:id/quiz',
+        loadComponent: () => import('./quiz/quiz-video/quiz-video').then(m => m.QuizVideo),
+      },
+      {
+        path: 'quiz/:quizId/play',
+        loadComponent: () => import('./quiz/quiz-play/quiz-play').then(m => m.QuizPlay),
+      },
 
       // QUANDO FOR FEITO É SÓ TIRAR O COMENTÁRIO
       // {
