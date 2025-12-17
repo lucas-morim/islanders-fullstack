@@ -45,10 +45,13 @@ export class UsersService {
   private http = inject(HttpClient);
   private base = `${API_BASE}/users`;  
 
-  list(skip = 0, limit = 20): Promise<UserOut[]> {
-    const params = new HttpParams()
-      .set('skip', String(skip))
-      .set('limit', String(limit));
+  list(skip = 0, limit?: number): Promise<UserOut[]> {
+    let params = new HttpParams().set('skip', String(skip));
+
+    if (limit !== undefined) {
+      params = params.set('limit', String(limit));
+    }
+
     return firstValueFrom(this.http.get<UserOut[]>(`${this.base}/`, { params }));
   }
 

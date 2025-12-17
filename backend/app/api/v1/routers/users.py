@@ -14,7 +14,7 @@ router = APIRouter()
 async def list_users(
     db: AsyncSession = Depends(get_db),
     skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=100),
+    limit: Optional[int] = Query(None, ge=1),
 ):
     return await user_service.list(db, skip=skip, limit=limit)
 

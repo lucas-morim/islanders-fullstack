@@ -87,7 +87,7 @@ export class Users implements OnInit {
       const roles = await this.rolesSvc.list(0, 100);
       this.roles.set(roles);
 
-      const data: UserOut[] = await this.usersSvc.list(0, 100);
+      const data: UserOut[] = await this.usersSvc.list(0);
       this.users.set(
         data.map(u => ({
           id: u.id,

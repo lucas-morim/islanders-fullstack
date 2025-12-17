@@ -22,13 +22,12 @@ class UserService:
         return pwd_context.verify(plain_password, hashed_password)
 
     def _normalize_username(self, username: str) -> str:
-        """Normalizei para consistência (sem espaços, minúsculo, caracteres válidos)."""
         s = username.strip().lower()
         s = re.sub(r"[^a-z0-9_]+", "_", s)
         s = s.strip("_")
         return s or "user"
 
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[User]:
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = None) -> Sequence[User]:
         return await self.repo.list(db, skip=skip, limit=limit)
 
     async def get(self, db: AsyncSession, user_id: str) -> User:

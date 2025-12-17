@@ -1,4 +1,5 @@
 from typing import Sequence, Optional
+from unittest import skip
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, or_
 from sqlalchemy.orm import selectinload
@@ -7,13 +8,13 @@ from app.models.user import User
 from app.schemas.user import UserCreate, StatusEnum
 
 class UserRepository:
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[User]:
-        result = await db.execute(
-            select(User)
-            .offset(skip)
-            .limit(limit)
-            .order_by(User.created_at.desc())  
-        )
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = None) -> Sequence[User]:
+        stmt = select(User).offset(skip).order_by(User.created_at.desc())
+
+        if limit is not None:
+            stmt = stmt.limit(limit)
+
+        result = await db.execute(stmt)
         return result.scalars().all()
 
     async def get(self, db: AsyncSession, user_id: str) -> Optional[User]:
