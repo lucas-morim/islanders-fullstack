@@ -11,7 +11,7 @@ class QuestionService:
     def __init__(self, repo=QuestionRepository()):
         self.repo = repo
 
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Question]:
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = None) -> Sequence[Question]:
         return await self.repo.list(db, skip=skip, limit=limit)
 
     async def get(self, db: AsyncSession, question_id: str) -> Question:

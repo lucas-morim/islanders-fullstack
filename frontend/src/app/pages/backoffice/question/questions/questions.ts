@@ -72,7 +72,7 @@ export class Questions implements OnInit {
       this.quizzes.set(quizzes);
       const quizMap = this.quizzesMap();
 
-      const qs: QuestionOut[] = await this.questionsSvc.list(0, 100);
+      const qs: QuestionOut[] = await this.questionsSvc.list(0);
 
       const ids = qs.map(x => x.id);
       const countsMap = ids.length ? await this.qOptSvc.counts(ids) : {};
