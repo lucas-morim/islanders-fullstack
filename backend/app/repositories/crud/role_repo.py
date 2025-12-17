@@ -4,8 +4,13 @@ from sqlalchemy import select
 from app.models.role import Role
 
 class RoleRepository:
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Role]:
-        result = await db.execute(select(Role).offset(skip).limit(limit))
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = None) -> Sequence[Role]:
+        stmt = select(Role).offset(skip)
+
+        if limit is not None:
+            stmt = stmt.limit(limit)
+        result = await db.execute(stmt)
+        
         return result.scalars().all()
 
     async def get(self, db: AsyncSession, role_id: str) -> Optional[Role]:

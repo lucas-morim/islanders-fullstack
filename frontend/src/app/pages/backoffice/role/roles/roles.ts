@@ -44,7 +44,7 @@ export class Roles {
   async ngOnInit() {
     this.loading.set(true);
     try {
-      const data = await this.srv.list(0, 100);
+      const data = await this.srv.list(0);
       this.roles.set(data);
     } finally {
       this.loading.set(false);

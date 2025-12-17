@@ -84,7 +84,7 @@ export class Users implements OnInit {
   async ngOnInit() {
     this.loading.set(true);
     try {
-      const roles = await this.rolesSvc.list(0, 100);
+      const roles = await this.rolesSvc.list(0);
       this.roles.set(roles);
 
       const data: UserOut[] = await this.usersSvc.list(0);
