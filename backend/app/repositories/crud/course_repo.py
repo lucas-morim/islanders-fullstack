@@ -6,8 +6,13 @@ from app.models.course import Course
 from app.schemas.course import CourseCreate, CourseUpdate, StatusEnum
 
 class CourseRepository:
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Course]:
-        result = await db.execute(select(Course).options(selectinload(Course.areas)).offset(skip).limit(limit))
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = 100) -> Sequence[Course]:
+        stmt = select(Course).options(selectinload(Course.areas)).offset(skip)
+
+        if limit is not None:
+            stmt = stmt.limit(limit)
+
+        result = await db.execute(stmt)
         return result.scalars().all()
 
     async def get(self, db: AsyncSession, course_id: str) -> Optional[Course]:

@@ -12,7 +12,7 @@ class CourseService:
     def __init__(self, repo: CourseRepository = CourseRepository()):
         self.repo = repo
 
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Course]:
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = 100) -> Sequence[Course]:
         return await self.repo.list(db, skip=skip, limit=limit)
     
     async def get(self, db: AsyncSession, course_id: str) -> Course:

@@ -95,13 +95,13 @@
     async ngOnInit() {
       this.loading.set(true);
       try {
-        const areas = await this.areasSvc.list(0, 100);
+        const areas = await this.areasSvc.list(0);
         this.areas.set(areas);
 
         const modalities = await this.modalitySvc.list(0, 100);
         this.modalities.set(modalities);
 
-        const data: CourseOut[] = await this.coursesSvc.list(0, 100);
+        const data: CourseOut[] = await this.coursesSvc.list(0);
 
         this.courses.set(
           data.map(c => {

@@ -1,13 +1,12 @@
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Optional
 
 from app.core.deps import get_db
 from app.schemas.course import CourseCreate, CourseUpdate, CourseOut
 from app.services.course_service import service as course_service
 
 from datetime import datetime
-from typing import Optional
 from app.schemas.course import StatusEnum
 from app.utils.csv_export import stream_csv
 
@@ -53,7 +52,7 @@ async def export_courses_csv(
 async def list_courses(
     db: AsyncSession = Depends(get_db),
     skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=100),
+    limit: Optional[int] = Query(None, ge=1)
 ):
     return await course_service.list(db, skip=skip, limit=limit)
 
