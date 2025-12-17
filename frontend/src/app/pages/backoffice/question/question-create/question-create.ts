@@ -94,7 +94,7 @@ export class QuestionCreate implements OnInit {
 
     this.optionsLoading.set(true);
     try {
-      const opts = await this.optionsSvc.list(0, 100);
+      const opts = await this.optionsSvc.list(0);
       this.options.set(opts);
 
       const ids = opts.map(o => o.id);

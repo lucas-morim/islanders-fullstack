@@ -1,6 +1,6 @@
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Optional
 from app.core.deps import get_db
 from app.schemas.option import OptionCreate, OptionOut, OptionUpdate
 from app.services.option_service import service as option_service
@@ -12,7 +12,7 @@ router = APIRouter()
 async def list_options(
     db: AsyncSession = Depends(get_db),
     skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=100)
+    limit: Optional[int] = Query(None, ge=1)
 ):
     return await option_service.list(db, skip=skip, limit=limit)
 

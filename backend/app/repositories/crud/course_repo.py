@@ -6,7 +6,7 @@ from app.models.course import Course
 from app.schemas.course import CourseCreate, CourseUpdate, StatusEnum
 
 class CourseRepository:
-    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = 100) -> Sequence[Course]:
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = None) -> Sequence[Course]:
         stmt = select(Course).options(selectinload(Course.areas)).offset(skip)
 
         if limit is not None:

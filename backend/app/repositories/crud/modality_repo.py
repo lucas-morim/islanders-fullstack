@@ -4,7 +4,7 @@ from sqlalchemy import select
 from app.models.modality import Modality
 
 class ModalityRepository:
-    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = 100) -> Sequence[Modality]:
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = None) -> Sequence[Modality]:
         stmt = select(Modality).offset(skip)
 
         if limit is not None:
