@@ -121,11 +121,13 @@
   <div class="card-body pagination-bar d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
     <div class="text-muted small">
       Mostrando <strong>{{ paginated().length }}</strong> de
-      <strong>{{ filtered().length }}</strong> usuários
+      <strong>{{ filtered().length }}</strong> cursos
     </div>
 
     <div class="d-flex align-items-center gap-2">
-      <select class="form-select form-select-sm w-auto" (ngModelChange)="page.set(1)">
+      <select class="form-select form-select-sm w-auto"
+              [ngModel]="pageSize()"
+              (ngModelChange)="pageSize.set($event); page.set(1)">
         <option [ngValue]="5">5</option>
         <option [ngValue]="10">10</option>
         <option [ngValue]="20">20</option>

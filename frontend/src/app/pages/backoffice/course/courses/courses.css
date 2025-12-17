@@ -37,14 +37,14 @@
 .title-cell {
   max-width: 220px;
   white-space: normal;
-  overflow-wrap: anywhere; /* quebra até sem espaço */
+  overflow-wrap: anywhere; 
   word-break: break-word;
 }
 
 .sticky-top-under-app {
   position: sticky;
-  top: 100px; 
-  z-index: 100;
+  top: 93px; 
+  z-index: 10;
   background: var(--bs-body-bg, #fff);
   padding-top: .5rem;
   padding-bottom: .5rem;
