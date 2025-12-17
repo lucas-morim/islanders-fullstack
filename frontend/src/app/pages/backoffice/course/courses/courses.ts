@@ -139,7 +139,33 @@ export class Courses {
   }
 
   newCourse() { this.router.navigate(['/backoffice/courses/create']); }
-  exportCsv() { /* … */ }
+  exportCsv() {
+    const statusApi =
+      this.status() === 'Ativo' ? 'active' :
+      this.status() === 'Inativo' ? 'inactive' :
+      undefined;
+
+    this.coursesSvc.exportCsv({
+      q: this.q().trim() || undefined,
+      area_id: this.areaId() || undefined,
+      modality_id: this.modalityId() || undefined,
+      status: statusApi,
+    }).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'courses.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+      },  
+      error: async (err) => {
+        try { console.error(await err.error.text()); } catch { console.error(err); }
+        alert('Falha ao exportar CSV.');
+      }
+    });
+  }
+
   view(c: CourseRow) { this.router.navigate(['/backoffice/courses', c.id]); }
   edit(c: CourseRow) { this.router.navigate(['/backoffice/courses', c.id, 'edit']); }
 

@@ -93,4 +93,17 @@ export class CourseService {
         this.http.post<{ url: string }>(`${API_BASE}/upload/courses`, formData)
         ).then(res => res.url);
     }
+
+    exportCsv(filters: { q?: string; area_id?: string; modality_id?: string; status?: 'active' | 'inactive' }) {
+        let params = new HttpParams();
+        if (filters.q) params = params.set('q', filters.q);
+        if (filters.area_id) params = params.set('area_id', filters.area_id);
+        if (filters.modality_id) params = params.set('modality_id', filters.modality_id);
+        if (filters.status) params = params.set('status', filters.status);
+
+        return this.http.get(`${API_BASE}/courses/export/csv`, {
+            params,
+            responseType: 'blob',
+        });
+    }
 }

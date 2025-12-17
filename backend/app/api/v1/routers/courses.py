@@ -6,7 +6,48 @@ from app.core.deps import get_db
 from app.schemas.course import CourseCreate, CourseUpdate, CourseOut
 from app.services.course_service import service as course_service
 
+from datetime import datetime
+from typing import Optional
+from app.schemas.course import StatusEnum
+from app.utils.csv_export import stream_csv
+
 router = APIRouter()
+
+@router.get("/export/csv")
+async def export_courses_csv(
+    db: AsyncSession = Depends(get_db),
+    q: Optional[str] = Query(None),
+    area_id: Optional[str] = Query(None),
+    modality_id: Optional[str] = Query(None),
+    status: Optional[StatusEnum] = Query(None),
+):
+    courses = await course_service.export(
+        db, q=q, area_id=area_id, modality_id=modality_id, status=status
+    )
+
+    filename = f"courses_{datetime.utcnow().strftime('%Y-%m-%d_%H-%M')}.csv"
+    header = [
+        "ID", "Título", "Descrição", "Áreas", "Modalidade", "Status",
+        "Horas", "Créditos", "Preço", "Criado em"
+    ]
+
+    return stream_csv(
+        filename,
+        header,
+        courses,
+        lambda c: [
+            c.id,
+            c.title,
+            c.description or "",
+            ", ".join([a.name for a in (c.areas or [])]) if getattr(c, "areas", None) else "",
+            c.modality.name if c.modality else "",
+            c.status,
+            c.num_hours or "",
+            c.credits or "",
+            c.price or "",
+            c.created_at.isoformat() if c.created_at else "",
+        ],
+    )
 
 @router.get("/", response_model=List[CourseOut])
 async def list_courses(
