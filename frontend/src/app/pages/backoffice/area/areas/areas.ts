@@ -44,7 +44,7 @@ export class Areas {
   async ngOnInit() {
     this.loading.set(true);
     try {
-      const data = await this.srv.list(0, 100);
+      const data = await this.srv.list(0);
       this.areas.set(data);
     } finally {
       this.loading.set(false);
@@ -69,7 +69,6 @@ export class Areas {
     this.page.set(Math.max(1, Math.min(p, max)));
   }
 
-  // métodos para o template usar no *ngIf
   canCreate(): boolean { return this.auth.canCreate(); }
   canEdit(): boolean { return this.auth.canEdit(); }
   canDelete(): boolean { return this.auth.canDelete(); }
