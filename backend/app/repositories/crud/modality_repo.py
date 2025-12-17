@@ -4,8 +4,13 @@ from sqlalchemy import select
 from app.models.modality import Modality
 
 class ModalityRepository:
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Modality]:
-        result = await db.execute(select(Modality).offset(skip).limit(limit))
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = 100) -> Sequence[Modality]:
+        stmt = select(Modality).offset(skip)
+
+        if limit is not None:
+            stmt = stmt.limit(limit)
+            
+        result = await db.execute(stmt)
         return result.scalars().all()
 
     async def get(self, db: AsyncSession, modality_id: str) -> Optional[Modality]:

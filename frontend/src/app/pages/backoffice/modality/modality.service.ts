@@ -27,10 +27,13 @@ export class ModalityService {
   private http = inject(HttpClient);
   private base = `${API_BASE}/modalities`;
 
-  list(skip = 0, limit = 100): Promise<ModalityOut[]> {
-    const params = new HttpParams()
-      .set('skip', String(skip))
-      .set('limit', String(Math.min(Math.max(1, limit), 100)));
+  list(skip = 0, limit?: number): Promise<ModalityOut[]> {
+    let params = new HttpParams().set('skip', String(skip));
+
+    if (limit !== undefined) {
+      params = params.set('limit', String(Math.min(Math.max(1, limit), 100)));
+    }
+
     return firstValueFrom(this.http.get<ModalityOut[]>(`${this.base}/`, { params }));
   }
 

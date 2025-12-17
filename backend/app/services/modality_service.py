@@ -8,7 +8,7 @@ class ModalityService:
     def __init__(self, repo= ModalityRepository()):
         self.repo = repo
 
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Modality]:
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = None) -> Sequence[Modality]:
         return await self.repo.list(db, skip=skip, limit=limit)
     
     async def get(self, db: AsyncSession, modality_id: str) -> Modality:

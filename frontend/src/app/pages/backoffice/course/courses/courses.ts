@@ -98,7 +98,7 @@
         const areas = await this.areasSvc.list(0);
         this.areas.set(areas);
 
-        const modalities = await this.modalitySvc.list(0, 100);
+        const modalities = await this.modalitySvc.list(0);
         this.modalities.set(modalities);
 
         const data: CourseOut[] = await this.coursesSvc.list(0);
