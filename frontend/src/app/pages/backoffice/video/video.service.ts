@@ -30,10 +30,12 @@ export class VideoService {
   private http = inject(HttpClient);
   private base = `${API_BASE}/videos`;
 
-  list(skip = 0, limit = 20): Promise<VideoOut[]> {
-    const params = new HttpParams()
-      .set('skip', String(skip))
-      .set('limit', String(limit));
+  list(skip = 0, limit?: Number): Promise<VideoOut[]> {
+    let params = new HttpParams().set('skip', String(skip));
+
+    if (limit !== undefined) {
+      params = params.set('limit', String(limit));
+    }
     return firstValueFrom(
       this.http.get<VideoOut[]>(`${this.base}/`, { params })
     );

@@ -59,7 +59,7 @@ export class Videos implements OnInit {
     this.loading.set(true);
 
     try {
-      const data: VideoOut[] = await this.videosSvc.list(0, 100);
+      const data: VideoOut[] = await this.videosSvc.list(0);
 
       this.videos.set(
         data.map(v => ({
