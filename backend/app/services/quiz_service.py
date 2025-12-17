@@ -16,7 +16,7 @@ class QuizService:
         self,
         db: AsyncSession,
         skip: int = 0,
-        limit: int = 100
+        limit: Optional[int] = None
     ) -> Sequence[Quiz]:
         return await self.repo.list(db, skip=skip, limit=limit)
 
@@ -50,9 +50,9 @@ class QuizService:
             db,
             title=title,
             description=description,
-            user_id=user_id or None,      # '' -> None
+            user_id=user_id or None,      
             course_id=course_id,
-            video_id=video_id or None,    # '' -> None
+            video_id=video_id or None,    
         )
         return quiz
 

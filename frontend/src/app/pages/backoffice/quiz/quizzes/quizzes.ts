@@ -86,9 +86,9 @@ export class Quizzes implements OnInit {
     this.loading.set(true);
     try {
       const [courses, videos, quizzes] = await Promise.all([
-        this.coursesSvc.list(0, 100),
+        this.coursesSvc.list(0),
         this.videosSvc.list(0, 100),
-        this.quizzesSvc.list(0, 100),
+        this.quizzesSvc.list(0),
       ]);
 
       this.courses.set(courses);
