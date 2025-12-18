@@ -62,8 +62,8 @@
       this.loading.set(true);
       try {
         const [areas, modalities] = await Promise.all([
-          this.areasSvc.list(0, 100),
-          this.modalitiesSvc.list(0, 100),
+          this.areasSvc.list(0, 50),
+          this.modalitiesSvc.list(0, 20),
         ]);
 
         this.areas.set(areas);

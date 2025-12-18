@@ -56,8 +56,8 @@ export class QuizEdit implements OnInit {
     this.loading.set(true);
     try {
       const [courses, videos, quiz] = await Promise.all([
-        this.coursesSvc.list(0, 100),
-        this.videosSvc.list(0, 100),
+        this.coursesSvc.list(0),
+        this.videosSvc.list(0),
         this.quizSvc.getOne(this.quizId),
       ]);
 

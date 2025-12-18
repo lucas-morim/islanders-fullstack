@@ -44,7 +44,7 @@ export class Areas {
   async ngOnInit() {
     this.loading.set(true);
     try {
-      const data = await this.srv.list(0);
+      const data = await this.srv.list(0, 50);
       this.areas.set(data);
     } finally {
       this.loading.set(false);
