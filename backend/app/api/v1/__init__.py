@@ -17,6 +17,7 @@ from app.api.v1.routers.auth_refresh import router as auth_refresh_router
 from app.api.v1.routers.videos import router as videos_router
 from app.api.v1.routers.question_option import router as question_option_router
 from app.api.v1.routers.question_option_meta import router as question_option_meta_router
+from app.api.v1.routers.dashboard import router as dashboard_router
 
 api_router = APIRouter()
 
@@ -38,3 +39,4 @@ api_router.include_router(auth_login_router, prefix="/auth", tags=["Auth"])
 api_router.include_router(auth_register_router, prefix="/auth", tags=["Auth"])
 api_router.include_router(uploads_router, prefix="/upload", tags=["Upload"])
 api_router.include_router(auth_refresh_router, prefix="/auth", tags=["Auth"])
+api_router.include_router(dashboard_router, prefix="/dashboard", tags=["Dashboard"])
