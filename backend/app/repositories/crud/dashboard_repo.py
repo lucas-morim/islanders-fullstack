@@ -105,3 +105,21 @@ class DashboardRepository:
         """
         result = await db.execute(text(query))
         return [{"label": r.label, "value": float(r.value)} for r in result.all()]
+    
+    async def top_students(self, db: AsyncSession, limit: int = 5):
+        query = """
+        SELECT
+            u.name AS label,
+            ROUND(AVG(qa.score)::numeric, 2) AS value
+        FROM quiz_attempts qa
+        JOIN users u ON u.id = qa.user_id
+        WHERE qa.finished_at IS NOT NULL
+        GROUP BY u.id, u.name
+        HAVING COUNT(qa.id) >= 1
+        ORDER BY value DESC
+        LIMIT :limit
+        """
+
+        result = await db.execute(text(query), {"limit": limit})
+        return [{"label": r.label, "value": float(r.value)} for r in result.all()]
+

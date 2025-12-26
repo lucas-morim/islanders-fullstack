@@ -9,7 +9,7 @@
   <div class="col-md-4">
     <div class="card text-center">
       <div class="card-body">
-        <div class="text-muted">Usuários</div>
+        <div class="text-muted">Utilizadores</div>
         <div class="display-6">{{ kpis().users }}</div>
       </div>
     </div>
@@ -34,6 +34,7 @@
   </div>
 </div>
 
+
 <!-- Filtro Dropdown (apenas para Cursos e Quizzes) -->
 <div class="mb-3" *ngIf="currentCategory() !== 'users'">
   <label for="filterSelect" class="form-label">Filtrar {{ currentCategory() === 'courses' ? 'Curso' : 'Quiz' }}</label>
@@ -51,6 +52,19 @@
     <button class="btn btn-outline-primary" (click)="setCategory('quizzes')">Quizzes</button>
   </div>
 
+  <!-- Top 5 Alunos (apenas em Users) -->
+  <div class="card mt-4" *ngIf="currentCategory() === 'users'">
+    <div class="card-header">
+      <strong>Top 5 Alunos</strong>
+    </div>
+
+    <div class="card-body">
+      <div style="height:200px; margin: 20px">
+        <canvas #topStudentsChart></canvas>
+      </div>
+    </div>
+  </div>
+  <div style="height: 50px"></div>
   <div class="card-body">
     <div style="height:400px">
       <canvas #dashboardChart></canvas>

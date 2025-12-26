@@ -7,6 +7,10 @@ from app.schemas.dashboard import SummaryOut, AverageGradeOut, LabelValue, Grade
 
 router = APIRouter()
 
+@router.get("/top-students", response_model=List[LabelValue])
+async def top_students(db: AsyncSession = Depends(get_db)):
+    return await dashboard_service.top_students(db)
+
 @router.get("/summary", response_model=SummaryOut)
 async def get_summary(db: AsyncSession = Depends(get_db)):
     return await dashboard_service.get_summary(db)

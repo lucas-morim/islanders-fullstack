@@ -24,9 +24,21 @@ export interface GradeDistribution {
   total: number;
 }
 
+export interface TopStudent {
+  label: string;
+  value: number;
+}
+
+
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
   private http = inject(HttpClient);
+
+  getTopStudents(): Promise<TopStudent[]> {
+    return firstValueFrom(
+      this.http.get<TopStudent[]>(`${API_BASE}/top-students`)
+    );
+  }
 
   getGradesByUser(): Promise<LabelValue[]> {
     return firstValueFrom(

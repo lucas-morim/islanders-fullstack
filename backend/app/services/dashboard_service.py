@@ -23,6 +23,9 @@ class DashboardService:
     
     async def get_grades_by_user(self, db: AsyncSession):
         return await self.repo.grades_by_user(db)
+    
+    async def top_students(self, db):
+        return await self.repo.top_students(db)
 
 
 service = DashboardService()

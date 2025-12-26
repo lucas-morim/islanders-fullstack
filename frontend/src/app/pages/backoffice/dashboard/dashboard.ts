@@ -14,8 +14,10 @@ import {
   DashboardService,
   Summary,
   LabelValue,
-  GradeDistribution
+  GradeDistribution,
+  TopStudent
 } from './dashboard.service';
+
 
 Chart.register(...registerables);
 
@@ -43,6 +45,8 @@ export class Dashboard implements AfterViewInit {
   courses = signal<LabelValue[]>([]);
   quizzes = signal<LabelValue[]>([]);
   gradeDistribution = signal<GradeDistribution[]>([]);
+  topStudents = signal<TopStudent[]>([]);
+
 
   // Categoria do gráfico
   currentCategory = signal<'users' | 'courses' | 'quizzes'>('users');
@@ -58,12 +62,20 @@ export class Dashboard implements AfterViewInit {
   async loadData() {
     this.loading.set(true);
     try {
-      const [summary, users, courses, quizzes, distribution] = await Promise.all([
+      const [
+        summary,
+        users,
+        courses,
+        quizzes,
+        distribution,
+        topStudents
+      ] = await Promise.all([
         this.srv.getSummary(),
         this.srv.getGradesByUser(),
         this.srv.getGradesByCourse(),
         this.srv.getGradesByQuiz(),
-        this.srv.getGradeDistribution()
+        this.srv.getGradeDistribution(),
+        this.srv.getTopStudents()
       ]);
 
       this.kpis.set(summary);
@@ -71,8 +83,10 @@ export class Dashboard implements AfterViewInit {
       this.courses.set(courses);
       this.quizzes.set(quizzes);
       this.gradeDistribution.set(distribution);
+      this.topStudents.set(topStudents);
 
       this.updateChart();
+      this.updateTopStudentsChart();
     } finally {
       this.loading.set(false);
     }
@@ -128,5 +142,64 @@ export class Dashboard implements AfterViewInit {
     this.currentCategory.set(cat);
     this.selectedFilter = ''; // reset do filtro ao mudar categoria
     this.updateChart();
+    if (cat === 'users') {
+      // garante que o canvas do TopStudents já está no DOM
+      setTimeout(() => this.updateTopStudentsChart());
+    }
   }
+
+  @ViewChild('topStudentsChart')
+    topStudentsChartRef?: ElementRef<HTMLCanvasElement>;
+
+    
+
+    topStudentsChart?: Chart;
+    
+    updateTopStudentsChart() {
+      if (!this.topStudentsChartRef) return;
+  
+      const data = this.topStudents();
+      if (!data.length) return;
+  
+      const labels = data.map(s => s.label);
+      const values = data.map(s => s.value);
+  
+      if (this.topStudentsChart) {
+        this.topStudentsChart.destroy();
+      }
+  
+      this.topStudentsChart = new Chart(
+        this.topStudentsChartRef.nativeElement,
+        {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Média (%)',
+              data: values,
+              backgroundColor: '#1cc88a'
+            }]
+          },
+          options: {
+            indexAxis: 'y', // horizontal
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              x: {
+                beginAtZero: true,
+                max: 100
+              }
+            },
+            plugins: {
+              legend: { display: false },
+              tooltip: {
+                callbacks: {
+                  label: (ctx: any) => `${ctx.raw}%`
+                }
+              }
+            }
+          }
+        }
+      );
+    }
 }
