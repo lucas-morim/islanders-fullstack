@@ -58,4 +58,12 @@ export const routes: Routes = [
       { path: '', loadComponent: () => import('./register/register').then(c => c.Register) },
     ],
   },
+  {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('../../layouts/login-shell/login-shell').then(c => c.LoginShell),
+    children: [
+      { path: '', loadComponent: () => import('./forgot-password/forgot-password').then(c => c.ForgotPassword) },
+    ],
+  },
 ];
