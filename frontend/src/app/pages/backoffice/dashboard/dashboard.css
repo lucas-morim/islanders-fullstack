@@ -1,16 +1,24 @@
 :host {
   display: block;
-  --hdr: var(--admin-header-height, 72px);
-  --sbw: var(--admin-sidebar-width, 260px);
-  padding-top: 30px;        
+  padding-top: 20px;
 }
 
 .sticky-top-under-app {
   position: sticky;
-  top: 0;                          
+  top: 0;
   z-index: 100;
-  background: var(--bs-body-bg, #fff);
-  padding-top: .5rem;
-  padding-bottom: .5rem;
+  background: #fff;
+  padding: .5rem 1rem;
   border-bottom: 1px solid rgba(0,0,0,.05);
+}
+
+.card-body {
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.display-6 {
+  font-size: 1.75rem;
 }
