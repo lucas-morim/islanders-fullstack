@@ -25,7 +25,7 @@ export class Header {
       .subscribe((event: NavigationEnd) => {
 
       
-        this.isDarkPage = event.url.startsWith('/about') || event.url.startsWith('/course');
+        this.isDarkPage = event.url.startsWith('/about') || event.url.startsWith('/course') || event.url.startsWith('/quiz');
 
        
         this.logo = this.isDarkPage ? 'assets/islaverse2.png' : 'assets/islaverse.png';
