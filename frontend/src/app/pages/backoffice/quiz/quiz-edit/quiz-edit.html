@@ -27,7 +27,6 @@
           </div>
         </div>
 
-        <!-- CURSO -->
         <div class="col-12 col-md-6">
           <label class="form-label">Curso</label>
           <select class="form-select" formControlName="course_id">
@@ -36,13 +35,29 @@
               {{ c.title }}
             </option>
           </select>
+
+
           <div class="invalid-feedback d-block"
-               *ngIf="f['course_id'].touched && f['course_id'].invalid">
+            *ngIf="f['course_id'].touched && f['course_id'].invalid">
             Selecione um curso.
           </div>
         </div>
 
-        <!-- VÍDEO -->
+        <div class="col-12 col-md-6">
+          <label class="form-label">Status</label>
+          <select class="form-select" formControlName="status">
+            <option [ngValue]="'active'" [disabled]="activeExists() && f['course_id'].value">Ativo</option>
+            <option [ngValue]="'inactive'">Inativo</option>
+          </select>
+
+          <div class="invalid-feedback d-block text-wrap"
+              *ngIf="f['status'].touched && f['status'].errors?.['activeTaken']">
+            Já existe um quiz ativo para este curso. Selecione <strong>Inativo</strong> ou desative o quiz ativo atual.
+          </div>
+
+          <div class="form-text" *ngIf="checkingActive()">Verificando status do curso…</div>
+        </div>
+
         <div class="col-12 col-md-6">
           <label class="form-label">Vídeo introdutório (opcional)</label>
           <select class="form-select" formControlName="video_id">
@@ -56,7 +71,6 @@
           </div>
         </div>
 
-        <!-- DESCRIÇÃO -->
         <div class="col-12">
           <label class="form-label">Descrição</label>
           <textarea class="form-control"

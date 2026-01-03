@@ -42,6 +42,25 @@
         </div>
 
         <div class="col-12 col-md-6">
+          <label class="form-label">Status</label>
+          <select class="form-select" formControlName="status">
+          <option [ngValue]="'active'" [disabled]="activeExists() && f['course_id'].value">
+            Ativo
+          </option>
+          <option [ngValue]="'inactive'">Inativo</option>
+          </select>
+          <div class="form-text">
+            Apenas um quiz pode ficar ativo por curso. Se já existir um ativo, selecione <strong>Inativo</strong> ou desative o quiz ativo atual.
+          </div>
+
+
+          <div class="invalid-feedback d-block"
+              *ngIf="f['status'].touched && f['status'].errors?.['activeTaken']">
+            Já existe um quiz ativo para este curso. Selecione <strong>Inativo</strong> ou desative o quiz ativo atual.
+          </div>
+        </div>
+
+        <div class="col-12">
           <label class="form-label">Vídeo introdutório (opcional)</label>
           <select class="form-select" formControlName="video_id">
             <option value="">Sem vídeo</option>

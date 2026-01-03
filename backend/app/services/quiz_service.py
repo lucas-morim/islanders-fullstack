@@ -39,7 +39,7 @@ class QuizService:
         user_id: Optional[str],
         course_id: str,
         video_id: Optional[str] = None,
-        status: StatusEnum | str = StatusEnum.active,  
+        status: StatusEnum | str = StatusEnum.active,
     ) -> Quiz:
         existing_quiz = await self.repo.get_by_title(db, title)
         if existing_quiz:
@@ -48,7 +48,16 @@ class QuizService:
                 detail="Quiz title must be unique"
             )
 
-        status_str = status.value if isinstance(status, StatusEnum) else str(status)  
+        status_str = status.value if isinstance(status, StatusEnum) else str(status)
+        
+        if status_str == "active":
+            current_active = await self.repo.get_active_by_course(db, course_id)
+            if current_active:
+                raise HTTPException(
+                    status_code=409,
+                    detail="Já existe um quiz ativo para este curso. Selecione Inativo ou desative o quiz ativo atual."
+                )
+
 
         return await self.repo.create(
             db,
@@ -57,7 +66,7 @@ class QuizService:
             user_id=user_id or None,
             course_id=course_id,
             video_id=video_id or None,
-            status=status_str, 
+            status=status_str,
         )
 
     async def update(
@@ -83,7 +92,16 @@ class QuizService:
 
             status_str = None
             if status is not None:
-                status_str = status.value if isinstance(status, StatusEnum) else str(status)  
+                status_str = status.value if isinstance(status, StatusEnum) else str(status)
+
+            if status_str == "active":
+                current_active = await self.repo.get_active_by_course(db, quiz.course_id)
+                if current_active and current_active.id != quiz.id:
+                    raise HTTPException(
+                        status_code=409,
+                        detail="Já existe um quiz ativo para este curso. Desative o quiz ativo atual antes de ativar este."
+                    )
+
 
             quiz = await self.repo.update(
                 db,
@@ -98,7 +116,16 @@ class QuizService:
 
     async def delete(self, db: AsyncSession, quiz_id: str) -> None:
         quiz = await self.get(db, quiz_id)
+        course_id = quiz.course_id
+        was_active = (quiz.status == "active")
+
         await self.repo.delete(db, quiz)
+
+        if was_active:
+            other = await self.repo.get_any_other_quiz_same_course(db, course_id, exclude_quiz_id=quiz_id)
+            if other:
+                await self.repo.update(db, other, status="active")
+
 
     async def get_by_course(self, db: AsyncSession, course_id: str) -> Quiz:
         result = await db.execute(select(Quiz).where(Quiz.course_id == course_id))
@@ -130,6 +157,28 @@ class QuizService:
             questions_out.append(QuestionFull(id=q.id, text=q.text, options=opts))
 
         return QuizFullOut(quiz=quiz, questions=questions_out)
+    
+    async def get_active_by_course(self, db: AsyncSession, course_id: str) -> Quiz | None:
+            res = await db.execute(
+                select(Quiz).where(Quiz.course_id == course_id, Quiz.status == "active")
+            )
+            return res.scalar_one_or_none()
+
+    async def get_other_quiz_same_course(
+        self,
+        db: AsyncSession,
+        course_id: str,
+        exclude_quiz_id: str,
+    ) -> Quiz | None:
+        res = await db.execute(
+            select(Quiz)
+            .where(Quiz.course_id == course_id, Quiz.id != exclude_quiz_id)
+            .order_by(Quiz.created_at.desc())
+        )
+        return res.scalar_one_or_none()
+    
+    async def get_active_by_course(self, db: AsyncSession, course_id: str) -> Quiz | None:
+        return await self.repo.get_active_by_course(db, course_id)
 
 
 service = QuizService()

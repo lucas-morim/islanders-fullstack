@@ -26,6 +26,12 @@ class QuizRepository:
         stmt = select(Quiz).where(Quiz.title == title)
         res = await db.execute(stmt)
         return res.scalar_one_or_none()
+    
+    async def get_active_by_course(self, db: AsyncSession, course_id: str) -> Quiz | None:
+        res = await db.execute(
+            select(Quiz).where(Quiz.course_id == course_id, Quiz.status == "active")
+        )
+        return res.scalar_one_or_none()
 
     async def create(
         self,
@@ -85,3 +91,10 @@ class QuizRepository:
         await db.delete(quiz)
         await db.commit()
         return True
+    
+    async def get_active_by_course(self, db: AsyncSession, course_id: str) -> Quiz | None:
+        res = await db.execute(
+            select(Quiz).where(Quiz.course_id == course_id, Quiz.status == "active")
+        )
+        return res.scalar_one_or_none()
+

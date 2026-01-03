@@ -21,6 +21,7 @@ export interface QuizOut {
 export interface QuizCreatePayload {
   title: string;
   description?: string;    
+  status: StatusEnum;
   course_id: string;
   video_id?: string | null;
   created_at?: string;          
@@ -30,6 +31,7 @@ export interface QuizUpdatePayload {
   id?: string | null;
   title?: string | null;
   description?: string | null;
+  status?: StatusEnum | null;
   course_id?: string | null;
   video_id?: string | null;
   updated_at: string;
@@ -63,5 +65,9 @@ export class QuizService {
 
   delete(quiz_id: string): Promise<void> {
     return firstValueFrom(this.http.delete<void>(`${this.base}/${quiz_id}`));
+  }
+
+  getActiveByCourse(courseId: string): Promise<QuizOut | null> {
+    return firstValueFrom(this.http.get<QuizOut | null>(`${this.base}/active_by_course/${courseId}`));
   }
 }

@@ -3,7 +3,7 @@
   --hdr: var(--admin-header-height, 72px);
   --sbw: var(--admin-sidebar-width, 260px);
   padding-top: 35px;
-  padding-left: 20px;
+  padding-left: 100px;
 }
 
 .sticky-top-under-app {
