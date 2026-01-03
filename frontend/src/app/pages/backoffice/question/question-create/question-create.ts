@@ -80,7 +80,7 @@ export class QuestionCreate implements OnInit {
   async ngOnInit() {
     this.loading.set(true);
     try {
-      const quizzes = await this.quizzesSvc.list(0, 100);
+      const quizzes = await this.quizzesSvc.list(0);
       this.quizzes.set(quizzes);
     } finally {
       this.loading.set(false);
@@ -94,7 +94,7 @@ export class QuestionCreate implements OnInit {
 
     this.optionsLoading.set(true);
     try {
-      const opts = await this.optionsSvc.list(0, 100);
+      const opts = await this.optionsSvc.list(0);
       this.options.set(opts);
 
       const ids = opts.map(o => o.id);

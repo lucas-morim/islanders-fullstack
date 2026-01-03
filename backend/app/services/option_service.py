@@ -12,7 +12,7 @@ class OptionService:
     def __init__(self):
         self.repo = OptionRepository()
 
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Option]:
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = None) -> Sequence[Option]:
         return await self.repo.list(db, skip=skip, limit=limit)
 
     async def get(self, db: AsyncSession, option_id: str) -> Option:

@@ -37,10 +37,12 @@ export class QuizService {
   private http = inject(HttpClient);
   private base = `${API_BASE}/quizzes`;  
 
-  list(skip = 0, limit = 20): Promise<QuizOut[]> {
-    const params = new HttpParams()
-      .set('skip', String(skip))
-      .set('limit', String(limit));
+  list(skip = 0, limit?: Number): Promise<QuizOut[]> {
+  let params = new HttpParams().set('skip', String(skip));
+
+  if (limit !== undefined) {
+    params = params.set('limit', String(limit));
+  }
     return firstValueFrom(this.http.get<QuizOut[]>(`${this.base}/`, { params }));
   }
 

@@ -1,20 +1,20 @@
 from typing import Sequence, Optional
+from unittest import skip
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, or_
+from sqlalchemy.orm import selectinload
 from sqlalchemy.exc import IntegrityError
-
 from app.models.user import User
-from app.schemas.user import UserCreate, StatusEnum  # ajuste o import se seu StatusEnum estiver em outro módulo
-
+from app.schemas.user import UserCreate, StatusEnum
 
 class UserRepository:
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[User]:
-        result = await db.execute(
-            select(User)
-            .offset(skip)
-            .limit(limit)
-            .order_by(User.created_at.desc())  # se usar TimestampMixin
-        )
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = None) -> Sequence[User]:
+        stmt = select(User).offset(skip).order_by(User.created_at.desc())
+
+        if limit is not None:
+            stmt = stmt.limit(limit)
+
+        result = await db.execute(stmt)
         return result.scalars().all()
 
     async def get(self, db: AsyncSession, user_id: str) -> Optional[User]:
@@ -100,3 +100,37 @@ class UserRepository:
         await db.delete(user)
         await db.commit()
         return True
+
+    async def export(
+        self,
+        db: AsyncSession,
+        *,
+        q: Optional[str] = None,
+        role_id: Optional[str] = None,
+        status: Optional[StatusEnum | str] = None,
+    ) -> Sequence[User]:
+        stmt = (
+            select(User)
+            .options(selectinload(User.role))  
+            .order_by(User.created_at.desc())
+        )
+
+        if q:
+            term = f"%{q.strip().lower()}%"
+            stmt = stmt.where(
+                or_(
+                    User.name.ilike(term),
+                    User.username.ilike(term),
+                    User.email.ilike(term),
+                )
+            )
+
+        if role_id:
+            stmt = stmt.where(User.role_id == role_id)
+
+        if status:
+            s = self._status_value(status)
+            stmt = stmt.where(User.status == s)
+
+        result = await db.execute(stmt)
+        return result.scalars().all()

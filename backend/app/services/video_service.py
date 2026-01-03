@@ -14,7 +14,7 @@ class VideoService:
         self,
         db: AsyncSession,
         skip: int = 0,
-        limit: int = 100,
+        limit: Optional[int] = None,
     ) -> Sequence[Video]:
         return await self.repo.list(db, skip=skip, limit=limit)
 

@@ -92,10 +92,10 @@ export class QuestionEdit implements OnInit {
 
     this.loading.set(true);
     try {
-      const quizzes = await this.quizzesSvc.list(0, 100);
+      const quizzes = await this.quizzesSvc.list(0);
       this.quizzes.set(quizzes);
 
-      const opts = await this.optionsSvc.list(0, 100);
+      const opts = await this.optionsSvc.list(0);
       this.options.set(opts);
 
       const optIds = opts.map(o => o.id);

@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { VideoService, VideoOut } from  '../video.service';
+import { createPagination } from '../../shared/pagination';
 
 interface VideoRow {
   id: string;
@@ -30,9 +31,6 @@ export class Videos implements OnInit {
 
   q = signal('');
 
-  page = signal(1);
-  pageSize = signal(10);
-
   filtered = computed(() => {
     const term = this.q().trim().toLowerCase();
 
@@ -46,20 +44,20 @@ export class Videos implements OnInit {
     });
   });
 
-  totalPages = computed(() =>
-    Math.max(1, Math.ceil(this.filtered().length / this.pageSize()))
-  );
+  pager = createPagination(this.filtered, 10);
 
-  paginated = computed(() => {
-    const start = (this.page() - 1) * this.pageSize();
-    return this.filtered().slice(start, start + this.pageSize());
-  });
+  page = this.pager.page;
+  pageSize = this.pager.pageSize;
+  totalPages = this.pager.totalPages;
+  paginated = this.pager.paginated;
+  changePage = this.pager.changePage;
+  resetPage = this.pager.resetPage;
 
   async ngOnInit() {
     this.loading.set(true);
 
     try {
-      const data: VideoOut[] = await this.videosSvc.list(0, 100);
+      const data: VideoOut[] = await this.videosSvc.list(0);
 
       this.videos.set(
         data.map(v => ({
@@ -71,7 +69,7 @@ export class Videos implements OnInit {
         }))
       );
 
-      this.page.set(1);
+      this.resetPage();
     } finally {
       this.loading.set(false);
     }
@@ -79,7 +77,7 @@ export class Videos implements OnInit {
 
   resetFilters() {
     this.q.set('');
-    this.page.set(1);
+    this.resetPage();
   }
 
   newVideo() {
@@ -108,10 +106,5 @@ export class Videos implements OnInit {
       this.videos.set(prev);
       alert('Não foi possível remover.');
     }
-  }
-
-  changePage(p: number) {
-    const max = this.totalPages();
-    this.page.set(Math.min(Math.max(1, p), max));
   }
 }

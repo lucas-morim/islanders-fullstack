@@ -15,14 +15,14 @@
         <input type="search" class="form-control"
               placeholder="Nome, usuário ou e-mail"
               [ngModel]="q()"
-              (ngModelChange)="q.set($event); page.set(1)">
+              (ngModelChange)="q.set($event); resetPage()">
       </div>
 
       <div class="col-6 col-md-3">
         <label class="form-label">Função</label>
         <select class="form-select"
                 [ngModel]="roleId()"
-                (ngModelChange)="roleId.set($event); page.set(1)">
+                (ngModelChange)="roleId.set($event); resetPage()">
           <option value="">Todas</option>
           <option *ngFor="let r of roles()" [value]="r.id">{{ r.name }}</option>
         </select>
@@ -32,7 +32,7 @@
         <label class="form-label">Status</label>
         <select class="form-select"
                 [ngModel]="status()"
-                (ngModelChange)="status.set($event); page.set(1)">
+                (ngModelChange)="status.set($event); resetPage()">
           <option value="">Todos</option>
           <option>Ativo</option>
           <option>Inativo</option>
@@ -111,7 +111,8 @@
     </div>
 
     <div class="d-flex align-items-center gap-2">
-      <select class="form-select form-select-sm w-auto" (ngModelChange)="page.set(1)">
+      <select class="form-select form-select-sm w-auto" [ngModel]="pageSize()"
+              (ngModelChange)="pageSize.set($event); resetPage()">
         <option [ngValue]="5">5</option>
         <option [ngValue]="10">10</option>
         <option [ngValue]="20">20</option>

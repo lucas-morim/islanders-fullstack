@@ -25,11 +25,12 @@ export class OptionService {
   private http = inject(HttpClient);
   private base = `${API_BASE}/options`;
 
-  list(skip = 0, limit = 100): Promise<OptionOut[]> {
-    const params = new HttpParams()
-      .set('skip', String(skip))
-      .set('limit', String(limit));
+  list(skip = 0, limit?: number): Promise<OptionOut[]> {
+    let params = new HttpParams().set('skip', String(skip));
 
+    if (limit !== undefined) {
+      params = params.set('limit', String(limit));
+    }
     return firstValueFrom(
       this.http.get<OptionOut[]>(`${this.base}/`, { params })
     );

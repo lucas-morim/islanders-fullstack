@@ -15,14 +15,14 @@
         <input type="search" class="form-control"
               placeholder="Nome do Curso"
               [ngModel]="q()"
-              (ngModelChange)="q.set($event); page.set(1)">
+              (ngModelChange)="q.set($event); resetPage()">
       </div>
 
       <div class="col-6 col-md-3">
         <label class="form-label">Áreas</label>
         <select class="form-select"
                 [ngModel]="areaId()"
-                (ngModelChange)="areaId.set($event); page.set(1)">
+                (ngModelChange)="areaId.set($event); resetPage()">
           <option value="">Todas</option>
           <option *ngFor="let a of areas()" [value]="a.id">{{ a.name }}</option>
         </select>
@@ -32,7 +32,7 @@
         <label class="form-label">Modalidades</label>
         <select class="form-select"
                 [ngModel]="modalityId()"
-                (ngModelChange)="modalityId.set($event); page.set(1)">
+                (ngModelChange)="modalityId.set($event); resetPage()">
           <option value="">Todas</option>
           <option *ngFor="let m of modalities()" [value]="m.id">{{ m.name }}</option>
         </select>
@@ -42,7 +42,7 @@
         <label class="form-label">Status</label>
         <select class="form-select"
                 [ngModel]="status()"
-                (ngModelChange)="status.set($event); page.set(1)">
+                (ngModelChange)="status.set($event); resetPage()">
           <option value="">Todos</option>
           <option>Ativo</option>
           <option>Inativo</option>
@@ -121,11 +121,13 @@
   <div class="card-body pagination-bar d-flex flex-column flex-md-row align-items-center justify-content-between gap-2">
     <div class="text-muted small">
       Mostrando <strong>{{ paginated().length }}</strong> de
-      <strong>{{ filtered().length }}</strong> usuários
+      <strong>{{ filtered().length }}</strong> cursos
     </div>
 
     <div class="d-flex align-items-center gap-2">
-      <select class="form-select form-select-sm w-auto" (ngModelChange)="page.set(1)">
+      <select class="form-select form-select-sm w-auto"
+              [ngModel]="pageSize()"
+              (ngModelChange)="pageSize.set($event); resetPage()">
         <option [ngValue]="5">5</option>
         <option [ngValue]="10">10</option>
         <option [ngValue]="20">20</option>

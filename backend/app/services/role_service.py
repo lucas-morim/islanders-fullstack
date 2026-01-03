@@ -8,7 +8,7 @@ class RoleService:
     def __init__(self, repo= RoleRepository()):
         self.repo = repo
 
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Role]:
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = None) -> Sequence[Role]:
         return await self.repo.list(db, skip=skip, limit=limit)
     
     async def get(self, db: AsyncSession, role_id: str) -> Role:

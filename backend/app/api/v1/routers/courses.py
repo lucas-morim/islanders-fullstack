@@ -1,18 +1,58 @@
 from fastapi import APIRouter, Depends, Query, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from typing import List
+from typing import List, Optional
 
 from app.core.deps import get_db
 from app.schemas.course import CourseCreate, CourseUpdate, CourseOut
 from app.services.course_service import service as course_service
 
+from datetime import datetime
+from app.schemas.course import StatusEnum
+from app.utils.csv_export import stream_csv
+
 router = APIRouter()
+
+@router.get("/export/csv")
+async def export_courses_csv(
+    db: AsyncSession = Depends(get_db),
+    q: Optional[str] = Query(None),
+    area_id: Optional[str] = Query(None),
+    modality_id: Optional[str] = Query(None),
+    status: Optional[StatusEnum] = Query(None),
+):
+    courses = await course_service.export(
+        db, q=q, area_id=area_id, modality_id=modality_id, status=status
+    )
+
+    filename = f"courses_{datetime.utcnow().strftime('%Y-%m-%d_%H-%M')}.csv"
+    header = [
+        "ID", "Título", "Descrição", "Áreas", "Modalidade", "Status",
+        "Horas", "Créditos", "Preço", "Criado em"
+    ]
+
+    return stream_csv(
+        filename,
+        header,
+        courses,
+        lambda c: [
+            c.id,
+            c.title,
+            c.description or "",
+            ", ".join([a.name for a in (c.areas or [])]) if getattr(c, "areas", None) else "",
+            c.modality.name if c.modality else "",
+            c.status,
+            c.num_hours or "",
+            c.credits or "",
+            c.price or "",
+            c.created_at.isoformat() if c.created_at else "",
+        ],
+    )
 
 @router.get("/", response_model=List[CourseOut])
 async def list_courses(
     db: AsyncSession = Depends(get_db),
     skip: int = Query(0, ge=0),
-    limit: int = Query(100, ge=1, le=100),
+    limit: Optional[int] = Query(None, ge=1)
 ):
     return await course_service.list(db, skip=skip, limit=limit)
 

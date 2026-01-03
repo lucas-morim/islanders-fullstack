@@ -4,6 +4,7 @@ import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { AreaService, AreaOut } from '../area.service';
 import { AuthState } from '../../../frontoffice/auth/auth.state';
+import { createPagination } from '../../shared/pagination';
 
 @Component({
   standalone: true,
@@ -20,8 +21,6 @@ export class Areas {
   areas = signal<AreaOut[]>([]);
 
   q = signal('');
-  page = signal(1);
-  pageSize = signal(10);
 
   filtered = computed(() => {
     const term = this.q().toLowerCase();
@@ -32,20 +31,21 @@ export class Areas {
     );
   });
 
-  totalPages = computed(() =>
-    Math.max(1, Math.ceil(this.filtered().length / this.pageSize()))
-  );
+  pager = createPagination(this.filtered, 10);
 
-  paginated = computed(() => {
-    const start = (this.page() - 1) * this.pageSize();
-    return this.filtered().slice(start, start + this.pageSize());
-  });
+  page = this.pager.page;
+  pageSize = this.pager.pageSize;
+  totalPages = this.pager.totalPages;
+  paginated = this.pager.paginated;
+  changePage = this.pager.changePage;
+  resetPage = this.pager.resetPage;
 
   async ngOnInit() {
     this.loading.set(true);
     try {
-      const data = await this.srv.list(0, 100);
+      const data = await this.srv.list(0, 50);
       this.areas.set(data);
+      this.resetPage();
     } finally {
       this.loading.set(false);
     }
@@ -53,7 +53,7 @@ export class Areas {
 
   resetFilters() {
     this.q.set('');
-    this.page.set(1);
+    this.resetPage();
   }
 
   remove(area: AreaOut) {
@@ -64,12 +64,6 @@ export class Areas {
     });
   }
 
-  changePage(p: number) {
-    const max = this.totalPages();
-    this.page.set(Math.max(1, Math.min(p, max)));
-  }
-
-  // métodos para o template usar no *ngIf
   canCreate(): boolean { return this.auth.canCreate(); }
   canEdit(): boolean { return this.auth.canEdit(); }
   canDelete(): boolean { return this.auth.canDelete(); }

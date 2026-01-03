@@ -53,7 +53,7 @@ export class UserCreate implements OnInit {
   async ngOnInit() {
     this.loading.set(true);
     try {
-      const roles = await this.rolesSvc.list(0, 100);
+      const roles = await this.rolesSvc.list(0, 20);
       this.roles.set(roles);
     } catch (e) {
       console.error('Erro ao carregar roles', e);

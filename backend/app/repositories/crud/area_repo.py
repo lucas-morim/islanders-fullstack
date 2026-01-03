@@ -4,8 +4,12 @@ from sqlalchemy import select, update, delete
 from app.models.area import Area
 
 class AreaRepository:
-    async def list(self, db: AsyncSession, *, skip: int = 0, limit: int = 100) -> Sequence[Area]:
-        result = await db.execute(select(Area).offset(skip).limit(limit))
+    async def list(self, db: AsyncSession, *, skip: int = 0, limit: Optional[int] = None) -> Sequence[Area]:
+        stmt = select(Area).offset(skip)
+        if limit is not None:
+            stmt = stmt.limit(limit)
+
+        result = await db.execute(stmt)
         return result.scalars().all()
     
     async def get(self, db: AsyncSession, area_id: str) -> Optional[Area]:

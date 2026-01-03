@@ -5,7 +5,6 @@
       <button class="btn btn-primary isla-color-bg" routerLink="/backoffice/videos/create">
         Novo vídeo
       </button>
-      <button class="btn btn-outline-secondary">Exportar</button>
     </div>
   </div>
 
@@ -18,7 +17,7 @@
                  class="form-control"
                  placeholder="Título ou URL do vídeo"
                  [ngModel]="q()"
-                 (ngModelChange)="q.set($event); page.set(1)">
+                 (ngModelChange)="q.set($event); resetPage()">
         </div>
 
         <div class="col-12 col-md-2 d-flex">
@@ -110,7 +109,8 @@
     </div>
 
     <div class="d-flex align-items-center gap-2">
-      <select class="form-select form-select-sm w-auto" (ngModelChange)="page.set(1)">
+      <select class="form-select form-select-sm w-auto" (ngModelChange)="pageSize.set($event); resetPage()"
+              [ngModel]="pageSize()">
         <option [ngValue]="5">5</option>
         <option [ngValue]="10">10</option>
         <option [ngValue]="20">20</option>

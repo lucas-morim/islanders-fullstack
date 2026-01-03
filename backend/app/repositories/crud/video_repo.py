@@ -9,11 +9,14 @@ class VideoRepository:
         self,
         db: AsyncSession,
         skip: int = 0,
-        limit: int = 100,
+        limit: Optional[int] = None,
     ) -> Sequence[Video]:
-        result = await db.execute(
-            select(Video).offset(skip).limit(limit)
-        )
+        stmt = select(Video).offset(skip)
+
+        if limit is not None:
+            stmt = stmt.limit(limit)
+            
+        result = await db.execute(stmt)
         return result.scalars().all()
 
     async def get(

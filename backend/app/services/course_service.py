@@ -6,13 +6,13 @@ from fastapi import HTTPException, status
 from app.repositories.crud.course_repo import CourseRepository
 from app.models.course import Course
 from app.models.area_course import AreaCourse
-from app.schemas.course import CourseCreate, CourseUpdate
+from app.schemas.course import CourseCreate, CourseUpdate, StatusEnum
 
 class CourseService:
     def __init__(self, repo: CourseRepository = CourseRepository()):
         self.repo = repo
 
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Course]:
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = 100) -> Sequence[Course]:
         return await self.repo.list(db, skip=skip, limit=limit)
     
     async def get(self, db: AsyncSession, course_id: str) -> Course:
@@ -81,6 +81,20 @@ class CourseService:
     async def delete(self, db: AsyncSession, course_id: str) -> None:
         course = await self.get(db, course_id)
         await self.repo.delete(db, course)
+    
+    async def export(
+        self,
+        db: AsyncSession,
+        *,
+        q: Optional[str] = None,
+        area_id: Optional[str] = None,
+        modality_id: Optional[str] = None,
+        status: Optional[StatusEnum | str] = None,
+    ) -> Sequence[Course]:
+        return await self.repo.export(
+            db, q=q, area_id=area_id, modality_id=modality_id, status=status
+        )
+
 
 
 service = CourseService()

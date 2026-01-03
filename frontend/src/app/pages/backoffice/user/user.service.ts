@@ -45,10 +45,13 @@ export class UsersService {
   private http = inject(HttpClient);
   private base = `${API_BASE}/users`;  
 
-  list(skip = 0, limit = 20): Promise<UserOut[]> {
-    const params = new HttpParams()
-      .set('skip', String(skip))
-      .set('limit', String(limit));
+  list(skip = 0, limit?: number): Promise<UserOut[]> {
+    let params = new HttpParams().set('skip', String(skip));
+
+    if (limit !== undefined) {
+      params = params.set('limit', String(limit));
+    }
+
     return firstValueFrom(this.http.get<UserOut[]>(`${this.base}/`, { params }));
   }
 
@@ -75,5 +78,18 @@ export class UsersService {
     return firstValueFrom(
       this.http.post<{ url: string }>(`${API_BASE}/upload/users`, formData)
     ).then(res => res.url);
+  }
+
+  exportCsv(filters: { q?: string; role_id?: string; status?: 'active' | 'inactive' }) {
+    let params = new HttpParams();
+
+    if (filters.q) params = params.set('q', filters.q);
+    if (filters.role_id) params = params.set('role_id', filters.role_id);
+    if (filters.status) params = params.set('status', filters.status);
+
+    return this.http.get(`${API_BASE}/users/export/csv`, {
+      params,
+      responseType: 'blob',
+    });
   }
 }

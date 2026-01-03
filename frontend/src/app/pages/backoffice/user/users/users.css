@@ -18,13 +18,6 @@
   color: #fff !important;
 }
 
-.table-card {
-  display: flex;
-  flex-direction: column;
-  min-height: 440px;    
-  margin-top: 40px;     
-}
-
 .table-card .table-responsive {
   flex: 1 1 auto;
   overflow: auto;              
@@ -37,11 +30,20 @@
 
 .sticky-top-under-app {
   position: sticky;
-  top: 100px; 
-  z-index: 100;
+  top: 93px; /*AAAAA */
+  z-index: 10; /*AAAAA */
   background: var(--bs-body-bg, #fff);
   padding-top: .5rem;
   padding-bottom: .5rem;
   border-bottom: 1px solid rgba(0,0,0,.05);
   margin-bottom: 40px;
+}
+
+.table-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 440px;    
+  margin-top: 40px;
+  position: relative;
+  z-index: 1; /*AAAAA */
 }

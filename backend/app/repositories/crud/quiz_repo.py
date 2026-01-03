@@ -10,9 +10,14 @@ class QuizRepository:
         db: AsyncSession,
         *,
         skip: int = 0,
-        limit: int = 100
+        limit: Optional[int] = None
     ) -> Sequence[Quiz]:
-        result = await db.execute(select(Quiz).offset(skip).limit(limit))
+        stmt = select(Quiz).offset(skip)
+
+        if limit is not None:
+            stmt = stmt.limit(limit)
+
+        result = await db.execute(stmt)
         return result.scalars().all()
 
     async def get(self, db: AsyncSession, quiz_id: str) -> Optional[Quiz]:

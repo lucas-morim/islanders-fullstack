@@ -31,10 +31,12 @@ export class QuestionService {
   private http = inject(HttpClient);
   private base = `${API_BASE}/questions`;
 
-  list(skip = 0, limit = 100): Promise<QuestionOut[]> {
-    const params = new HttpParams()
-      .set('skip', String(skip))
-      .set('limit', String(limit));
+  list(skip = 0, limit?: Number): Promise<QuestionOut[]> {
+    let params = new HttpParams().set('skip', String(skip));
+
+    if (limit !== undefined) {
+      params = params.set('limit', String(limit));
+    }
 
     return firstValueFrom(
       this.http.get<QuestionOut[]>(`${this.base}/`, { params })

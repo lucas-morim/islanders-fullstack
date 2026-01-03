@@ -2,6 +2,7 @@ import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { createPagination } from '../../shared/pagination';
 
 import { QuestionService, QuestionOut } from '../question.service';
 import { QuizService, QuizOut } from '../../quiz/quiz.service';
@@ -42,9 +43,6 @@ export class Questions implements OnInit {
   q = signal('');
   quizNameFilter = signal('');
 
-  page = signal(1);
-  pageSize = signal(10);
-
   filtered = computed(() => {
     const term = this.q().toLowerCase().trim();
     const quizTerm = this.quizNameFilter().toLowerCase().trim();
@@ -56,23 +54,23 @@ export class Questions implements OnInit {
     });
   });
 
-  totalPages = computed(() =>
-    Math.max(1, Math.ceil(this.filtered().length / this.pageSize()))
-  );
+  pager = createPagination(this.filtered, 10);
 
-  paginated = computed(() => {
-    const start = (this.page() - 1) * this.pageSize();
-    return this.filtered().slice(start, start + this.pageSize());
-  });
+  page = this.pager.page;
+  pageSize = this.pager.pageSize;
+  totalPages = this.pager.totalPages;
+  paginated = this.pager.paginated;
+  changePage = this.pager.changePage;
+  resetPage = this.pager.resetPage;
 
   async ngOnInit() {
     this.loading.set(true);
     try {
-      const quizzes = await this.quizzesSvc.list(0, 100);
+      const quizzes = await this.quizzesSvc.list(0);
       this.quizzes.set(quizzes);
       const quizMap = this.quizzesMap();
 
-      const qs: QuestionOut[] = await this.questionsSvc.list(0, 100);
+      const qs: QuestionOut[] = await this.questionsSvc.list(0);
 
       const ids = qs.map(x => x.id);
       const countsMap = ids.length ? await this.qOptSvc.counts(ids) : {};
@@ -88,7 +86,7 @@ export class Questions implements OnInit {
         }))
       );
 
-      this.page.set(1);
+      this.resetPage();
     } finally {
       this.loading.set(false);
     }
@@ -97,7 +95,7 @@ export class Questions implements OnInit {
   resetFilters() {
     this.q.set('');
     this.quizNameFilter.set('');
-    this.page.set(1);
+    this.resetPage();
   }
 
   async remove(item: QuestionRow) {
@@ -114,10 +112,5 @@ export class Questions implements OnInit {
       this.questions.set(prev);
       alert('Não foi possível remover a questão.');
     }
-  }
-
-  changePage(p: number) {
-    const max = this.totalPages();
-    this.page.set(Math.min(Math.max(1, p), max));
   }
 }

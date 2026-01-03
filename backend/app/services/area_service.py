@@ -8,7 +8,7 @@ class AreaService:
     def __init__(self):
         self.repo = AreaRepository()
 
-    async def list(self, db: AsyncSession, skip: int = 0, limit: int = 100) -> Sequence[Area]:
+    async def list(self, db: AsyncSession, skip: int = 0, limit: Optional[int] = None) -> Sequence[Area]:
         return await self.repo.list(db, skip=skip, limit=limit)
     
     async def get(self, db: AsyncSession, area_id: str) -> Area:

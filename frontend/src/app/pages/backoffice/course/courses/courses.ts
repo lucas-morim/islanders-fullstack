@@ -2,9 +2,10 @@ import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
-import { CourseService, CourseOut } from  '../course.service';
+import { CourseService, CourseOut } from '../course.service';
 import { AreaService, AreaOut } from '../../area/area.service';
 import { ModalityService, ModalityOut } from '../../modality/modality.service';
+import { createPagination } from '../../shared/pagination'; // <-- ajuste o path se precisar
 
 type StatusLabel = 'Ativo' | 'Inativo';
 
@@ -25,7 +26,6 @@ interface CourseRow {
   updated_at: string;
 }
 
-
 @Component({
   standalone: true,
   selector: 'app-courses',
@@ -33,7 +33,7 @@ interface CourseRow {
   templateUrl: './courses.html',
   styleUrl: './courses.css',
 })
-export class Courses {
+export class Courses implements OnInit {
   private coursesSvc = inject(CourseService);
   private areasSvc = inject(AreaService);
   private modalitySvc = inject(ModalityService);
@@ -58,12 +58,9 @@ export class Courses {
   courses = signal<CourseRow[]>([]);
 
   q = signal('');
-  areaId = signal<string>('');         
-  modalityId = signal<string>(''); 
-  status = signal<StatusLabel | ''>(''); 
-
-  page = signal(1);
-  pageSize = signal(10);
+  areaId = signal<string>('');
+  modalityId = signal<string>('');
+  status = signal<StatusLabel | ''>('');
 
   filtered = computed(() => {
     const term = this.q().toLowerCase().trim();
@@ -72,39 +69,37 @@ export class Courses {
     const status = this.status();
 
     return this.courses().filter(c => {
-      const matchesTerm =
-        !term ||
-        c.title.toLowerCase().includes(term)
-
+      const matchesTerm = !term || c.title.toLowerCase().includes(term);
       const matchesArea = !areaId || c.area_id === areaId;
       const matchesModality = !modalityId || c.modality_id === modalityId;
       const matchesStatus = !status || c.status === status;
-
       return matchesTerm && matchesArea && matchesModality && matchesStatus;
     });
   });
 
-  totalPages = computed(() => Math.max(1, Math.ceil(this.filtered().length / this.pageSize())));
-  paginated = computed(() => {
-    const start = (this.page() - 1) * this.pageSize();
-    return this.filtered().slice(start, start + this.pageSize());
-  });
+  pager = createPagination(this.filtered, 10);
+
+  page = this.pager.page;
+  pageSize = this.pager.pageSize;
+  totalPages = this.pager.totalPages;
+  paginated = this.pager.paginated;
+  changePage = this.pager.changePage;
+  resetPage = this.pager.resetPage;
 
   async ngOnInit() {
     this.loading.set(true);
     try {
-      const areas = await this.areasSvc.list(0, 100);
+      const areas = await this.areasSvc.list(0, 50);
       this.areas.set(areas);
 
-      const modalities = await this.modalitySvc.list(0, 100);
+      const modalities = await this.modalitySvc.list(0, 20);
       this.modalities.set(modalities);
 
-      const data: CourseOut[] = await this.coursesSvc.list(0, 100);
+      const data: CourseOut[] = await this.coursesSvc.list(0);
 
       this.courses.set(
         data.map(c => {
-          const firstAreaId =
-            c.area_ids && c.area_ids.length > 0 ? c.area_ids[0] : null;
+          const firstAreaId = c.area_ids && c.area_ids.length > 0 ? c.area_ids[0] : null;
 
           return {
             id: c.id,
@@ -125,7 +120,7 @@ export class Courses {
         })
       );
 
-      this.page.set(1);
+      this.resetPage(); // antes era this.page.set(1)
     } finally {
       this.loading.set(false);
     }
@@ -135,11 +130,41 @@ export class Courses {
     this.q.set('');
     this.areaId.set('');
     this.status.set('');
-    this.page.set(1);
+    this.modalityId.set('');
+    this.resetPage(); // antes era this.page.set(1)
   }
 
-  newCourse() { this.router.navigate(['/backoffice/courses/create']); }
-  exportCsv() { /* … */ }
+  newCourse() {
+    this.router.navigate(['/backoffice/courses/create']);
+  }
+
+  exportCsv() {
+    const statusApi =
+      this.status() === 'Ativo' ? 'active' :
+      this.status() === 'Inativo' ? 'inactive' :
+      undefined;
+
+    this.coursesSvc.exportCsv({
+      q: this.q().trim() || undefined,
+      area_id: this.areaId() || undefined,
+      modality_id: this.modalityId() || undefined,
+      status: statusApi,
+    }).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'courses.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: async (err) => {
+        try { console.error(await err.error.text()); } catch { console.error(err); }
+        alert('Falha ao exportar CSV.');
+      }
+    });
+  }
+
   view(c: CourseRow) { this.router.navigate(['/backoffice/courses', c.id]); }
   edit(c: CourseRow) { this.router.navigate(['/backoffice/courses', c.id, 'edit']); }
 
@@ -149,17 +174,11 @@ export class Courses {
     this.courses.set(prev.filter(x => x.id !== c.id));
     try {
       await this.coursesSvc.delete(c.id);
-      const tp = this.totalPages();
-      if (this.page() > tp) this.page.set(tp);
+      // não precisa recalcular nada: totalPages/paginated já se ajustam
     } catch {
       this.courses.set(prev);
       alert('Não foi possível remover.');
     }
-  }
-
-    changePage(p: number) {
-    const max = this.totalPages();
-    this.page.set(Math.min(Math.max(1, p), max));
   }
 
   badgeClass(status: StatusLabel): string {

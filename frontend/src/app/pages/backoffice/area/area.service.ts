@@ -28,10 +28,11 @@ export class AreaService {
     private http = inject(HttpClient);
     private base = `${API_BASE}/areas`;
 
-    list(skip = 0, limit = 100): Promise<AreaOut[]> {
-        const params = new HttpParams ()
-            .set('skip', String(skip))
-            .set('limit', String(limit))
+    list(skip = 0, limit?: number): Promise<AreaOut[]> {
+        let params = new HttpParams().set('skip', String(skip));
+        if (limit !== undefined) {
+            params = params.set('limit', String(limit));
+        }
         return firstValueFrom(this.http.get<AreaOut[]>(`${this.base}/`, { params }));
     }
 

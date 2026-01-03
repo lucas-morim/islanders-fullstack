@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { UsersService, UserOut } from  '../user.service';
 import { RoleService, RoleOut } from '../../role/role.service';
+import { createPagination } from '../../shared/pagination';
 
 type StatusLabel = 'Ativo' | 'Inativo';
 
@@ -46,9 +47,6 @@ export class Users implements OnInit {
   roleId = signal<string>('');
   status = signal<StatusLabel | ''>('');
 
-  page = signal(1);
-  pageSize = signal(10);
-
   private buildAvatarUrl(path?: string | null): string | null {
     if (!path) return null;
     if (path.startsWith('http')) return path;
@@ -75,19 +73,22 @@ export class Users implements OnInit {
     });
   });
 
-  totalPages = computed(() => Math.max(1, Math.ceil(this.filtered().length / this.pageSize())));
-  paginated = computed(() => {
-    const start = (this.page() - 1) * this.pageSize();
-    return this.filtered().slice(start, start + this.pageSize());
-  });
+  pager = createPagination(this.filtered, 10);
+
+  page = this.pager.page;
+  pageSize = this.pager.pageSize;
+  totalPages = this.pager.totalPages;
+  paginated = this.pager.paginated;
+  changePage = this.pager.changePage;
+  resetPage = this.pager.resetPage;
 
   async ngOnInit() {
     this.loading.set(true);
     try {
-      const roles = await this.rolesSvc.list(0, 100);
+      const roles = await this.rolesSvc.list(0, 20);
       this.roles.set(roles);
 
-      const data: UserOut[] = await this.usersSvc.list(0, 100);
+      const data: UserOut[] = await this.usersSvc.list(0, 200);
       this.users.set(
         data.map(u => ({
           id: u.id,
@@ -101,7 +102,7 @@ export class Users implements OnInit {
           avatar: this.buildAvatarUrl(u.photo ?? null), 
         }))
       );
-      this.page.set(1);
+      this.resetPage();
     } finally {
       this.loading.set(false);
     }
@@ -111,11 +112,35 @@ export class Users implements OnInit {
     this.q.set('');
     this.roleId.set('');
     this.status.set('');
-    this.page.set(1);
+    this.resetPage();
+  }
+
+  exportCsv() {
+    const statusApi =
+      this.status() === 'Ativo' ? 'active' :
+      this.status() === 'Inativo' ? 'inactive' :
+      undefined;
+
+    this.usersSvc.exportCsv({
+      q: this.q().trim() || undefined,
+      role_id: this.roleId() || undefined,
+      status: statusApi,
+    }).subscribe({
+      next: (blob) => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'users.csv';
+        a.click();
+        URL.revokeObjectURL(url);
+      },
+      error: async (err) => {
+        try { console.error(await err.error.text()); } catch { console.error(err); }
+      }
+    });
   }
 
   newUser() { this.router.navigate(['/backoffice/users/create']); }
-  exportCsv() { /* … */ }
   view(u: UserRow) { this.router.navigate(['/backoffice/users', u.id]); }
   edit(u: UserRow) { this.router.navigate(['/backoffice/users', u.id, 'edit']); }
 
@@ -131,11 +156,6 @@ export class Users implements OnInit {
       this.users.set(prev);
       alert('Não foi possível remover.');
     }
-  }
-
-  changePage(p: number) {
-    const max = this.totalPages();
-    this.page.set(Math.min(Math.max(1, p), max));
   }
 
   badgeClass(status: StatusLabel): string {

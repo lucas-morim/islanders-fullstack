@@ -27,10 +27,12 @@ export class RoleService {
   private http = inject(HttpClient);
   private base = `${API_BASE}/roles`;
 
-  list(skip = 0, limit = 100): Promise<RoleOut[]> {
-    const params = new HttpParams()
-      .set('skip', String(skip))
-      .set('limit', String(Math.min(Math.max(1, limit), 100)));
+  list(skip = 0, limit?: Number): Promise<RoleOut[]> {
+    let params = new HttpParams().set('skip', String(skip));
+
+    if (limit !== undefined) {
+      params = params.set('limit', String(limit));
+    }
     return firstValueFrom(this.http.get<RoleOut[]>(`${this.base}/`, { params }));
   }
 

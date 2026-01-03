@@ -64,11 +64,11 @@ export class UserEdit implements OnInit {
     this.loading.set(true);
     try {
       const [roles, user] = await Promise.all([
-        this.rolesSvc.list(0, 100),
+        this.rolesSvc.list(0, 20),
         this.usersSvc.getOne(this.userId),
       ]);
 
-      this.roles.set(roles);
+      this.roles.set(roles);  
       this.patchFormWithUser(user);
     } catch (e) {
       console.error('Erro ao carregar usuário/roles', e);

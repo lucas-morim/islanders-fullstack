@@ -17,7 +17,7 @@
 
 .sticky-top-under-app {
   position: sticky;
-  top: 100px; 
+  top: 93px; 
   z-index: 100;
   background: var(--bs-body-bg, #fff);
   padding-top: .5rem;

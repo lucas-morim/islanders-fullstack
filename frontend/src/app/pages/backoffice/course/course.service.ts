@@ -62,10 +62,12 @@ export class CourseService {
     private http = inject(HttpClient);
     private base = `${API_BASE}/courses`;  
     
-    list(skip = 0, limit = 20): Promise<CourseOut[]> {
-    const params = new HttpParams()
-        .set('skip', String(skip))
-        .set('limit', String(limit));
+    list(skip = 0, limit?: number): Promise<CourseOut[]> {
+    let params = new HttpParams().set('skip', String(skip));
+
+    if (limit !== undefined) {
+        params = params.set('limit', String(limit));
+    }
     return firstValueFrom(this.http.get<CourseOut[]>(`${this.base}/`, { params }));
     }
 
@@ -92,5 +94,18 @@ export class CourseService {
         return firstValueFrom(
         this.http.post<{ url: string }>(`${API_BASE}/upload/courses`, formData)
         ).then(res => res.url);
+    }
+
+    exportCsv(filters: { q?: string; area_id?: string; modality_id?: string; status?: 'active' | 'inactive' }) {
+        let params = new HttpParams();
+        if (filters.q) params = params.set('q', filters.q);
+        if (filters.area_id) params = params.set('area_id', filters.area_id);
+        if (filters.modality_id) params = params.set('modality_id', filters.modality_id);
+        if (filters.status) params = params.set('status', filters.status);
+
+        return this.http.get(`${API_BASE}/courses/export/csv`, {
+            params,
+            responseType: 'blob',
+        });
     }
 }
