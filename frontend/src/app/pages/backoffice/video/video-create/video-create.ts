@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { VideoService, VideoCreatePayload } from '../video.service';
+import { httpUrlValidator } from '../../shared/url.validator';
 
 @Component({
   standalone: true,
@@ -22,7 +23,7 @@ export class VideoCreate implements OnInit {
   form = this.fb.group({
     title: ['', [Validators.required, Validators.minLength(3), Validators.maxLength(50)]],
     description: [''],
-    video_url: ['', [Validators.required, Validators.maxLength(500)]],
+    video_url: ['', [Validators.required, Validators.maxLength(500), httpUrlValidator]],
   });
 
   get f() {
@@ -38,6 +39,14 @@ export class VideoCreate implements OnInit {
   }
 
   async submit() {
+    let videoUrl = (this.f['video_url'].value ?? '').trim();
+    if (videoUrl && !/^[a-zA-Z][a-zA-Z0-9+.-]*:\/\//.test(videoUrl)) {
+      videoUrl = `https://${videoUrl}`;
+      this.f['video_url'].setValue(videoUrl); 
+    }
+
+    this.f['video_url'].updateValueAndValidity();
+
     if (this.form.invalid) {
       this.form.markAllAsTouched();
       return;
@@ -49,7 +58,7 @@ export class VideoCreate implements OnInit {
 
       const payload: VideoCreatePayload = {
         title: v.title!,
-        video_url: v.video_url!,
+        video_url: videoUrl,
         description: v.description ?? null,
       };
 
@@ -62,6 +71,7 @@ export class VideoCreate implements OnInit {
       this.submitting.set(false);
     }
   }
+
 
   cancel() {
     this.router.navigate(['/backoffice/videos']);

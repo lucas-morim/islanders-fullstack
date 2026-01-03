@@ -32,7 +32,7 @@ async def create_video(
     return await video_service.create(
         db,
         title=payload.title,
-        video_url=payload.video_url,
+        video_url=str(payload.video_url),
         description=payload.description,
     )
 
@@ -47,7 +47,7 @@ async def update_video(
         db,
         video_id,
         title=payload.title,
-        video_url=payload.video_url,
+        video_url=str(payload.video_url) if payload.video_url is not None else None,
         description=payload.description,
     )
 

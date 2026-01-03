@@ -6,7 +6,7 @@ import datetime as dt
 class VideoBase(BaseModel):
     title: str = Field(max_length=50)
     description: Optional[str] = None
-    video_url: str  
+    video_url: HttpUrl  
 
     class Config:
         from_attributes = True
@@ -19,7 +19,7 @@ class VideoCreate(VideoBase):
 class VideoUpdate(BaseModel):
     title: Optional[str] = Field(default=None, max_length=50)
     description: Optional[str] = None
-    video_url: Optional[str] = None
+    video_url: Optional[HttpUrl] = None
 
 
 class VideoOut(VideoBase):
