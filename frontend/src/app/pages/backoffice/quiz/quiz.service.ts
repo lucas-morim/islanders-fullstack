@@ -4,10 +4,13 @@ import { firstValueFrom } from 'rxjs';
 
 const API_BASE = 'http://127.0.0.1:8000/api/v1';  
 
+export type StatusEnum = 'active' | 'inactive';
+
 export interface QuizOut {
   id: string;
   title: string;
   description?: string;
+  status: StatusEnum;
   user_id?: string | null;
   course_id: string;
   video_id?: string | null;
