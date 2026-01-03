@@ -39,6 +39,7 @@ async def create_quiz(
         title=payload.title,
         description=payload.description,
         user_id=current_user.id,   
+        status=payload.status.value,
         course_id=payload.course_id,
         video_id=payload.video_id
     )
@@ -66,6 +67,7 @@ async def update_quiz(
         quiz_id,
         title=payload.title,
         description=payload.description,
+        status=payload.status.value if payload.status is not None else None,
         course_id=payload.course_id,
         video_id=payload.video_id
     )

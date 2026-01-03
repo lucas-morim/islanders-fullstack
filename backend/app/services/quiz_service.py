@@ -6,6 +6,7 @@ from app.models.quiz import Quiz
 from sqlalchemy import select
 from sqlalchemy.orm import selectinload
 from app.schemas.quiz_full import QuizFullOut, QuestionFull, OptionMini
+from app.schemas.quiz import StatusEnum
 
 
 class QuizService:
@@ -38,6 +39,7 @@ class QuizService:
         user_id: Optional[str],
         course_id: str,
         video_id: Optional[str] = None,
+        status: StatusEnum | str = StatusEnum.active,  
     ) -> Quiz:
         existing_quiz = await self.repo.get_by_title(db, title)
         if existing_quiz:
@@ -46,15 +48,17 @@ class QuizService:
                 detail="Quiz title must be unique"
             )
 
-        quiz = await self.repo.create(
+        status_str = status.value if isinstance(status, StatusEnum) else str(status)  
+
+        return await self.repo.create(
             db,
             title=title,
             description=description,
-            user_id=user_id or None,      
+            user_id=user_id or None,
             course_id=course_id,
-            video_id=video_id or None,    
+            video_id=video_id or None,
+            status=status_str, 
         )
-        return quiz
 
     async def update(
         self,
@@ -65,26 +69,32 @@ class QuizService:
         description: Optional[str] = None,
         course_id: Optional[str] = None,
         video_id: Optional[str] = None,
-    ) -> Quiz:
-        quiz = await self.get(db, quiz_id)
+        status: Optional[StatusEnum | str] = None,
+        ) -> Quiz:
+            quiz = await self.get(db, quiz_id)
 
-        if title:
-            existing_quiz = await self.repo.get_by_title(db, title)
-            if existing_quiz and existing_quiz.id != quiz_id:
-                raise HTTPException(
-                    status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Quiz title must be unique"
-                )
+            if title:
+                existing_quiz = await self.repo.get_by_title(db, title)
+                if existing_quiz and existing_quiz.id != quiz_id:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail="Quiz title must be unique"
+                    )
 
-        quiz = await self.repo.update(
-            db,
-            quiz,
-            title=title,
-            description=description,
-            course_id=course_id,
-            video_id=video_id,
-        )
-        return quiz
+            status_str = None
+            if status is not None:
+                status_str = status.value if isinstance(status, StatusEnum) else str(status)  
+
+            quiz = await self.repo.update(
+                db,
+                quiz,
+                title=title,
+                description=description,
+                course_id=course_id,
+                video_id=video_id,
+                status=status_str, 
+            )
+            return quiz
 
     async def delete(self, db: AsyncSession, quiz_id: str) -> None:
         quiz = await self.get(db, quiz_id)

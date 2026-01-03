@@ -25,7 +25,6 @@ class UserCreate(UserBase):
     role_id: Optional[str] = None
 
 
-
 class UserUpdate(BaseModel):
     name: Optional[str] = Field(default=None, max_length=120)
     email: Optional[EmailStr] = Field(default=None, max_length=255)
