@@ -116,15 +116,14 @@ class QuizService:
 
     async def delete(self, db: AsyncSession, quiz_id: str) -> None:
         quiz = await self.get(db, quiz_id)
-        course_id = quiz.course_id
-        was_active = (quiz.status == "active")
+
+        if quiz.status == "active":
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail="Não é possível apagar um quiz ativo. Desative-o antes de remover."
+            )
 
         await self.repo.delete(db, quiz)
-
-        if was_active:
-            other = await self.repo.get_any_other_quiz_same_course(db, course_id, exclude_quiz_id=quiz_id)
-            if other:
-                await self.repo.update(db, other, status="active")
 
 
     async def get_by_course(self, db: AsyncSession, course_id: str) -> Quiz:

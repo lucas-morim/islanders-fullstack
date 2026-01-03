@@ -161,11 +161,18 @@ export class Quizzes implements OnInit {
       await this.quizzesSvc.delete(qz.id);
       const tp = this.totalPages();
       if (this.page() > tp) this.page.set(tp);
-    } catch {
+    } catch (e: any) {
       this.quizzes.set(prev);
+
+      if (e?.status === 409) {
+        alert(e?.error?.detail ?? 'Este quiz está ativo e não pode ser removido.');
+        return;
+      }
+
       alert('Não foi possível remover o quiz.');
     }
   }
+
 
   badgeClass(status: StatusLabel): string {
     return status === 'Ativo' ? 'bg-success text-white' : 'bg-secondary text-white';
