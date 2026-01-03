@@ -15,37 +15,11 @@
     </nav>
 
     <div class="ms-auto d-flex align-items-center gap-3">
-      <button class="icon-btn btn p-0 text-dark">
-        <i class="cil-bell fs-5"></i>
-        <span class="badge rounded-pill bg-danger badge-count">{{ notifications }}</span>
-      </button>
-
-      <button class="icon-btn btn p-0 text-dark d-none d-sm-inline-flex">
-        <i class="cil-list fs-5"></i>
-        <span class="badge rounded-pill bg-warning text-dark badge-count">{{ tasks }}</span>
-      </button>
-
-      <button class="icon-btn btn p-0 text-dark d-none d-sm-inline-flex">
-        <i class="cil-envelope-closed fs-5"></i>
-        <span class="badge rounded-pill bg-primary badge-count">{{ emails }}</span>
-      </button>
-
-      <div class="vr d-none d-md-block"></div>
-
-      <button class="icon-btn btn p-0 text-dark d-none d-sm-inline-flex">
-        <i class="cil-apps fs-5"></i>
-      </button>
-
-      <button class="icon-btn btn p-0 text-dark d-none d-sm-inline-flex">
-        <i class="cil-moon fs-5"></i>
-      </button>
-
       <div class="dropdown">
         <button class="btn p-0 border-0 bg-transparent" (click)="toggleDropdown()">
-          <span class="avatar">
-            <img [src]="userPhoto" alt="Perfil" width="36" height="36" class="rounded-circle">
-            <span class="status-dot"></span>
-          </span>
+        <span class="avatar">
+          <img [src]="userPhoto" alt="Perfil" class="avatar-img" (error)="onAvatarError($event)">
+        </span>
         </button>
         <div *ngIf="dropdownOpen()" class="dropdown-menu dropdown-menu-end show mt-2 p-2 rounded shadow-sm">
           <ng-container *ngIf="auth.isLoggedIn(); else guest">
