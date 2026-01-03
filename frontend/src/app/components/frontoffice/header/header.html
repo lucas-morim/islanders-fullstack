@@ -15,7 +15,14 @@
     </div>
 
     <div class="relative ml-4">
-      <img [src]="userPhoto" class="w-16 h-12 rounded-full cursor-pointer" (click)="toggleDropdown()" />
+      <img
+        [src]="userPhoto"
+        alt="Perfil"
+        class="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover object-center cursor-pointer block bg-white/30"
+        (error)="onAvatarError($event)"
+        (click)="toggleDropdown()"
+      />
+
 
       <div *ngIf="dropdownOpenValue()" class="absolute right-0 mt-2 w-44 bg-white border shadow-lg rounded transition duration-200">
         <ng-container *ngIf="auth.isLoggedIn(); else guest">
