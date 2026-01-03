@@ -43,6 +43,7 @@
           <div class="form-text">
             Pode ser um link do YouTube, Vimeo ou URL de um vídeo hospedado pelo sistema.
           </div>
+          <span *ngIf="f['video_url'].errors?.['url']">Informe uma URL válida (http/https).</span>
         </div>
 
       </div>
