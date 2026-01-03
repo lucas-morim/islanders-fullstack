@@ -17,7 +17,7 @@
                  class="form-control"
                  placeholder="Título, curso ou vídeo"
                  [ngModel]="q()"
-                 (ngModelChange)="q.set($event); page.set(1)">
+                 (ngModelChange)="q.set($event); resetPage()">
         </div>
 
         <div class="col-12 col-md-2 d-flex">
@@ -115,7 +115,8 @@
     </div>
 
     <div class="d-flex align-items-center gap-2">
-      <select class="form-select form-select-sm w-auto" (ngModelChange)="page.set(1)">
+      <select class="form-select form-select-sm w-auto" [ngModel]="pageSize()"
+              (ngModelChange)="pageSize.set($event); resetPage()">
         <option [ngValue]="5">5</option>
         <option [ngValue]="10">10</option>
         <option [ngValue]="20">20</option>

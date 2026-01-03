@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { RoleService, RoleOut } from '../../role/role.service';
 import { FormsModule } from '@angular/forms';
+import { createPagination } from '../../shared/pagination';
 
 @Component({
   standalone: true,
@@ -19,9 +20,6 @@ export class Roles {
 
   q = signal('');
 
-  page = signal(1);
-  pageSize = signal(10);
-
   filtered = computed(() => {
     const term = this.q().toLowerCase();
 
@@ -32,14 +30,14 @@ export class Roles {
     );
   });
 
-  totalPages = computed(() =>
-    Math.max(1, Math.ceil(this.filtered().length / this.pageSize()))
-  );
+  pager = createPagination(this.filtered, 10);
 
-  paginated = computed(() => {
-    const start = (this.page() - 1) * this.pageSize();
-    return this.filtered().slice(start, start + this.pageSize());
-  });
+  page = this.pager.page;
+  pageSize = this.pager.pageSize;
+  totalPages = this.pager.totalPages;
+  paginated = this.pager.paginated;
+  changePage = this.pager.changePage;
+  resetPage = this.pager.resetPage;
 
   async ngOnInit() {
     this.loading.set(true);
@@ -53,7 +51,7 @@ export class Roles {
 
   resetFilters() {
     this.q.set('');
-    this.page.set(1);
+    this.resetPage();
   }
 
   remove(role: RoleOut) {
@@ -62,10 +60,5 @@ export class Roles {
     this.srv.delete(role.id).then(() => {
       this.roles.set(this.roles().filter(r => r.id !== role.id));
     });
-  }
-
-  changePage(p: number) {
-    const max = this.totalPages();
-    this.page.set(Math.max(1, Math.min(p, max)));
   }
 }

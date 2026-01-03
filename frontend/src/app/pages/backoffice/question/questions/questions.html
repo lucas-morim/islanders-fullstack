@@ -18,7 +18,7 @@
                  class="form-control"
                  placeholder="Texto da questão"
                  [ngModel]="q()"
-                 (ngModelChange)="q.set($event); page.set(1)">
+                 (ngModelChange)="q.set($event); resetPage()">
         </div>
 
         <div class="col-12 col-md-4">
@@ -27,7 +27,7 @@
                 class="form-control"
                 placeholder="Pesquisar pelo nome do quiz"
                 [ngModel]="quizNameFilter()"
-                (ngModelChange)="quizNameFilter.set($event); page.set(1)">
+                (ngModelChange)="quizNameFilter.set($event); resetPage()">
         </div>
 
         <div class="col-12 col-md-2 d-flex">
@@ -122,7 +122,7 @@
     <div class="d-flex align-items-center gap-2">
       <select class="form-select form-select-sm w-auto"
               [ngModel]="pageSize()"
-              (ngModelChange)="pageSize.set($event); page.set(1)">
+              (ngModelChange)="pageSize.set($event); resetPage()">
         <option [ngValue]="5">5</option>
         <option [ngValue]="10">10</option>
         <option [ngValue]="20">20</option>

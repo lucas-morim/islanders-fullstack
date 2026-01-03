@@ -3,9 +3,11 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
-import { QuizService, QuizOut } from '../quiz.service';
+import { QuizService } from '../quiz.service';
 import { CourseService, CourseOut } from '../../course/course.service';
 import { VideoService, VideoOut } from '../../video/video.service';
+
+import { createPagination } from '../../shared/pagination';
 
 interface QuizRow {
   id: string;
@@ -51,9 +53,6 @@ export class Quizzes implements OnInit {
 
   q = signal('');
 
-  page = signal(1);
-  pageSize = signal(10);
-
   filtered = computed(() => {
     const term = this.q().trim().toLowerCase();
 
@@ -73,14 +72,14 @@ export class Quizzes implements OnInit {
     });
   });
 
-  totalPages = computed(() =>
-    Math.max(1, Math.ceil(this.filtered().length / this.pageSize()))
-  );
+  pager = createPagination(this.filtered, 10);
 
-  paginated = computed(() => {
-    const start = (this.page() - 1) * this.pageSize();
-    return this.filtered().slice(start, start + this.pageSize());
-  });
+  page = this.pager.page;
+  pageSize = this.pager.pageSize;
+  totalPages = this.pager.totalPages;
+  paginated = this.pager.paginated;
+  changePage = this.pager.changePage;
+  resetPage = this.pager.resetPage;
 
   async ngOnInit() {
     this.loading.set(true);
@@ -114,7 +113,7 @@ export class Quizzes implements OnInit {
         })
       );
 
-      this.page.set(1);
+      this.resetPage();
     } catch (e) {
       console.error('Erro ao carregar quizzes/cursos/vídeos', e);
       alert('Não foi possível carregar os dados de quizzes.');
@@ -125,7 +124,7 @@ export class Quizzes implements OnInit {
 
   resetFilters() {
     this.q.set('');
-    this.page.set(1);
+    this.resetPage();
   }
 
   newQuiz() {
@@ -154,10 +153,5 @@ export class Quizzes implements OnInit {
       this.quizzes.set(prev);
       alert('Não foi possível remover o quiz.');
     }
-  }
-
-  changePage(p: number) {
-    const max = this.totalPages();
-    this.page.set(Math.min(Math.max(1, p), max));
   }
 }
