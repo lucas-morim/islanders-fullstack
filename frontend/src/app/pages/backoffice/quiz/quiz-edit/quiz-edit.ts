@@ -27,6 +27,8 @@ export class QuizEdit implements OnInit {
 
   courses = signal<CourseOut[]>([]);
   videos = signal<VideoOut[]>([]);
+  activeExists = signal(false);
+  checkingActive = signal(false);
 
   quizId = '';
 
@@ -35,6 +37,7 @@ export class QuizEdit implements OnInit {
     description: [''],
     course_id: ['', [Validators.required]],
     video_id: [''],
+    status: ['active', [Validators.required]],
   });
 
   get f() {
@@ -64,6 +67,10 @@ export class QuizEdit implements OnInit {
       this.courses.set(courses);
       this.videos.set(videos);
       this.patchFormWithQuiz(quiz);
+
+      await this.validateActiveForCourse();
+      this.f['course_id'].valueChanges.subscribe(() => this.validateActiveForCourse());
+      this.f['status'].valueChanges.subscribe(() => this.validateActiveForCourse());
     } catch (e) {
       console.error('Erro ao carregar quiz/cursos/vídeos', e);
       alert('Não foi possível carregar dados do quiz.');
@@ -79,6 +86,7 @@ export class QuizEdit implements OnInit {
       description: q.description ?? '',
       course_id: q.course_id ?? '',
       video_id: q.video_id ?? '',
+      status: (q as any).status ?? 'inactive', 
     });
   }
 
@@ -89,7 +97,6 @@ export class QuizEdit implements OnInit {
     }
 
     this.submitting.set(true);
-
     try {
       const v = this.form.value;
 
@@ -98,14 +105,18 @@ export class QuizEdit implements OnInit {
         description: v.description ?? null,
         course_id: v.course_id || null,
         video_id: v.video_id || null,
+        status: (v.status as any) ?? null,
         updated_at: new Date().toISOString(),
-        // user_id: deixa null/undefined, não editamos aqui 
       };
 
       await this.quizSvc.update(this.quizId, payload);
       alert('Quiz atualizado com sucesso.');
       this.router.navigate(['/backoffice/quizzes']);
-    } catch (e) {
+    } catch (e: any) {
+      if (e?.status === 409) {
+        alert(e?.error?.detail ?? 'Já existe um quiz ativo para este curso.');
+        return;
+      }
       console.error('Erro ao atualizar quiz', e);
       alert('Não foi possível salvar o quiz. Tente novamente.');
     } finally {
@@ -115,5 +126,39 @@ export class QuizEdit implements OnInit {
 
   cancel() {
     this.router.navigate(['/backoffice/quizzes']);
+  }
+
+  private async validateActiveForCourse() {
+    const courseCtrl = this.f['course_id'];
+    const statusCtrl = this.f['status'];
+
+    const courseId = (courseCtrl.value ?? '').toString();
+    const st = (statusCtrl.value ?? '').toString();
+
+    if (statusCtrl.hasError('activeTaken')) {
+      const errors = { ...(statusCtrl.errors ?? {}) };
+      delete errors['activeTaken'];
+      statusCtrl.setErrors(Object.keys(errors).length ? errors : null);
+    }
+
+    this.activeExists.set(false);
+
+    if (!courseId) return;
+
+    this.checkingActive.set(true);
+    try {
+      const activeQuiz = await this.quizSvc.getActiveByCourse(courseId);
+
+      const existsOtherActive = !!activeQuiz && activeQuiz.id !== this.quizId;
+
+      this.activeExists.set(existsOtherActive);
+
+      if (st === 'active' && existsOtherActive) {
+        statusCtrl.setErrors({ ...(statusCtrl.errors ?? {}), activeTaken: true });
+        statusCtrl.markAsTouched();
+      }
+    } finally {
+      this.checkingActive.set(false);
+    }
   }
 }

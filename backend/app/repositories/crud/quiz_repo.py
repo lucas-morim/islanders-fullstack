@@ -3,7 +3,6 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from app.models.quiz import Quiz
 
-
 class QuizRepository:
     async def list(
         self,
@@ -27,6 +26,12 @@ class QuizRepository:
         stmt = select(Quiz).where(Quiz.title == title)
         res = await db.execute(stmt)
         return res.scalar_one_or_none()
+    
+    async def get_active_by_course(self, db: AsyncSession, course_id: str) -> Quiz | None:
+        res = await db.execute(
+            select(Quiz).where(Quiz.course_id == course_id, Quiz.status == "active")
+        )
+        return res.scalar_one_or_none()
 
     async def create(
         self,
@@ -35,15 +40,17 @@ class QuizRepository:
         title: str,
         description: Optional[str] = None,
         user_id: Optional[str] = None,
+        status: str = "active",        
         course_id: str,
         video_id: Optional[str] = None,
     ) -> Quiz:
         obj = Quiz(
             title=title,
             description=description,
-            user_id=user_id,      # None -> NULL no banco
+            user_id=user_id,
+            status=status,           
             course_id=course_id,
-            video_id=video_id,    # None -> NULL também
+            video_id=video_id,
         )
         db.add(obj)
         await db.commit()
@@ -57,6 +64,7 @@ class QuizRepository:
         *,
         title: Optional[str] = None,
         description: Optional[str] = None,
+        status: Optional[str] = None,   
         course_id: Optional[str] = None,
         video_id: Optional[str] = None,
     ) -> Quiz:
@@ -64,6 +72,8 @@ class QuizRepository:
             quiz.title = title
         if description is not None:
             quiz.description = description
+        if status is not None:
+            quiz.status = status          
         if course_id is not None:
             quiz.course_id = course_id
 
@@ -81,3 +91,10 @@ class QuizRepository:
         await db.delete(quiz)
         await db.commit()
         return True
+    
+    async def get_active_by_course(self, db: AsyncSession, course_id: str) -> Quiz | None:
+        res = await db.execute(
+            select(Quiz).where(Quiz.course_id == course_id, Quiz.status == "active")
+        )
+        return res.scalar_one_or_none()
+

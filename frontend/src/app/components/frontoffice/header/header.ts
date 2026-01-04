@@ -48,6 +48,11 @@ export class Header {
     return this.dropdownOpen();
   }
 
+  onAvatarError(ev: Event) {
+    (ev.target as HTMLImageElement).src = 'assets/perfil.png';
+  }
+
+
   logout() {
     this.auth.logout();
     this.router.navigate(['/']);

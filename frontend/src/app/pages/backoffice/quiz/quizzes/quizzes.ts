@@ -9,10 +9,13 @@ import { VideoService, VideoOut } from '../../video/video.service';
 
 import { createPagination } from '../../shared/pagination';
 
+export type StatusLabel = 'Ativo' | 'Inativo';
+
 interface QuizRow {
   id: string;
   title: string;
   description: string | null;
+  status: StatusLabel;
   course_id: string;
   courseName: string;
   video_id: string | null;
@@ -34,7 +37,7 @@ export class Quizzes implements OnInit {
   private router = inject(Router);
 
   loading = signal(false);
-
+  status = signal<StatusLabel | ''>(''); 
   quizzes = signal<QuizRow[]>([]);
 
   courses = signal<CourseOut[]>([]);
@@ -55,6 +58,7 @@ export class Quizzes implements OnInit {
 
   filtered = computed(() => {
     const term = this.q().trim().toLowerCase();
+    const st = this.status();
 
     return this.quizzes().filter(qz => {
       const title = qz.title.toLowerCase();
@@ -62,13 +66,16 @@ export class Quizzes implements OnInit {
       const courseName = qz.courseName.toLowerCase();
       const videoTitle = (qz.videoTitle ?? '').toLowerCase();
 
-      return (
+      const matchesText =
         !term ||
         title.includes(term) ||
         desc.includes(term) ||
         courseName.includes(term) ||
-        videoTitle.includes(term)
-      );
+        videoTitle.includes(term);
+
+      const matchesStatus = !st || qz.status === st;
+
+      return matchesText && matchesStatus;
     });
   });
 
@@ -99,11 +106,15 @@ export class Quizzes implements OnInit {
           const videoTitle = q.video_id
             ? this.videosMap().get(q.video_id) ?? 'Sem título'
             : null;
+            
+
+
 
           return {
             id: q.id,
             title: q.title,
             description: q.description ?? null,
+            status: q.status === 'active' ? 'Ativo' : 'Inativo',
             course_id: q.course_id,
             courseName,
             video_id: q.video_id ?? null,
@@ -124,6 +135,7 @@ export class Quizzes implements OnInit {
 
   resetFilters() {
     this.q.set('');
+    this.status.set('');
     this.resetPage();
   }
 
@@ -149,9 +161,21 @@ export class Quizzes implements OnInit {
       await this.quizzesSvc.delete(qz.id);
       const tp = this.totalPages();
       if (this.page() > tp) this.page.set(tp);
-    } catch {
+    } catch (e: any) {
       this.quizzes.set(prev);
+
+      if (e?.status === 409) {
+        alert(e?.error?.detail ?? 'Este quiz está ativo e não pode ser removido.');
+        return;
+      }
+
       alert('Não foi possível remover o quiz.');
     }
   }
+
+
+  badgeClass(status: StatusLabel): string {
+    return status === 'Ativo' ? 'bg-success text-white' : 'bg-secondary text-white';
+  }
+
 }

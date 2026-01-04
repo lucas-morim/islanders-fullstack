@@ -32,6 +32,7 @@ export class QuizCreate implements OnInit {
     description: [''],
     course_id: ['', [Validators.required]],
     video_id: [''], 
+    status: ['inactive', [Validators.required]], 
   });
 
   get f() {
@@ -41,6 +42,8 @@ export class QuizCreate implements OnInit {
   get canSubmit() {
     return computed(() => this.form.valid && !this.submitting() && !this.loading());
   }
+  activeExists = signal(false);
+  checkingActive = signal(false);
 
   async ngOnInit() {
     this.loading.set(true);
@@ -52,6 +55,42 @@ export class QuizCreate implements OnInit {
 
       this.courses.set(courses);
       this.videos.set(videos);
+
+      const courseCtrl = this.f['course_id'];
+      const statusCtrl = this.f['status'];
+
+      const validateActive = async () => {
+        const courseId = (courseCtrl.value ?? '').toString();
+        const st = (statusCtrl.value ?? '').toString();
+
+        if (statusCtrl.hasError('activeTaken')) {
+          const errors = { ...(statusCtrl.errors ?? {}) };
+          delete errors['activeTaken'];
+          statusCtrl.setErrors(Object.keys(errors).length ? errors : null);
+        }
+
+        this.activeExists.set(false);
+
+        if (!courseId) return;
+        if (st !== 'active') return;
+
+        this.checkingActive.set(true);
+        try {
+          const activeQuiz = await this.quizSvc.getActiveByCourse(courseId);
+          const exists = !!activeQuiz;
+          this.activeExists.set(exists);
+
+          if (exists) {
+            statusCtrl.setErrors({ ...(statusCtrl.errors ?? {}), activeTaken: true });
+            statusCtrl.markAsTouched();
+          }
+        } finally {
+          this.checkingActive.set(false);
+        }
+      };
+
+      courseCtrl.valueChanges.subscribe(() => validateActive());
+      statusCtrl.valueChanges.subscribe(() => validateActive());
     } catch (e) {
       console.error('Erro ao carregar cursos/vídeos', e);
       alert('Não foi possível carregar cursos/vídeos para o quiz.');
@@ -75,17 +114,22 @@ export class QuizCreate implements OnInit {
         title: v.title!,
         description: v.description ?? undefined,
         course_id: v.course_id!,
-        video_id: v.video_id || null
+        video_id: v.video_id || null,
+        status: (v.status as any) ?? 'inactive', 
       };
 
       await this.quizSvc.create(payload);
       this.router.navigate(['/backoffice/quizzes']);
-    } catch (e) {
-      console.error('Erro ao criar quiz', e);
-      alert('Não foi possível criar o quiz. Tente novamente.');
-    } finally {
-      this.submitting.set(false);
-    }
+      } catch (e: any) {
+        if (e?.status === 409) {
+          alert(e?.error?.detail ?? 'Já existe um quiz ativo para este curso.');
+          return;
+        }
+        console.error('Erro ao criar quiz', e);
+        alert('Não foi possível criar o quiz. Tente novamente.');
+      } finally {
+        this.submitting.set(false);
+      }
   }
 
   cancel() {

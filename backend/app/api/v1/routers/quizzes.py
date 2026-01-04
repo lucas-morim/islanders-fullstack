@@ -39,6 +39,7 @@ async def create_quiz(
         title=payload.title,
         description=payload.description,
         user_id=current_user.id,   
+        status=payload.status.value,
         course_id=payload.course_id,
         video_id=payload.video_id
     )
@@ -51,21 +52,13 @@ async def update_quiz(
     db: AsyncSession = Depends(get_db),
     #current_user: User = Depends(get_current_user)
 ):
-    
-    #quiz = await quiz_service.get(db, quiz_id)
-
-    # Impedir que alguém edite quiz que não é dele
-    #if quiz.user_id != current_user.id:
-        #raise HTTPException(
-            #status_code=403,
-            #detail="You do not have permission to edit this quiz."
-        #)
 
     return await quiz_service.update(
         db,
         quiz_id,
         title=payload.title,
         description=payload.description,
+        status=payload.status.value if payload.status is not None else None,
         course_id=payload.course_id,
         video_id=payload.video_id
     )
@@ -92,3 +85,10 @@ async def get_quiz_full(
     db: AsyncSession = Depends(get_db),
 ):
     return await quiz_service.get_full(db, quiz_id)
+
+@router.get("/active_by_course/{course_id}", response_model=QuizOut | None)
+async def get_active_quiz_by_course(
+    course_id: str,
+    db: AsyncSession = Depends(get_db),
+):
+    return await quiz_service.get_active_by_course(db, course_id)

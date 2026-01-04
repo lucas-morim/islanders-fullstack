@@ -28,9 +28,12 @@ export class QuizVideo implements OnInit {
   video = signal<VideoOut | null>(null);
 
   safeEmbedUrl = computed<SafeResourceUrl | null>(() => {
-    const url = this.video()?.video_url;
+    const url = this.video()?.video_url?.trim();
     if (!url) return null;
+
     const embed = this.toYouTubeEmbed(url);
+    if (!embed) return null;
+
     return this.sanitizer.bypassSecurityTrustResourceUrl(embed);
   });
 
@@ -40,9 +43,7 @@ export class QuizVideo implements OnInit {
 
     this.loading.set(true);
     try {
-      // não existe endpoint "get quiz by course", então: lista e filtra
-      const quizzes = await this.quizzesSvc.list(0, 100);
-      const q = quizzes.find(x => x.course_id === this.courseId) || null;
+      const q = await this.quizzesSvc.getActiveByCourse(this.courseId);
       this.quiz.set(q);
 
       if (!q) return;
@@ -50,11 +51,14 @@ export class QuizVideo implements OnInit {
       if (q.video_id) {
         const v = await this.videosSvc.getOne(q.video_id);
         this.video.set(v);
+      } else {
+        this.video.set(null);
       }
     } finally {
       this.loading.set(false);
     }
   }
+
 
   startQuiz() {
     const q = this.quiz();

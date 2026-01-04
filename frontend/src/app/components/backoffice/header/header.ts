@@ -32,4 +32,8 @@ export class Header {
     const photo = this.auth.user()?.photo;
     return photo ? 'http://127.0.0.1:8000' + photo : 'assets/avatar-default.png';
   }
+
+  onAvatarError(ev: Event) {
+    (ev.target as HTMLImageElement).src = 'assets/avatar-default.png';
+  }
 }
