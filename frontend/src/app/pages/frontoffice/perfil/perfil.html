@@ -1,1 +1,169 @@
-<p>perfil works!</p>
+<div class="min-h-screen flex mt-32 bg-white">
+ 
+  <aside class="w-80 bg-white p-6 flex border-2 flex-col items-center shadow-md mt-10 ml-7">
+    <div class="relative">
+      <img
+  [src]="avatarPreview() || avatarSrc"
+  alt="Avatar"
+  class="w-60 h-60 border-2 rounded-full border-gray-300 object-cover"
+  (error)="avatarPreview.set('assets/avatar.png')"
+/>
+
+      <label
+  class="absolute bottom-2 right-2 bg-redIsla text-white w-10 h-10 cursor-pointer hover:bg-red-800 rounded-full shadow-lg flex items-center justify-center -translate-x-1 -translate-y-1"
+>
+  ✎
+  <input type="file" class="hidden" accept="image/*" (change)="onAvatarChange($event)">
+</label>
+
+
+
+    </div>
+    <h2 class="mt-4 font-semibold text-lg text-gray-800">{{ form.value.name }}</h2>
+    <p class="text-sm text-gray-500">{{ userRole }}</p>
+
+ <div class="flex flex-col gap-2 w-full mt-5">
+ 
+  <button
+    routerLink="/perfil"
+    
+    class="w-full flex items-center gap-2 text-gray-800 px-4 py-2 hover:bg-gray-300"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0 ml-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 20v-1a6 6 0 0112 0v1" />
+    </svg>
+    Informação Pessoal
+  </button>
+
+ 
+  <button
+    routerLink="/conquistas"
+    
+    class="w-full flex items-center gap-2 text-gray-800 px-4 py-2 hover:bg-gray-300"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0 ml-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0112 21a12.083 12.083 0 01-6.16-10.422L12 14z" />
+    </svg>
+    Conquistas
+  </button>
+
+
+  <button
+    type="button"
+    class="w-full flex items-center gap-2 text-gray-800 px-4 py-2 hover:bg-gray-300"
+    (click)="logout()"
+  >
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0 ml-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+    </svg>
+    Log Out
+  </button>
+</div>
+
+
+
+
+
+
+  </aside>
+
+  <main class="flex-1 p-10">
+    <section class="bg-white p-8  shadow-md border border-gray-300">
+      <h3 class="text-2xl font-semibold mb-6">Informação Pessoal</h3>
+
+      <form [formGroup]="form" novalidate>
+       
+        <div class="mb-6 flex gap-4">
+          <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" formControlName="gender" value="Masculino" class="form-radio text-red-700">
+            <span class="ml-2">Masculino</span>
+          </label>
+          <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" formControlName="gender" value="Feminino" class="form-radio text-red-700">
+            <span class="ml-2">Feminino</span>
+          </label>
+          <label class="inline-flex items-center cursor-pointer">
+            <input type="radio" formControlName="gender" value="Outro" class="form-radio text-red-700">
+            <span class="ml-2">Outro</span>
+          </label>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          
+          <div class="md:col-span-2">
+  <label class="block text-sm font-medium mb-1">Nome Completo</label>
+  <input
+    type="text"
+    class="w-full border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-700"
+    formControlName="firstName"
+    (input)="updateFullName()"
+  >
+</div>
+
+
+         
+          
+
+         
+          <div>
+            <label class="block text-sm font-medium mb-1">Nome de Utilizador</label>
+            <input
+              type="text"
+              class="w-full border px-3 py-2  focus:outline-none focus:ring-2 focus:ring-red-700"
+              formControlName="username"
+            >
+          </div>
+
+         
+          <div>
+            <label class="block text-sm font-medium mb-1">Data de Nascimento</label>
+            <input
+              type="date"
+              class="w-full border px-3 py-2  focus:outline-none focus:ring-2 focus:ring-red-700"
+              formControlName="birthDate"
+            >
+          </div>
+
+      
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium mb-1">E-mail</label>
+            <input
+              type="email"
+              class="w-full border px-3 py-2  focus:outline-none focus:ring-2 focus:ring-red-700"
+              formControlName="email"
+            >
+          </div>
+        </div>
+
+       
+        <div class="mt-8 flex flex-wrap gap-4">
+          <button
+            type="button"
+            (click)="discardChanges()"
+            class="border border-gray-300 px-4 py-2  hover:bg-gray-100"
+          >
+            Descartar Alterações
+          </button>
+
+          <button
+  type="button"
+  (click)="saveChanges()"
+  [disabled]="!canSaveChanges()"
+  class="bg-red-700 text-white px-4 py-2 
+         hover:bg-red-800 disabled:opacity-50 disabled:hover:bg-red-700"
+>
+  <span *ngIf="!submitting(); else savingTpl">Guardar Alterações</span>
+  <ng-template #savingTpl>
+   <span class="animate-spin border-2 border-white border-t-transparent w-4 h-4 inline-block mr-2"></span>
+
+    Salvando…
+  </ng-template>
+</button>
+
+        </div>
+      </form>
+    </section>
+  </main>
+</div>
