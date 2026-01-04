@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
 
@@ -10,10 +10,7 @@ export interface Summary {
   quizzes: number;
 }
 
-export interface LabelValue {
-  label: string;
-  value: number;
-}
+export interface LabelValue { label: string; value: number; }
 
 export interface AverageGrade {
   average: number;
@@ -32,18 +29,14 @@ export interface TopStudent {
 
 @Injectable({ providedIn: 'root' })
 export class DashboardService {
-  private http = inject(HttpClient);
+  constructor(private http: HttpClient) {}
 
   getTopStudents(): Promise<TopStudent[]> {
-    return firstValueFrom(
-      this.http.get<TopStudent[]>(`${API_BASE}/top-students`)
-    );
+    return firstValueFrom(this.http.get<TopStudent[]>(`${API_BASE}/top-students`));
   }
 
   getGradesByUser(): Promise<LabelValue[]> {
-    return firstValueFrom(
-      this.http.get<LabelValue[]>(`${API_BASE}/grades-by-user`)
-    );
+    return firstValueFrom(this.http.get<LabelValue[]>(`${API_BASE}/grades-by-user`));
   }
 
   getSummary(): Promise<Summary> {
@@ -69,5 +62,26 @@ export class DashboardService {
 
   getGradeDistribution(): Promise<GradeDistribution[]> {
     return firstValueFrom(this.http.get<GradeDistribution[]>(`${API_BASE}/grade-distribution`));
+  }
+
+  getQuizAttemptsOverTime(range: '1m' | '6m' | '1y' = '1m', quiz_id?: string): Promise<LabelValue[]> {
+    const params: any = { range };
+    if (quiz_id) params.quiz_id = quiz_id;
+    return firstValueFrom(this.http.get<LabelValue[]>(`${API_BASE}/quiz-attempts-over-time`, { params }));
+  }
+
+  getUsersOverTime(range: '1m' | '6m' | '1y' = '1m', role_id?: string): Promise<LabelValue[]> {
+    const params: any = { range };
+    if (role_id) params.role_id = role_id;
+    return firstValueFrom(this.http.get<LabelValue[]>(`${API_BASE}/users-over-time`, { params }));
+  }
+
+  async getTopQuizzes(limit = 10): Promise<LabelValue[]> {
+    let params = new HttpParams().set('limit', limit.toString());
+    return firstValueFrom(this.http.get<LabelValue[]>(`${API_BASE}/top-quizzes`, { params, withCredentials: true }));
+  }
+
+  async getTopQuizzesByAttempts(limit = 10): Promise<LabelValue[]> {
+    return this.getTopQuizzes(limit);
   }
 }

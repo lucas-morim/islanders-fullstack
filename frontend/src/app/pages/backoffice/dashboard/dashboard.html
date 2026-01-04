@@ -47,9 +47,15 @@
 <!-- Gráficos -->
 <div class="card shadow-sm">
   <div class="card-header d-flex gap-2">
-    <button class="btn btn-outline-primary" (click)="setCategory('users')">Usuários</button>
-    <button class="btn btn-outline-primary" (click)="setCategory('courses')">Cursos</button>
-    <button class="btn btn-outline-primary" (click)="setCategory('quizzes')">Quizzes</button>
+    <button class="btn btn-outline-primary"
+            [class.active]="currentCategory() === 'users'"
+            (click)="setCategory('users')">Utilizadores</button>
+    <button class="btn btn-outline-primary"
+            [class.active]="currentCategory() === 'courses'"
+            (click)="setCategory('courses')">Cursos</button>
+    <button class="btn btn-outline-primary"
+            [class.active]="currentCategory() === 'quizzes'"
+            (click)="setCategory('quizzes')">Quizzes</button>
   </div>
 
   <!-- Top 5 Alunos (apenas em Users) -->
@@ -69,5 +75,55 @@
     <div style="height:400px">
       <canvas #dashboardChart></canvas>
     </div>
+  </div>
+</div>
+
+
+
+<!-- Quiz Attempts (apenas em Quizzes) -->
+<div *ngIf="currentCategory() === 'quizzes'" class="card mt-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <strong>Tentativas de Quiz no tempo</strong>
+    <div class="d-flex gap-2">
+      <select [(ngModel)]="quizAttemptsRange" (change)="changeQuizAttemptsFilter(quizAttemptsRange, selectedFilter)">
+        <option value="1m">1 mês</option>
+        <option value="6m">6 meses</option>
+        <option value="1y">1 ano</option>
+      </select>
+
+      <!-- opcional: filtro por quiz (reusa selectedFilter) -->
+      <select [(ngModel)]="selectedFilter" (change)="changeQuizAttemptsFilter(quizAttemptsRange, selectedFilter)">
+        <option value="">Todos</option>
+        <option *ngFor="let q of quizzes()" [value]="q.label">{{ q.label }}</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="card-body" style="height:300px">
+    <canvas #quizAttemptsChart></canvas>
+  </div>
+</div>
+
+<!-- Usuários no tempo (apenas em Users) -->
+<div *ngIf="currentCategory() === 'users'" class="card mt-4">
+  <div class="card-header d-flex justify-content-between align-items-center">
+    <strong>Utilizadores no tempo</strong>
+    <div class="d-flex gap-2">
+      <select [(ngModel)]="usersOverTimeRange" (change)="changeUsersOverTimeFilter(usersOverTimeRange, usersOverTimeRoleId)">
+        <option value="1m">1 mês</option>
+        <option value="6m">6 meses</option>
+        <option value="1y">1 ano</option>
+      </select>
+
+      <select [(ngModel)]="usersOverTimeRoleId" (change)="changeUsersOverTimeFilter(usersOverTimeRange, usersOverTimeRoleId)">
+        <option value="">Todos</option>
+        <option value="81504151-1450-4559-bf54-6738ebbf50ae">Professor</option>
+        <option value="b305dc67-f6c9-4470-9a9b-10f6844bb338">Aluno</option>
+        <option value="c0c056eb-8ee4-4484-a544-1fe94bac104">Admin</option>
+      </select>
+    </div>
+  </div>
+  <div class="card-body" style="height:300px">
+    <canvas #usersOverTimeChart></canvas>
   </div>
 </div>

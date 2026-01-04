@@ -1,4 +1,10 @@
+from typing import List
 from sqlalchemy.ext.asyncio import AsyncSession
+from fastapi import Depends, Query
+
+from app.core.deps import get_db
+from app.schemas.dashboard import LabelValue
+
 from sqlalchemy import text
 
 class DashboardRepository:
@@ -122,4 +128,79 @@ class DashboardRepository:
 
         result = await db.execute(text(query), {"limit": limit})
         return [{"label": r.label, "value": float(r.value)} for r in result.all()]
+
+    async def users_over_time(self, db: AsyncSession, range_key: str = "1m", role_id: str | None = None):
+        """
+        range_key: "1m" | "6m" | "1y"
+        1m => agrupamento por dia
+        6m/1y => agrupamento por mês
+        Filtra por users.role_id quando fornecido.
+        """
+        if range_key == "1m":
+            trunc = "day"
+            fmt = "YYYY-MM-DD"
+            interval = "1 month"
+        else:
+            trunc = "month"
+            fmt = "YYYY-MM"
+            interval = "6 months" if range_key == "6m" else "1 year"
+
+        sql = f"""
+        SELECT to_char(date_trunc('{trunc}', u.created_at), '{fmt}') AS label,
+               COUNT(*)::int AS value
+        FROM users u
+        WHERE u.created_at >= now() - interval '{interval}'
+        """
+
+        params: dict = {}
+        if role_id:
+            sql += " AND u.role_id = :role_id"
+            params["role_id"] = role_id
+
+        # DEBUG: opcionalmente retornamos params para ver se chegou (remover depois)
+        # print("DEBUG users_over_time params=", params)
+
+        sql += f" GROUP BY date_trunc('{trunc}', u.created_at) ORDER BY label"
+
+        result = await db.execute(text(sql), params)
+        rows = result.all()
+        return [{"label": r.label, "value": int(r.value)} for r in rows]
+
+    async def quiz_attempts_over_time(self, db: AsyncSession, range_key: str = "1m", quiz_id: str | None = None):
+        """
+        Agrupa tentativas por day (1m) ou month (6m/1y) usando quiz_attempts.finished_at (coluna existente).
+        range_key: "1m" | "6m" | "1y"
+        """
+        if range_key == "1m":
+            trunc = "day"
+            fmt = "YYYY-MM-DD"
+            interval = "1 month"
+        else:
+            trunc = "month"
+            fmt = "YYYY-MM"
+            interval = "6 months" if range_key == "6m" else "1 year"
+
+        sql = f"""
+        SELECT to_char(date_trunc('{trunc}', qa.finished_at), '{fmt}') AS label,
+               COUNT(*)::int AS value
+        FROM quiz_attempts qa
+        WHERE qa.finished_at IS NOT NULL
+          AND qa.finished_at >= now() - interval '{interval}'
+        """
+
+        params: dict = {}
+        if quiz_id:
+            sql += " AND qa.quiz_id = :quiz_id"
+            params["quiz_id"] = quiz_id
+
+        sql += f" GROUP BY date_trunc('{trunc}', qa.finished_at) ORDER BY label"
+
+        try:
+            result = await db.execute(text(sql), params)
+            rows = result.all()
+            return [{"label": r.label, "value": int(r.value)} for r in rows]
+        except Exception:
+            import logging
+            logging.exception("quiz_attempts_over_time SQL failed")
+            return []
 
