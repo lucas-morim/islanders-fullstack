@@ -1,11 +1,18 @@
 from typing import List
+from unittest import result
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import Depends, Query
 
 from app.core.deps import get_db
 from app.schemas.dashboard import LabelValue
+from sqlalchemy import select, func
+from app.models.course import Course
+from app.models.area import Area
+from app.models.area_course import AreaCourse
 
 from sqlalchemy import text
+
+from app import db
 
 class DashboardRepository:
 
@@ -204,3 +211,18 @@ class DashboardRepository:
             logging.exception("quiz_attempts_over_time SQL failed")
             return []
 
+    async def courses_by_area(self, db: AsyncSession):
+        stmt = (
+            select(
+                Area.name.label("label"),
+                func.count(Course.id).label("value")
+            )
+            .outerjoin(AreaCourse, AreaCourse.area_id == Area.id)
+            .outerjoin(Course, Course.id == AreaCourse.course_id)
+            .group_by(Area.name)
+            .order_by(func.count(Course.id).desc())
+        )
+
+
+        result = await db.execute(stmt)
+        return [{"label": r.label, "value": int(r.value)} for r in result.all()]

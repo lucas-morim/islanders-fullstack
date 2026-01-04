@@ -4,6 +4,9 @@ from typing import List
 from app.services.dashboard_service import service as dashboard_service
 from app.core.deps import get_db
 from app.schemas.dashboard import SummaryOut, AverageGradeOut, LabelValue, GradeDistributionOut
+from app.models.course import Course
+from app.models.area import Area
+from app.models.area_course import AreaCourse
 
 router = APIRouter()
 
@@ -64,3 +67,7 @@ async def quiz_attempts_over_time(
 @router.get("/top-students", response_model=List[LabelValue])
 async def get_top_students(limit: int = Query(5, ge=1), db: AsyncSession = Depends(get_db)):
     return await dashboard_service.top_students(db, limit)
+
+@router.get("/courses-by-area", response_model=list[LabelValue])
+async def courses_by_area(db: AsyncSession = Depends(get_db)):
+    return await dashboard_service.get_courses_by_area(db)

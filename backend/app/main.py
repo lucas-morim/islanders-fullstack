@@ -7,10 +7,16 @@ import os
 
 app = FastAPI(title="Islanders University API", version="0.1.0")
 
+origins = [
+    "http://localhost:4200",  # Angular
+    "http://127.0.0.1:4200",  # se precisares
+    # "*"  # usar apenas em dev, não recomendado em produção
+]
+
 # Configuração temporária de CORS (vamos aprimorar depois)
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # depois trocamos para o frontend Angular
+    allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

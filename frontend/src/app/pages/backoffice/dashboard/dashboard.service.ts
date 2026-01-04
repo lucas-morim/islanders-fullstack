@@ -76,6 +76,11 @@ export class DashboardService {
     return firstValueFrom(this.http.get<LabelValue[]>(`${API_BASE}/users-over-time`, { params }));
   }
 
+  getCoursesByArea(): Promise<LabelValue[]> {
+    return firstValueFrom(this.http.get<LabelValue[]>(`${API_BASE}/courses-by-area`));
+  }
+
+
   async getTopQuizzes(limit = 10): Promise<LabelValue[]> {
     let params = new HttpParams().set('limit', limit.toString());
     return firstValueFrom(this.http.get<LabelValue[]>(`${API_BASE}/top-quizzes`, { params, withCredentials: true }));

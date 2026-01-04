@@ -36,5 +36,8 @@ class DashboardService:
 
     async def get_quiz_attempts_over_time(self, db: AsyncSession, range_key: str = "1m", quiz_id: str | None = None):
         return await self.repo.quiz_attempts_over_time(db, range_key, quiz_id)
+    
+    async def get_courses_by_area(self, db: AsyncSession):
+        return await self.repo.courses_by_area(db)
 
 service = DashboardService()

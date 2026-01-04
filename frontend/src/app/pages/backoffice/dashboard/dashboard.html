@@ -127,3 +127,13 @@
     <canvas #usersOverTimeChart></canvas>
   </div>
 </div>
+
+<!-- Cursos por Área (apenas em Courses) -->
+<div *ngIf="currentCategory() === 'courses'" class="card mt-4">
+  <div class="card-header">
+    <strong>Cursos por Área</strong>
+  </div>
+  <div class="card-body" style="height:300px">
+    <canvas #coursesByAreaChart></canvas>
+  </div>
+</div>

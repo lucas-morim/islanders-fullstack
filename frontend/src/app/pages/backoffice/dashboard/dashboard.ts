@@ -48,7 +48,8 @@ export class Dashboard implements AfterViewInit {
   topStudents = signal<TopStudent[]>([]);
   usersOverTime = signal<LabelValue[]>([]);
   usersOverTimeRange: '1m' | '6m' | '1y' = '1m';
-  usersOverTimeRoleId = ''; // agora usa role_id
+  usersOverTimeRoleId = '';
+  coursesByArea = signal<LabelValue[]>([]);
 
   // Quiz attempts over time
   quizAttempts = signal<LabelValue[]>([]);
@@ -68,7 +69,7 @@ export class Dashboard implements AfterViewInit {
 
   private usersOverTimeRendered = false;
   private quizAttemptsRendered = false;
-
+  private coursesByAreaRendered = false;
 
   async ngAfterViewInit() {
     await this.loadData();
@@ -86,7 +87,8 @@ export class Dashboard implements AfterViewInit {
         distribution,
         topStudents,
         usersOverTime,
-        quizAttempts
+        quizAttempts,
+        coursesByArea
       ] = await Promise.all([
         this.srv.getSummary(),
         this.srv.getGradesByUser(),
@@ -95,7 +97,8 @@ export class Dashboard implements AfterViewInit {
         this.srv.getGradeDistribution(),
         this.srv.getTopStudents(),
         this.srv.getUsersOverTime(this.usersOverTimeRange, this.usersOverTimeRoleId),
-        this.srv.getQuizAttemptsOverTime(this.quizAttemptsRange, this.selectedFilter)
+        this.srv.getQuizAttemptsOverTime(this.quizAttemptsRange, this.selectedFilter),
+        this.srv.getCoursesByArea()
       ]);
 
       this.kpis.set(summary);
@@ -106,11 +109,13 @@ export class Dashboard implements AfterViewInit {
       this.topStudents.set(topStudents);
       this.usersOverTime.set(usersOverTime);
       this.quizAttempts.set(quizAttempts);
+      this.coursesByArea.set(coursesByArea);
 
       this.updateChart();
       this.updateTopStudentsChart();
       this.updateUsersOverTimeChart();
       this.updateQuizAttemptsChart();
+      this.updateCoursesByAreaChart();
     } finally {
       this.loading.set(false);
     }
@@ -166,6 +171,10 @@ export class Dashboard implements AfterViewInit {
     this.currentCategory.set(cat);
     this.selectedFilter = ''; // reset do filtro ao mudar categoria
     this.updateChart();
+    if (cat === 'courses') {
+    setTimeout(() => this.safeRenderCoursesByArea(), 0);
+    }
+    
     if (cat === 'users') {
       // garante que os canvases já estão no DOM antes de desenhar
       setTimeout(() => {
@@ -202,7 +211,7 @@ export class Dashboard implements AfterViewInit {
     if (this.usersOverTimeRendered) return;
 
     this.usersOverTimeRendered = true;
-    this.updateUsersOverTimeChart();
+    this.safeRenderCoursesByArea();
   }
 
 
@@ -230,8 +239,36 @@ export class Dashboard implements AfterViewInit {
     if (this.quizAttemptsRendered) return;
 
     this.quizAttemptsRendered = true;
-    this.updateQuizAttemptsChart();
+    this.safeRenderCoursesByArea();
   }
+
+  private safeRenderCoursesByArea(attempt = 0) {
+    if (attempt > 10) return;
+
+    if (
+      !this.coursesByAreaChartRef ||
+      !this.coursesByArea().length
+    ) {
+      requestAnimationFrame(() =>
+        this.safeRenderCoursesByArea(attempt + 1)
+      );
+      return;
+    }
+
+    const canvas = this.coursesByAreaChartRef.nativeElement;
+    if (canvas.clientHeight === 0) {
+      requestAnimationFrame(() =>
+        this.safeRenderCoursesByArea(attempt + 1)
+      );
+      return;
+    }
+
+    if (this.coursesByAreaRendered) return;
+
+    this.coursesByAreaRendered = true;
+    this.updateCoursesByAreaChart();
+  }
+
 
 
   @ViewChild('topStudentsChart')
@@ -288,6 +325,38 @@ export class Dashboard implements AfterViewInit {
         }
       );
     }
+
+    @ViewChild('coursesByAreaChart') coursesByAreaChartRef?: ElementRef<HTMLCanvasElement>;
+      coursesByAreaChart?: Chart;
+
+      updateCoursesByAreaChart() {
+        if (!this.coursesByAreaChartRef) return;
+        const data = this.coursesByArea();
+        if (!data.length) return;
+
+        const labels = data.map(d => d.label);
+        const values = data.map(d => d.value);
+
+        if (this.coursesByAreaChart) this.coursesByAreaChart.destroy();
+
+        this.coursesByAreaChart = new Chart(this.coursesByAreaChartRef.nativeElement, {
+          type: 'bar',
+          data: {
+            labels,
+            datasets: [{
+              label: 'Cursos por Área',
+              data: values,
+              backgroundColor: ['#6B021F', '#8B1E3F', '#A83A55', '#C1566B', '#D87281']
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: true } }
+          }
+        });
+      }
+
 
 
   // Fill missing dates/months so chart spans full time range (prevents line stuck at left)
