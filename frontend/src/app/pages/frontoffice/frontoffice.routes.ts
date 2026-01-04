@@ -33,6 +33,12 @@ export const routes: Routes = [
         loadComponent: () => import('./community/community').then(c => c.Community)
       },
 
+      {
+        path: 'courses',
+        loadComponent: () => import('./courses-list/courses-list').then(c => c.CoursesList)
+      }
+
+
       // QUANDO FOR FEITO É SÓ TIRAR O COMENTÁRIO
       // {
       //   path: 'mission',

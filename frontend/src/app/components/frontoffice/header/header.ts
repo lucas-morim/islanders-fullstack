@@ -16,7 +16,7 @@ export class Header {
   logo: string = 'assets/islaverse.png';
   dropdownOpen = signal(false);
 
- 
+
   isDarkPage = false;
 
   constructor(private router: Router) {
@@ -24,13 +24,17 @@ export class Header {
       .pipe(filter(event => event instanceof NavigationEnd))
       .subscribe((event: NavigationEnd) => {
 
-      
-        this.isDarkPage = event.url.startsWith('/about') || event.url.startsWith('/course') || event.url.startsWith('/quiz');
 
-       
+        this.isDarkPage =
+          event.url === '/about' ||
+          event.url.startsWith('/course/') ||
+          event.url.startsWith('/quiz');
+
+
+
         this.logo = this.isDarkPage ? 'assets/islaverse2.png' : 'assets/islaverse.png';
 
-        
+
         this.dropdownOpen.set(false);
       });
   }
