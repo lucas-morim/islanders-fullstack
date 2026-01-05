@@ -9,7 +9,7 @@
       </a>
 
       <div class="relative inline-block mt-32">
-        <p class="text-1xl sm:text-3xl md:text-4xl lg:text-xl font-poppins text-black drop-shadow-lg mb-2 inline-block">
+        <p class="text-1xl sm:text-3xl md:text-4xl lg:text-xl font-poppins text-black drop-shadow-lg mb-2 inline-block hover:underline">
           Crie a sua conta
         </p>
         <span class="absolute bottom-1 left-0 h-0.5 bg-redIsla" style="width: 120px;"></span>
@@ -20,38 +20,53 @@
         <div class="flex flex-col">
           <label class="mb-1 text-xs">Nome:</label>
           <input [(ngModel)]="form.name" name="name" type="text" required class="px-2 py-2 border">
+          <div *ngIf="errors.name" class="text-red-600 text-xs mt-1">{{ errors.name }}</div>
         </div>
 
         <div class="flex flex-col">
           <label class="mb-1 text-xs">Utilizador:</label>
           <input [(ngModel)]="form.username" name="username" type="text" required class="px-2 py-2 border">
+          <div *ngIf="errors.username" class="text-red-600 text-xs mt-1">{{ errors.username }}</div>
         </div>
 
         <div class="flex flex-col">
           <label class="mb-1 text-xs">Email:</label>
           <input [(ngModel)]="form.email" name="email" type="email" required class="px-2 py-2 border">
+          <div *ngIf="errors.email" class="text-red-600 text-xs mt-1">{{ errors.email }}</div>
         </div>
 
         <div class="flex flex-col">
           <label class="mb-1 text-xs">Senha:</label>
           <input [(ngModel)]="form.password" name="password" type="password" required class="px-2 py-2 border">
+          <div *ngIf="errors.password" class="text-red-600 text-xs mt-1">{{ errors.password }}</div>
         </div>
 
         <div class="flex flex-col">
           <label class="mb-1 text-xs">Confirmar Senha:</label>
           <input [(ngModel)]="form.passwordConfirm" name="passwordConfirm" type="password" required class="px-2 py-2 border">
+          <div *ngIf="errors.passwordConfirm" class="text-red-600 text-xs mt-1">{{ errors.passwordConfirm }}</div>
         </div>
 
-        <button type="submit" class="mt-2 px-4 py-2 w-full bg-redIsla text-white font-poppins">
-          Registar
+        <!-- feedback -->
+        <div *ngIf="backendError" class="text-red-600 text-xs mt-1">
+          {{ backendError }}
+        </div>
+        <div *ngIf="successMessage" class="text-green-600 text-xs mt-1">
+          {{ successMessage }}
+        </div>
+
+        <button type="submit"
+                class="mt-2 px-4 py-2 w-full bg-redIsla text-white font-poppins"
+                [disabled]="submitting">
+          {{ submitting ? 'A processar...' : 'Registar' }}
         </button>
       </form>
 
 
-        <p class="mt-1 ml-[55px] text-xs text-black font-poppins">
+        <a routerLink="/login" class="mt-1 ml-[55px] text-xs text-black font-poppins">
           Já tem uma conta?
           <a routerLink="/login" class="text-redIsla relative inline-block hover:underline">Entre Aqui</a>
-        </p>
+        </a>
 
     </div>
   </div>

@@ -16,27 +16,35 @@
         <span class="absolute bottom-1 left-0 h-0.5 bg-redIsla" style="width: 120px;"></span>
       </div>
 
-      <form (submit)="submitLogin($event)" class="mt-6 flex flex-col gap-2 w-full max-w-[280px]">
+      <form #f="ngForm" (ngSubmit)="submitLogin(f)" class="mt-6 flex flex-col gap-2 w-full max-w-[280px]">
         <div class="flex flex-col">
           <label for="usuario" class="mb-2 text-sm sm:text-xs font-poppins text-black">Utilizador:</label>
-          <input [(ngModel)]="form.username" name="username"
-                 type="text" id="usuario" required
-                 class="px-2 py-2 border border-gray-300 focus:ring-2 focus:ring-redIsla">
+          <input [(ngModel)]="form.username" name="username" type="text" id="usuario" required
+                #username="ngModel"
+                class="px-2 py-2 border border-gray-300 focus:ring-2 focus:ring-redIsla">
+          <div class="invalid-feedback d-block text-red-600 text-xs" *ngIf="username.touched && username.invalid">
+            {{ username.errors?.['required'] ? 'Utilizador é obrigatório.' : '' }}
+          </div>
         </div>
 
         <div class="flex flex-col">
           <label for="password" class="mb-2 text-sm sm:text-xs font-poppins text-black">Senha:</label>
-          <input [(ngModel)]="form.password" name="password"
-                 type="password" id="password" required
+          <input [(ngModel)]="form.password" name="password" type="password" id="password" required
+                 #password="ngModel"
                  class="px-2 py-2 border border-gray-300 focus:ring-2 focus:ring-redIsla">
+          <div class="invalid-feedback d-block text-red-600 text-xs" *ngIf="password.touched && password.invalid">
+            {{ password.errors?.['required'] ? 'Senha é obrigatória.' : '' }}
+          </div>
         </div>
 
-        <button type="submit" class="mt-1 px-4 py-2 w-full bg-redIsla text-white font-poppins">
-          Entrar
+        <div *ngIf="backendError" class="text-red-600 text-xs mt-1">
+          {{ backendError }}
+        </div>
+
+        <button type="submit" class="mt-1 px-4 py-2 w-full bg-redIsla text-white font-poppins" [disabled]="submitting">
+          {{ submitting ? 'A processar...' : 'Entrar' }}
         </button>
       </form>
-
-
 
       <a routerLink="/forgot-password" class="mt-1 ml-[75px] text-xs text-black font-poppins hover:underline">
         Esqueceu a sua senha?
