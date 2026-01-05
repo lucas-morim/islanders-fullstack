@@ -59,9 +59,9 @@ class User(IdMixin, TimestampMixin, Base):
         passive_deletes=True
     )
 
-    quiz_badge_awards: Mapped[list["QuizBadgeAward"]] = relationship(
+    quiz_badge_awards: Mapped[list[QuizBadgeAward]] = relationship(
         "QuizBadgeAward",
         back_populates="user",
         cascade="all, delete-orphan",
-        passive_deletes=True,
+        passive_deletes=True
     )
