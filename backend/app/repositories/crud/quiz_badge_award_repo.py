@@ -35,10 +35,14 @@ class QuizBadgeAwardRepository:
 
     async def list_by_user(self, db: AsyncSession, user_id: str):
         stmt = (
-            select(QuizBadgeAward)
-            .options(selectinload(QuizBadgeAward.badge))  
-            .where(QuizBadgeAward.user_id == user_id)
-            .order_by(QuizBadgeAward.awarded_at.desc())
+        select(QuizBadgeAward)
+        .where(QuizBadgeAward.user_id == user_id)
+        .options(
+            selectinload(QuizBadgeAward.badge),
+            selectinload(QuizBadgeAward.quiz),
+            selectinload(QuizBadgeAward.attempt),
+        )
+        .order_by(QuizBadgeAward.awarded_at.desc())
         )
         res = await db.execute(stmt)
         return res.scalars().all()

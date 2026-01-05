@@ -2,7 +2,9 @@ from __future__ import annotations
 from typing import Optional
 from pydantic import BaseModel
 import datetime as dt
-from app.schemas.quiz_attempt_finish import BadgeOut  
+from app.schemas.quiz_attempt_finish import BadgeOut
+from app.schemas.quiz import QuizOut
+from app.schemas.quiz_attempt import QuizAttemptOut  
 
 
 class QuizBadgeAwardBase(BaseModel):
@@ -26,6 +28,8 @@ class QuizBadgeAwardOut(QuizBadgeAwardBase):
     updated_at: dt.datetime
 
     badge: Optional[BadgeOut] = None  
-
+    quiz: Optional[QuizOut] = None
+    attempt: Optional[QuizAttemptOut] = None
+    
     class Config:
         from_attributes = True

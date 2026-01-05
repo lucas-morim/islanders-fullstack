@@ -29,6 +29,7 @@ export class Perfil implements OnInit {
 
   user = signal<UserOut | null>(null);
   roles = signal<RoleOut[]>([]);
+  achievementsTab = signal<'resumo' | 'detalhes'>('resumo');
 
   private backendBase = 'http://127.0.0.1:8000';
 

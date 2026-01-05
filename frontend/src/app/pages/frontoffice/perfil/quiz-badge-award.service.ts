@@ -1,15 +1,19 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { firstValueFrom } from 'rxjs';
+import { BadgeOut } from '../quiz/quiz-attempt.service';
 
 const API_BASE = 'http://127.0.0.1:8000/api/v1';
 
-export interface BadgeOut {
+export interface QuizTinyOut {
   id: string;
-  code: string;
-  name: string;
-  min_score: number;
-  image?: string | null;
+  title: string;
+}
+
+export interface AttemptTinyOut {
+  id: string;
+  score: number;
+  finished_at?: string | null;
 }
 
 export interface QuizBadgeAwardOut {
@@ -19,8 +23,12 @@ export interface QuizBadgeAwardOut {
   badge_id: string;
   attempt_id?: string | null;
   awarded_at: string;
-  badge?: BadgeOut | null; 
+
+  badge?: BadgeOut | null;
+  quiz?: QuizTinyOut | null;
+  attempt?: AttemptTinyOut | null;
 }
+
 
 @Injectable({ providedIn: 'root' })
 export class QuizBadgeAwardService {
