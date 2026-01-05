@@ -22,3 +22,33 @@
 .display-6 {
   font-size: 1.75rem;
 }
+
+.card-header .btn-outline-primary {
+  color: #6B021F;
+  border-color: #6B021F;
+  background: transparent;
+  transition: background-color 180ms ease, color 180ms ease, transform 120ms ease;
+}
+
+.card-header .btn-outline-primary:hover {
+  background-color: rgba(107,2,31,0.06);
+  color: #6B021F;
+  transform: translateY(-2px);
+}
+
+.card-header .btn-outline-primary:active {
+  transform: translateY(0);
+}
+
+/* estado ativo */
+.card-header .btn-outline-primary.active {
+  background-color: #6B021F;
+  color: #fff;
+  box-shadow: 0 6px 18px rgba(107,2,31,0.12);
+  transform: translateY(-2px);
+}
+
+/* adaptações responsivas pequenas */
+@media (max-width: 576px) {
+  .card-header .btn-outline-primary { font-size: 13px; padding: 6px 10px; }
+}
