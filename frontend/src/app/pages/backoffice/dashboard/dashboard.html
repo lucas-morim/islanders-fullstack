@@ -79,11 +79,10 @@
 </div>
 
 
-
 <!-- Quiz Attempts (apenas em Quizzes) -->
 <div *ngIf="currentCategory() === 'quizzes'" class="card mt-4">
   <div class="card-header d-flex justify-content-between align-items-center">
-    <strong>Tentativas de Quiz no tempo</strong>
+    <strong>Tentativas de Quiz</strong>
     <div class="d-flex gap-2">
       <select [(ngModel)]="quizAttemptsRange" (change)="changeQuizAttemptsFilter(quizAttemptsRange, selectedFilter)">
         <option value="1m">1 mês</option>
@@ -104,10 +103,10 @@
   </div>
 </div>
 
-<!-- Usuários no tempo (apenas em Users) -->
+<!-- Utilizadores no tempo (apenas em Users) -->
 <div *ngIf="currentCategory() === 'users'" class="card mt-4">
   <div class="card-header d-flex justify-content-between align-items-center">
-    <strong>Utilizadores no tempo</strong>
+    <strong>Quantidade de Utilizadores</strong>
     <div class="d-flex gap-2">
       <select [(ngModel)]="usersOverTimeRange" (change)="changeUsersOverTimeFilter(usersOverTimeRange, usersOverTimeRoleId)">
         <option value="1m">1 mês</option>

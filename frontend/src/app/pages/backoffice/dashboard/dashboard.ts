@@ -433,7 +433,7 @@ export class Dashboard implements AfterViewInit {
         labels,
         datasets: [
           {
-            label: 'Novos usuários',
+            label: 'Novos Utilizadores',
             data: values,
             borderColor: '#6B021F',
             backgroundColor: 'rgba(107,2,31,0.08)',
