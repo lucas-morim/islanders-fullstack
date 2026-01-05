@@ -1,3 +1,4 @@
+from app.db import base  # ← Add this FIRST, before creating the app
 from app.core.config import settings
 from app.api.v1 import api_router
 from fastapi import FastAPI
