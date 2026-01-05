@@ -2,7 +2,7 @@ import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { Router } from '@angular/router';
-import { UsersService, UserCreatePayload, StatusEnum } from '../user.service';
+import { UsersService, UserCreatePayload, StatusEnum, GenderEnum } from '../user.service';
 import { RoleService, RoleOut } from '../../role/role.service';
 
 @Component({
@@ -30,17 +30,19 @@ export class UserCreate implements OnInit {
       username: ['', [Validators.required, Validators.pattern(/^[a-z0-9._-]{3,}$/i)]],
       email: ['', [Validators.required, Validators.email]],
 
-      role_id: [''], 
+      role_id: [''],
+      status: ['active' as StatusEnum, Validators.required],
+      photo: [''],
 
-      status: ['active' as StatusEnum, Validators.required], 
-      photo: [''], //ARRUMAR PARA RECEBER A URL DA FOTO APOS UPLOAD
+      gender: ['' as any],     
+      birthdate: [''],        
 
       password: ['', [Validators.required, Validators.minLength(6)]],
       confirm: ['', [Validators.required]],
-      
     },
     { validators: [matchPasswordsValidator] }
   );
+
 
   get f() {
     return this.form.controls;
@@ -98,9 +100,10 @@ export class UserCreate implements OnInit {
         username: v.username!,
         password: v.password!,
         status: (v.status as StatusEnum) ?? 'active',
-        created_at: new Date().toISOString(),
         photo: v.photo ? v.photo : null,
         role_id: v.role_id ? v.role_id : null,
+        ...(v.gender ? { gender: v.gender as any } : {}),
+        ...(v.birthdate ? { birthdate: v.birthdate as any } : {}),
       };
 
       await this.usersSvc.create(payload);

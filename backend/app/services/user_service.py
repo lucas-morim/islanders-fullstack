@@ -1,4 +1,5 @@
 import re
+import datetime as dt
 from typing import Sequence, Optional
 from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -6,10 +7,9 @@ from passlib.context import CryptContext
 
 from app.repositories.crud.user_repo import UserRepository
 from app.models.user import User
-from app.schemas.user import UserCreate, StatusEnum
+from app.schemas.user import UserCreate, StatusEnum, GenderEnum
 
 pwd_context = CryptContext(schemes=["argon2"], deprecated="auto")
-
 
 class UserService:
     def __init__(self, repo: UserRepository = UserRepository()):
@@ -54,7 +54,6 @@ class UserService:
                 "status": data.get("status") or StatusEnum.active,
             }
         )
-
         return await self.repo.create(db, UserCreate(**data))
 
     async def update(
@@ -69,6 +68,8 @@ class UserService:
         username: Optional[str] = None,
         photo: Optional[str] = None,
         status: Optional[StatusEnum | str] = None,
+        gender: Optional[GenderEnum | str] = None,
+        birthdate: Optional[dt.date] = None,
     ) -> User:
         user = await self.get(db, user_id)
 
@@ -96,15 +97,15 @@ class UserService:
             username=new_username if new_username is not None else user.username,
             photo=photo if photo is not None else user.photo,
             status=status if status is not None else user.status,
+            gender=gender if gender is not None else user.gender,
+            birthdate=birthdate if birthdate is not None else user.birthdate,
         )
         return updated
 
     async def delete(self, db: AsyncSession, user_id: str) -> None:
         user = await self.get(db, user_id)
         await self.repo.delete(db, user)
-    def verify_password(self, plain_password: str, hashed_password: str) -> bool:
-        return pwd_context.verify(plain_password, hashed_password)
-    
+
     async def export(
         self,
         db: AsyncSession,
@@ -114,5 +115,6 @@ class UserService:
         status: Optional[StatusEnum | str] = None,
     ) -> Sequence[User]:
         return await self.repo.export(db, q=q, role_id=role_id, status=status)
+
 
 service = UserService()

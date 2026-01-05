@@ -28,7 +28,8 @@ async def export_users_csv(
     users = await user_service.export(db, q=q, role_id=role_id, status=status)
 
     filename = f"users_{datetime.utcnow().strftime('%Y-%m-%d_%H-%M')}.csv"
-    header = ["ID", "Nome", "Username", "Email", "Função", "Status", "Criado em"]
+    header = ["ID", "Nome", "Username", "Email", "Função", "Status", "Gênero", "Nascimento", "Criado em"]
+
 
     return stream_csv(
         filename,
@@ -41,6 +42,8 @@ async def export_users_csv(
             u.email,
             (u.role.name if u.role else "Guest"),
             u.status,
+            u.gender or "",
+            u.birthdate.isoformat() if u.birthdate else "",
             u.created_at.isoformat() if u.created_at else "",
         ],
     )
@@ -75,7 +78,10 @@ async def update_user(
         username=payload.username,
         photo=payload.photo,
         status=payload.status,
+        gender=payload.gender,
+        birthdate=payload.birthdate,
     )
+
 
 @router.delete("/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_user(

@@ -28,7 +28,7 @@ export class Header {
         this.isDarkPage =
           event.url === '/about' ||
           event.url.startsWith('/course/') ||
-          event.url.startsWith('/quiz');
+          event.url.startsWith('/quiz') || event.url.startsWith('/perfil');
 
 
 

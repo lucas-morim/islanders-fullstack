@@ -4,9 +4,16 @@ from typing import Optional
 from pydantic import BaseModel, EmailStr, Field
 import datetime as dt
 
+
 class StatusEnum(str, enum.Enum):
     active = "active"
     inactive = "inactive"
+
+
+class GenderEnum(str, enum.Enum):
+    male = "male"
+    female = "female"
+    other = "other"
 
 
 class UserBase(BaseModel):
@@ -14,10 +21,12 @@ class UserBase(BaseModel):
     email: EmailStr = Field(max_length=255)
     username: str = Field(max_length=120)
     photo: Optional[str] = Field(default=None, max_length=255)
-    status: StatusEnum = StatusEnum.active 
+    status: StatusEnum = StatusEnum.active
+    gender: Optional[GenderEnum] = None
+    birthdate: Optional[dt.date] = None
 
     class Config:
-        from_attributes = True  
+        from_attributes = True
 
 
 class UserCreate(UserBase):
@@ -33,6 +42,8 @@ class UserUpdate(BaseModel):
     status: Optional[StatusEnum] = None
     password: Optional[str] = Field(default=None, min_length=6, max_length=255)
     role_id: Optional[str] = None
+    gender: Optional[GenderEnum] = None
+    birthdate: Optional[dt.date] = None
 
     class Config:
         from_attributes = True

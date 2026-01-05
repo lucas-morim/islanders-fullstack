@@ -11,6 +11,7 @@ if TYPE_CHECKING:
     from app.models.question import Question
     from app.models.quiz_attempt import QuizAttempt
     from app.models.video import Video
+    from app.models.quiz_badge_award import QuizBadgeAward
 
 class Quiz(IdMixin, TimestampMixin, Base):
     __tablename__ = "quizzes"
@@ -61,4 +62,11 @@ class Quiz(IdMixin, TimestampMixin, Base):
         "Video", 
         back_populates="quizzes", 
         passive_deletes=True
+    )
+
+    quiz_badge_awards: Mapped[list["QuizBadgeAward"]] = relationship(
+        "QuizBadgeAward",
+        back_populates="quiz",
+        cascade="all, delete-orphan",
+        passive_deletes=True,
     )
