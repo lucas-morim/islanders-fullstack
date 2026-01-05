@@ -5,6 +5,7 @@ import { UsersService, UserOut, UserUpdatePayload } from '../../backoffice/user/
 import { RoleService, RoleOut } from '../../backoffice/role/role.service';
 import { AuthState } from '../auth/auth.state';
 import { Router } from '@angular/router';
+import { QuizBadgeAwardService, QuizBadgeAwardOut } from './quiz-badge-award.service';
 
 @Component({
   selector: 'app-perfil',
@@ -68,6 +69,11 @@ export class Perfil implements OnInit {
     this.loadProfile();
   }
 
+  private awardsSvc = inject(QuizBadgeAwardService);
+  awards = signal<QuizBadgeAwardOut[]>([]);
+  awardsLoading = signal(false);
+
+
   async loadProfile() {
     this.loading.set(true);
     try {
@@ -97,6 +103,8 @@ export class Perfil implements OnInit {
 
       this.avatarPreview.set(this.avatarSrc);
       this.avatarChanged.set(false);
+      await this.loadAwards(userData.id);
+      
 
     } catch (e) {
       console.error('Erro ao carregar perfil', e);
@@ -106,6 +114,18 @@ export class Perfil implements OnInit {
     }
   }
 
+  async loadAwards(userId: string) {
+    this.awardsLoading.set(true);
+    try {
+      const items = await this.awardsSvc.listByUser(userId);
+      this.awards.set(items ?? []);
+    } catch (e) {
+      console.error('Erro ao carregar conquistas', e);
+      this.awards.set([]);
+    } finally {
+      this.awardsLoading.set(false);
+    }
+  }
 
   updateFullName() {
     const first = (this.form.value.firstName || '').trim();
@@ -178,6 +198,51 @@ export class Perfil implements OnInit {
     this.auth.logout();
     this.router.navigate(['/']);
   }
+
+  badgeGroups = computed(() => {
+    const map = new Map<string, {
+      code: string;
+      name: string;
+      image?: string | null;
+      min: number;
+      count: number;
+    }>();
+
+    for (const a of this.awards()) {
+      const b = a.badge;
+      if (!b) continue;
+
+      const key = b.code;
+      const curr = map.get(key);
+
+      if (!curr) {
+        map.set(key, {
+          code: b.code,
+          name: b.name,
+          image: b.image ?? null,
+          min: b.min_score,
+          count: 1,
+        });
+      } else {
+        curr.count += 1;
+      }
+    }
+
+    return Array.from(map.values()).sort((x, y) => x.min - y.min);
+  });
+
+  badgeImageUrl(src?: string | null): string {
+    if (!src) return 'assets/badge-default.png';
+    return src.startsWith('http') ? src : (this.backendBase + src);
+  }
+
+  badgeRangeText(code: string): string {
+    if (code === 'gold') return '100% de respostas corretas';
+    if (code === 'silver') return '80% a 99% de respostas corretas';
+    if (code === 'bronze') return '50% a 79% de respostas corretas';
+    return '';
+  }
+
 
   get avatarSrc(): string {
     const photo = this.form.value.photo;

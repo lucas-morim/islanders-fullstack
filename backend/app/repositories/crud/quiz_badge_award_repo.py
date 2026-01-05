@@ -2,7 +2,7 @@ from typing import Sequence, Optional
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from sqlalchemy.exc import IntegrityError
-
+from sqlalchemy.orm import selectinload
 from app.models.quiz_badge_award import QuizBadgeAward
 
 
@@ -15,7 +15,14 @@ class QuizBadgeAwardRepository:
         return res.scalars().all()
 
     async def get(self, db: AsyncSession, award_id: str) -> Optional[QuizBadgeAward]:
-        return await db.get(QuizBadgeAward, award_id)
+        stmt = (
+            select(QuizBadgeAward)
+            .options(selectinload(QuizBadgeAward.badge))
+            .where(QuizBadgeAward.id == award_id)
+        )
+        res = await db.execute(stmt)
+        return res.scalar_one_or_none()
+
 
     async def get_by_user_quiz(self, db: AsyncSession, user_id: str, quiz_id: str) -> Optional[QuizBadgeAward]:
         stmt = select(QuizBadgeAward).where(
@@ -25,10 +32,18 @@ class QuizBadgeAwardRepository:
         res = await db.execute(stmt)
         return res.scalar_one_or_none()
 
-    async def list_by_user(self, db: AsyncSession, user_id: str) -> Sequence[QuizBadgeAward]:
-        stmt = select(QuizBadgeAward).where(QuizBadgeAward.user_id == user_id).order_by(QuizBadgeAward.awarded_at.desc())
+
+    async def list_by_user(self, db: AsyncSession, user_id: str):
+        stmt = (
+            select(QuizBadgeAward)
+            .options(selectinload(QuizBadgeAward.badge))  
+            .where(QuizBadgeAward.user_id == user_id)
+            .order_by(QuizBadgeAward.awarded_at.desc())
+        )
         res = await db.execute(stmt)
         return res.scalars().all()
+
+
 
     async def create(
         self,
