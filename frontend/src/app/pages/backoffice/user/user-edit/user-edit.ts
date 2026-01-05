@@ -2,7 +2,7 @@ import { Component, OnInit, computed, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators, AbstractControl, ValidationErrors } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
-import { UsersService, UserOut, UserUpdatePayload, StatusEnum } from '../user.service';
+import { UsersService, UserOut, UserUpdatePayload, StatusEnum, GenderEnum } from '../user.service';
 import { RoleService, RoleOut } from '../../role/role.service';
 
 @Component({
@@ -35,11 +35,14 @@ export class UserEdit implements OnInit {
       username: ['', [Validators.required, Validators.pattern(/^[a-z0-9._-]{3,}$/i)]],
       email: ['', [Validators.required, Validators.email]],
 
-      role_id: [''],                                
+      role_id: [''],
       status: ['active' as StatusEnum, Validators.required],
-      photo: [''],                                 
+      photo: [''],
 
-      password: ['', [Validators.minLength(6)]],    
+      gender: ['' as GenderEnum | ''],
+      birthdate: [''],
+
+      password: ['', [Validators.minLength(6)]],
       confirm: [''],
     },
     { validators: [matchPasswordsValidator] }
@@ -92,8 +95,10 @@ export class UserEdit implements OnInit {
       username: u.username,
       email: u.email,
       role_id: u.role_id ?? '',
-      status: u.status,         
+      status: u.status,
       photo: u.photo ?? '',
+      gender: (u as any).gender ?? '',
+      birthdate: (u as any).birthdate ?? '',
     });
 
     const photoUrl = this.buildPhotoUrl(u.photo ?? null);
@@ -140,10 +145,12 @@ export class UserEdit implements OnInit {
         username: v.username ?? null,
         status: (v.status as StatusEnum) ?? null,
         role_id: v.role_id || null,
-        updated_at: new Date().toISOString(),
         photo: v.photo || null,
-        password: v.password ? v.password : null, 
+        password: v.password ? v.password : null,
+        ...(v.gender ? { gender: v.gender as any } : {}),
+        ...(v.birthdate ? { birthdate: v.birthdate as any } : {}),
       };
+
 
       await this.usersSvc.update(this.userId, payload);
       alert('Usuário atualizado com sucesso.');

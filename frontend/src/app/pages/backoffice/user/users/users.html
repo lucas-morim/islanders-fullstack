@@ -60,16 +60,20 @@
 <div class="card shadow-sm table-card" *ngIf="filtered().length > 0">
   <div class="table-responsive">
     <table class="table table-hover align-middle mb-0">
-      <thead class="table-light">
-        <tr>
-          <th>Utilizador</th>
-          <th class="d-none d-md-table-cell">E-mail</th>
-          <th>Função</th>
-          <th>Status</th>
-          <th class="text-end">Criado em</th>
-          <th class="text-end">Ações</th>
-        </tr>
-      </thead>
+    <thead class="table-light">
+      <tr>
+        <th>Utilizador</th>
+        <th class="d-none d-md-table-cell">E-mail</th>
+        <th>Função</th>
+        <th>Status</th>
+
+        <th class="d-none d-lg-table-cell">Gênero</th>
+        <th class="d-none d-lg-table-cell">Nascimento</th>
+
+        <th class="text-end">Criado em</th>
+        <th class="text-end">Ações</th>
+      </tr>
+    </thead>
       <tbody>
         <tr *ngFor="let u of paginated()">
           <td>
@@ -89,6 +93,17 @@
             </span>
           </td>
           <td><span class="badge" [ngClass]="badgeClass(u.status)">{{ u.status }}</span></td>
+          <td class="d-none d-lg-table-cell">
+            <span class="text-muted" *ngIf="!u.gender">—</span>
+            <span *ngIf="u.gender">{{ u.gender }}</span>
+          </td>
+
+          <td class="d-none d-lg-table-cell">
+            <span class="text-muted" *ngIf="!u.birthdate">—</span>
+            <time *ngIf="u.birthdate" [attr.datetime]="u.birthdate">
+              {{ u.birthdate | date:'dd/MM/yyyy' }}
+            </time>
+          </td>
           <td class="text-end">
             <time [attr.datetime]="u.created_at">{{ u.created_at | date:'dd/MM/yyyy HH:mm' }}</time>
           </td>

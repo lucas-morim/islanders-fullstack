@@ -8,6 +8,8 @@ import { createPagination } from '../../shared/pagination';
 
 type StatusLabel = 'Ativo' | 'Inativo';
 
+type GenderLabel = 'Masculino' | 'Feminino' | 'Outro' | '';
+
 interface UserRow {
   id: string;
   name: string;
@@ -18,6 +20,8 @@ interface UserRow {
   status: StatusLabel;
   created_at: string;
   avatar?: string | null;
+  gender: GenderLabel;
+  birthdate?: string | null;
 }
 
 @Component({
@@ -82,6 +86,14 @@ export class Users implements OnInit {
   changePage = this.pager.changePage;
   resetPage = this.pager.resetPage;
 
+  private mapGender(g?: string | null): GenderLabel {
+    if (!g) return '';
+    if (g === 'male') return 'Masculino';
+    if (g === 'female') return 'Feminino';
+    if (g === 'other') return 'Outro';
+    return '';
+  }
+
   async ngOnInit() {
     this.loading.set(true);
     try {
@@ -99,7 +111,9 @@ export class Users implements OnInit {
           roleName: u.role_id ? (this.rolesMap().get(u.role_id) ?? 'Guest') : 'Guest',
           status: u.status === 'active' ? 'Ativo' : 'Inativo',
           created_at: u.created_at,
-          avatar: this.buildAvatarUrl(u.photo ?? null), 
+          avatar: this.buildAvatarUrl(u.photo ?? null),
+          gender: this.mapGender((u as any).gender ?? null),
+          birthdate: (u as any).birthdate ?? null,
         }))
       );
       this.resetPage();

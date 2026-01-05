@@ -36,11 +36,12 @@ export class Perfil implements OnInit {
     lastName: ['', [Validators.minLength(3)]],
     username: ['', [Validators.required]],
     email: ['', [Validators.required, Validators.email]],
-    gender: [''],
-    birthDate: [''],
+    gender: [''],        
+    birthdate: [''],     
     photo: [''],
     name: [''],
   });
+
 
   get f() {
     return this.form.controls;
@@ -78,21 +79,21 @@ export class Perfil implements OnInit {
 
       const userData = await this.usersSvc.getOne(currentUser.id);
       this.user.set(userData);
-
-      const [first, ...rest] = (userData.name || '').split(' ');
+      const [first, ...rest] = (userData.name || '').trim().split(/\s+/);
       const last = rest.join(' ');
 
       this.form.patchValue({
-        firstName: userData.name || '',
-
+        firstName: first || '',
+        lastName: last || '',
         username: userData.username,
         email: userData.email,
-        gender: (userData as any).gender || 'Masculino',
-        birthDate: (userData as any).birthDate || '',
+
+        gender: (userData as any).gender ?? '',         
+        birthdate: (userData as any).birthdate ?? '',   
+
         photo: userData.photo || '',
         name: userData.name || '',
       });
-
 
       this.avatarPreview.set(this.avatarSrc);
       this.avatarChanged.set(false);
@@ -106,10 +107,11 @@ export class Perfil implements OnInit {
   }
 
 
-
   updateFullName() {
-    const first = this.form.value.firstName || '';
-    this.form.patchValue({ name: first }, { emitEvent: false });
+    const first = (this.form.value.firstName || '').trim();
+    const last = (this.form.value.lastName || '').trim();
+    const full = [first, last].filter(Boolean).join(' ');
+    this.form.patchValue({ name: full }, { emitEvent: false });
   }
 
 
@@ -150,10 +152,10 @@ export class Perfil implements OnInit {
         name: this.form.value.name!,
         username: this.form.value.username!,
         email: this.form.value.email!,
-        updated_at: new Date().toISOString(),
         photo: this.form.value.photo!,
-        ...(this.form.value.gender ? { gender: this.form.value.gender } : {}),
-        ...(this.form.value.birthDate ? { birthDate: this.form.value.birthDate } : {}),
+
+        ...(this.form.value.gender ? { gender: this.form.value.gender as any } : {}),
+        ...(this.form.value.birthdate ? { birthdate: this.form.value.birthdate } : {}),
       };
 
       await this.usersSvc.update(currentUser.id, payload);
