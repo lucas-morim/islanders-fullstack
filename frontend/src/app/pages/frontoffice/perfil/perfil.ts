@@ -4,12 +4,12 @@ import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { UsersService, UserOut, UserUpdatePayload } from '../../backoffice/user/user.service';
 import { RoleService, RoleOut } from '../../backoffice/role/role.service';
 import { AuthState } from '../auth/auth.state';
-import { Router, RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-perfil',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './perfil.html',
   styleUrls: ['./perfil.css'],
 })
@@ -186,5 +186,8 @@ export class Perfil implements OnInit {
       ? photo
       : 'http://127.0.0.1:8000' + photo;
   }
+
+  activeTab = signal<'perfil' | 'conquistas'>('perfil');
+
 
 }
