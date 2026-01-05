@@ -4,6 +4,7 @@ from typing import List
 from app.core.deps import get_db
 from app.schemas.quiz_attempt import QuizAttemptCreate, QuizAttemptUpdate, QuizAttemptOut
 from app.services.quiz_attempt_service import service as quiz_attempt_service
+from app.schemas.quiz_attempt_finish import QuizAttemptFinishOut
 
 router = APIRouter()
 
@@ -61,9 +62,11 @@ async def delete_quiz_attempt(
     await quiz_attempt_service.delete(db, attempt_id)
     return None
 
-@router.post("/{attempt_id}/finish", response_model=QuizAttemptOut)
-async def finish_quiz_attempt(
-    attempt_id: str,
-    db: AsyncSession = Depends(get_db),
-):
-    return await quiz_attempt_service.finish(db, attempt_id)
+@router.post("/{attempt_id}/finish", response_model=QuizAttemptFinishOut)
+async def finish_attempt(attempt_id: str, db: AsyncSession = Depends(get_db)):
+    attempt, badge = await quiz_attempt_service.finish(db, attempt_id)
+
+    return {
+        "attempt": attempt,
+        "badge_awarded": badge, 
+    }
