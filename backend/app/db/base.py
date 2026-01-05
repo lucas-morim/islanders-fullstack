@@ -15,5 +15,3 @@ from app.models.option import Option
 from app.models.answer import Answer
 from app.models.modality import Modality
 from app.models.video import Video
-from app.models.badge import Badge
-from app.models.quiz_badge_award import QuizBadgeAward

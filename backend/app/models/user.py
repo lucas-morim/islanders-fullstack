@@ -10,7 +10,6 @@ if TYPE_CHECKING:
     from app.models.project import Project
     from app.models.quiz import Quiz
     from app.models.quiz_attempt import QuizAttempt
-    from app.models.quiz_badge_award import QuizBadgeAward
 
 class User(IdMixin, TimestampMixin, Base):
     __tablename__ = "users"
@@ -48,11 +47,3 @@ class User(IdMixin, TimestampMixin, Base):
         cascade="all, delete-orphan",
         passive_deletes=True
     )
-
-    quiz_badge_awards: Mapped[list["QuizBadgeAward"]] = relationship(
-        "QuizBadgeAward",
-        back_populates="user",
-        cascade="all, delete-orphan",
-        passive_deletes=True,
-    )
-

@@ -10,7 +10,6 @@ if TYPE_CHECKING:
     from app.models.user import User
     from app.models.quiz import Quiz
     from app.models.answer import Answer
-    from app.models.quiz_badge_award import QuizBadgeAward
 
 class QuizAttempt(IdMixin, Base):
     __tablename__ = "quiz_attempts"
@@ -36,11 +35,4 @@ class QuizAttempt(IdMixin, Base):
         back_populates="attempt", 
         cascade="all, delete-orphan",
         passive_deletes=True
-    )
-
-    badge_award: Mapped["QuizBadgeAward | None"] = relationship(
-        "QuizBadgeAward",
-        back_populates="attempt",
-        uselist=False,
-        passive_deletes=True,
     )
