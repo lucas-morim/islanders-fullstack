@@ -9,6 +9,9 @@ from app.models.quiz_attempt import QuizAttempt
 from app.models.question import Question
 from app.models.answer import Answer
 from app.models.question_option import QuestionOption
+from app.models.badges import Badge
+from app.models.quiz_badge_award import QuizBadgeAward
+
 
 
 class QuizAttemptService:
@@ -35,14 +38,12 @@ class QuizAttemptService:
         attempt = await self.get(db, attempt_id)
         await self.repo.delete(db, attempt)
 
-    async def finish(self, db: AsyncSession, attempt_id: str) -> QuizAttempt:
+    async def finish(self, db: AsyncSession, attempt_id: str) -> tuple[QuizAttempt, Badge | None]:
         attempt = await self.get(db, attempt_id)
 
-        # se já finalizou, não recalcula
         if attempt.finished_at is not None:
-            return attempt
+            return attempt, None
 
-        # total de questões do quiz
         total_q = await db.scalar(
             select(func.count(Question.id)).where(Question.quiz_id == attempt.quiz_id)
         )
@@ -51,7 +52,6 @@ class QuizAttemptService:
         if total_q == 0:
             raise HTTPException(status_code=400, detail="Quiz has no questions")
 
-        # corretas = answers que batem com QuestionOption.is_correct == True
         correct = await db.scalar(
             select(func.count(Answer.id))
             .select_from(Answer)
@@ -73,7 +73,69 @@ class QuizAttemptService:
         finished_at = datetime.now(timezone.utc)
 
         updated = await self.repo.update(db, attempt, score=score, finished_at=finished_at)
-        return updated
+
+        badge_awarded = await self._award_badge_if_eligible(db, updated)
+
+        return updated, badge_awarded
+
+    async def _award_badge_if_eligible(
+        self,
+        db: AsyncSession,
+        attempt: QuizAttempt,
+    ) -> Badge | None:
+        score = float(attempt.score)
+
+        badge_code: str | None = None
+        if score == 100:
+            badge_code = "gold"
+        elif score >= 80:
+            badge_code = "silver"
+        elif score >= 50:
+            badge_code = "bronze"
+
+        # < 50% => sem badge
+        if badge_code is None:
+            return None
+
+        badge = await db.scalar(select(Badge).where(Badge.code == badge_code))
+        if not badge:
+            return None
+
+        existing_award = await db.scalar(
+            select(QuizBadgeAward).where(
+                QuizBadgeAward.user_id == attempt.user_id,
+                QuizBadgeAward.quiz_id == attempt.quiz_id,
+            )
+        )
+
+        if not existing_award:
+            new_award = QuizBadgeAward(
+                user_id=attempt.user_id,
+                quiz_id=attempt.quiz_id,
+                badge_id=badge.id,
+                attempt_id=attempt.id,
+                awarded_at=datetime.now(timezone.utc),
+            )
+            db.add(new_award)
+            await db.commit()
+            return badge
+
+        current_badge = await db.scalar(select(Badge).where(Badge.id == existing_award.badge_id))
+        current_min = current_badge.min_score if current_badge else -1
+
+        if badge.min_score > current_min:
+            existing_award.badge_id = badge.id
+            existing_award.attempt_id = attempt.id
+            existing_award.awarded_at = datetime.now(timezone.utc)
+            db.add(existing_award)
+            await db.commit()
+            return badge
+
+        return None
+    
+    async def list_by_user(self, db: AsyncSession, user_id: str) -> Sequence[QuizAttempt]:
+        return await self.repo.list_by_user(db, user_id)
+
 
 
 service = QuizAttemptService()

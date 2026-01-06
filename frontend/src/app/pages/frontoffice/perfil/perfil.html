@@ -1,16 +1,20 @@
-<div class="min-h-screen flex mt-32 bg-gray-100">
-
-  
-  <aside class="w-80 h-[758px] bg-white p-6 flex border-2 flex-col items-center shadow-md mt-10 ml-7">
+<div class="min-h-screen flex mt-20 bg-gray-100">
+  <aside
+    class="w-80 h-[758px] bg-white p-6 flex border-2 flex-col items-center shadow-md mt-10 ml-7"
+  >
     <div class="relative">
-      <img [src]="avatarPreview() || avatarSrc" alt="Avatar"
+      <img
+        [src]="avatarPreview() || avatarSrc"
+        alt="Avatar"
         class="w-60 h-60 border-2 rounded-full border-gray-300 object-cover"
-        (error)="avatarPreview.set('assets/avatar.png')" />
+        (error)="avatarPreview.set('assets/avatar.png')"
+      />
 
       <label
-        class="absolute bottom-2 right-2 bg-redIsla text-white w-10 h-10 cursor-pointer hover:bg-red-800 rounded-full shadow-lg flex items-center justify-center -translate-x-1 -translate-y-1">
+        class="absolute bottom-2 right-2 bg-redIsla text-white w-10 h-10 cursor-pointer hover:bg-red-800 rounded-full shadow-lg flex items-center justify-center -translate-x-1 -translate-y-1"
+      >
         ✎
-        <input type="file" class="hidden" accept="image/*" (change)="onAvatarChange($event)">
+        <input type="file" class="hidden" accept="image/*" (change)="onAvatarChange($event)" />
       </label>
     </div>
 
@@ -18,58 +22,119 @@
     <p class="text-sm text-gray-500">{{ userRole }}</p>
 
     <div class="flex flex-col gap-2 w-full mt-5">
-      <button type="button" (click)="activeTab.set('perfil')"
-        class="w-full flex items-center gap-2 text-gray-800 px-4 py-2 hover:bg-gray-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0 ml-5" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 20v-1a6 6 0 0112 0v1" />
+      <button
+        type="button"
+        (click)="activeTab.set('perfil')"
+        class="w-full flex items-center gap-2 text-gray-800 px-4 py-2 hover:bg-gray-300"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-6 h-6 flex-shrink-0 ml-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 20v-1a6 6 0 0112 0v1"
+          />
         </svg>
         Informação Pessoal
       </button>
 
-      <button type="button" (click)="activeTab.set('conquistas')"
-        class="w-full flex items-center gap-2 text-gray-800 px-4 py-2 hover:bg-gray-300">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0 ml-5" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M12 14l6.16-3.422A12.083 12.083 0 0112 21a12.083 12.083 0 01-6.16-10.422L12 14z" />
+      <button
+        type="button"
+        (click)="activeTab.set('conquistas')"
+        class="w-full flex items-center gap-2 text-gray-800 px-4 py-2 hover:bg-gray-300"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-6 h-6 flex-shrink-0 ml-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 14l9-5-9-5-9 5 9 5z"
+          />
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M12 14l6.16-3.422A12.083 12.083 0 0112 21a12.083 12.083 0 01-6.16-10.422L12 14z"
+          />
         </svg>
         Conquistas
       </button>
 
-      <button type="button" class="w-full flex items-center gap-2 text-gray-800 px-4 py-2 hover:bg-gray-300"
-        (click)="logout()">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0 ml-6" fill="none" viewBox="0 0 24 24"
-          stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1" />
+      <button
+        type="button"
+        class="w-full flex items-center gap-2 text-gray-800 px-4 py-2 hover:bg-gray-300"
+        (click)="logout()"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="w-6 h-6 flex-shrink-0 ml-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a2 2 0 01-2 2H5a2 2 0 01-2-2V7a2 2 0 012-2h6a2 2 0 012 2v1"
+          />
         </svg>
         Log Out
       </button>
     </div>
   </aside>
 
-
   <main class="flex-1 p-10 space-y-8">
-
-    
-    <section *ngIf="activeTab() === 'perfil'" class="bg-white p-8 shadow-md border border-gray-300 rounded-md">
+    <section
+      *ngIf="activeTab() === 'perfil'"
+      class="bg-white p-8 shadow-md border border-gray-300 rounded-md"
+    >
       <h3 class="text-2xl font-semibold mb-6">Informação Pessoal</h3>
       <form [formGroup]="form" novalidate>
         <div class="mb-6 flex gap-4">
           <label class="inline-flex items-center cursor-pointer">
-            <input type="radio" formControlName="gender" value="male" class="form-radio text-red-700">
+            <input
+              type="radio"
+              formControlName="gender"
+              value="male"
+              class="form-radio text-red-700"
+            />
             <span class="ml-2">Masculino</span>
           </label>
           <label class="inline-flex items-center cursor-pointer">
-            <input type="radio" formControlName="gender" value="female" class="form-radio text-red-700">
+            <input
+              type="radio"
+              formControlName="gender"
+              value="female"
+              class="form-radio text-red-700"
+            />
             <span class="ml-2">Feminino</span>
           </label>
           <label class="inline-flex items-center cursor-pointer">
-            <input type="radio" formControlName="gender" value="other" class="form-radio text-red-700">
+            <input
+              type="radio"
+              formControlName="gender"
+              value="other"
+              class="form-radio text-red-700"
+            />
             <span class="ml-2">Outro</span>
           </label>
         </div>
@@ -77,37 +142,60 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div class="md:col-span-2">
             <label class="block text-sm font-medium mb-1">Nome Completo</label>
-            <input type="text" class="w-full border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-700"
-              formControlName="firstName" (input)="updateFullName()">
+            <input
+              type="text"
+              class="w-full border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-700"
+              formControlName="firstName"
+              (input)="updateFullName()"
+            />
           </div>
 
           <div>
             <label class="block text-sm font-medium mb-1">Nome de Utilizador</label>
-            <input type="text" class="w-full border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-700"
-              formControlName="username">
+            <input
+              type="text"
+              class="w-full border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-700"
+              formControlName="username"
+            />
           </div>
 
           <div>
             <label class="block text-sm font-medium mb-1">Data de Nascimento</label>
-            <input type="date" class="w-full border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-700"
-              formControlName="birthdate">
+            <input
+              type="date"
+              class="w-full border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-700"
+              formControlName="birthdate"
+            />
           </div>
 
           <div class="md:col-span-2">
             <label class="block text-sm font-medium mb-1">E-mail</label>
-            <input type="email" class="w-full border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-700"
-              formControlName="email">
+            <input
+              type="email"
+              class="w-full border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-700"
+              formControlName="email"
+            />
           </div>
         </div>
 
         <div class="mt-8 flex flex-wrap gap-4">
-          <button type="button" (click)="discardChanges()"
-            class="border border-gray-300 px-4 py-2 hover:bg-gray-100">Descartar Alterações</button>
-          <button type="button" (click)="saveChanges()"
-            class="bg-red-700 text-white px-4 py-2 hover:bg-red-800 transition-colors duration-200">
+          <button
+            type="button"
+            (click)="discardChanges()"
+            class="border border-gray-300 px-4 py-2 hover:bg-gray-100"
+          >
+            Descartar Alterações
+          </button>
+          <button
+            type="button"
+            (click)="saveChanges()"
+            class="bg-red-700 text-white px-4 py-2 hover:bg-red-800 transition-colors duration-200"
+          >
             <span *ngIf="!submitting(); else savingTpl">Guardar Alterações</span>
             <ng-template #savingTpl>
-              <span class="animate-spin border-2 border-white border-t-transparent w-4 h-4 inline-block mr-2"></span>
+              <span
+                class="animate-spin border-2 border-white border-t-transparent w-4 h-4 inline-block mr-2"
+              ></span>
               Salvando…
             </ng-template>
           </button>
@@ -115,30 +203,137 @@
       </form>
     </section>
 
-   
-    <section *ngIf="activeTab() === 'perfil'" class="bg-white p-8 shadow-md border border-gray-300 rounded-md">
+    <section
+      *ngIf="activeTab() === 'perfil'"
+      class="bg-white p-7 shadow-md border border-gray-300 rounded-md"
+    >
       <h3 class="text-2xl font-semibold mb-6">Estatísticas</h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-white border p-6 text-center rounded shadow-sm">
           <p class="text-gray-500 mb-2">Badges Adquiridas</p>
-          <p class="text-3xl font-bold text-red-700"></p>
+          <p class="text-3xl font-bold text-red-700">{{ badgesAcquired() }}</p>
         </div>
         <div class="bg-white border p-6 text-center rounded shadow-sm">
           <p class="text-gray-500 mb-2">Quizzes Feitos</p>
-          <p class="text-3xl font-bold text-red-700"></p>
+          <p class="text-3xl font-bold text-red-700">{{ quizzesDone() }}</p>
         </div>
         <div class="bg-white border p-6 text-center rounded shadow-sm">
-          <p class="text-gray-500 mb-2">Acertos</p>
-          <p class="text-3xl font-bold text-red-700"></p>
+          <p class="text-gray-500 mb-2">Nota Média</p>
+          <p class="text-3xl font-bold text-red-700">{{ avgScore() }}%</p>
         </div>
       </div>
     </section>
 
-   
-    <div *ngIf="activeTab() === 'conquistas'" class="bg-white p-8 shadow-md border border-gray-300 rounded-md">
-      <h3 class="text-2xl font-semibold mb-6">Conquistas</h3>
-      <p>Olá</p>
-    </div>
+    <div
+      *ngIf="activeTab() === 'conquistas'"
+      class="bg-white p-8 shadow-md border border-gray-300 rounded-md"
+    >
+      <h3 class="text-2xl font-semibold mb-6">Minhas Conquistas</h3>
 
+      <div class="flex gap-2 mb-6">
+        <button
+          (click)="achievementsTab.set('resumo')"
+          class="px-4 py-2 rounded border"
+          [class.bg-black]="achievementsTab() === 'resumo'"
+          [class.text-white]="achievementsTab() === 'resumo'"
+        >
+          Resumo
+        </button>
+
+        <button
+          (click)="achievementsTab.set('detalhes')"
+          class="px-4 py-2 rounded border"
+          [class.bg-black]="achievementsTab() === 'detalhes'"
+          [class.text-white]="achievementsTab() === 'detalhes'"
+        >
+          Detalhes
+        </button>
+      </div>
+
+      <div *ngIf="achievementsTab() === 'detalhes'">
+        <div *ngIf="awardsLoading()" class="text-sm text-gray-600">Carregando detalhes…</div>
+
+        <div *ngIf="!awardsLoading() && awards().length === 0" class="text-sm text-gray-600">
+          Ainda não tens conquistas.
+        </div>
+
+        <div *ngIf="!awardsLoading() && awards().length > 0" class="overflow-x-auto border rounded">
+          <table class="min-w-full text-left">
+            <thead class="bg-gray-50">
+              <tr class="text-sm text-gray-700">
+                <th class="p-3">Badge</th>
+                <th class="p-3">Quiz</th>
+                <th class="p-3">Nota</th>
+                <th class="p-3">Data</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr *ngFor="let a of awards()" class="border-t">
+                <td class="p-3">
+                  <div class="flex items-center gap-3">
+                    <img
+                      [src]="badgeImageUrl(a.badge?.image)"
+                      [alt]="a.badge?.name || 'Badge'"
+                      class="w-10 h-10 object-contain"
+                    />
+                    <div class="font-medium">
+                      {{ a.badge?.name || '—' }}
+                    </div>
+                  </div>
+                </td>
+
+                <td class="p-3">
+                  {{ a.quiz?.title || a.quiz_id }}
+                </td>
+
+                <td class="p-3 font-semibold">{{ a.attempt?.score ?? '—' }}%</td>
+
+                <td class="p-3 text-sm text-gray-600">
+                  {{ a.awarded_at | date : 'dd/MM/yyyy HH:mm' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div *ngIf="achievementsTab() === 'resumo'">
+        <div *ngIf="awardsLoading()" class="text-sm text-gray-600">Carregando conquistas…</div>
+
+        <div *ngIf="!awardsLoading() && badgeGroups().length === 0" class="text-sm text-gray-600">
+          Ainda não tens badges. Faz quizzes para conquistar!
+        </div>
+
+        <div *ngIf="!awardsLoading() && badgeGroups().length > 0" class="flex flex-col gap-6">
+          <div
+            *ngFor="let g of badgeGroups()"
+            class="flex items-center gap-6 p-9 border rounded-lg bg-gray-50"
+          >
+            <div
+              class="relative w-30 h-30 rounded-full bg-gray-200 flex items-center justify-center overflow-visible"
+            >
+              <img [src]="badgeImageUrl(g.image)" [alt]="g.name" class="w-24 h-24 object-contain" />
+
+              <span
+                class="absolute -top-2 -right-2 bg-black text-white text-base px-3 py-1 rounded-full shadow z-20 pointer-events-none"
+              >
+                x{{ g.count }}
+              </span>
+            </div>
+
+            <div class="flex-1">
+              <div class="font-semibold text-2xl leading-tight">
+                {{ g.name }}
+              </div>
+              <div class="text-lg text-gray-600 mt-1">
+                {{ badgeRangeText(g.code) }}
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
   </main>
 </div>

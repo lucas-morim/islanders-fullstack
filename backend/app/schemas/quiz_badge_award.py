@@ -1,0 +1,35 @@
+from __future__ import annotations
+from typing import Optional
+from pydantic import BaseModel
+import datetime as dt
+from app.schemas.quiz_attempt_finish import BadgeOut
+from app.schemas.quiz import QuizOut
+from app.schemas.quiz_attempt import QuizAttemptOut  
+
+
+class QuizBadgeAwardBase(BaseModel):
+    user_id: str
+    quiz_id: str
+    badge_id: str
+    attempt_id: Optional[str] = None
+
+    class Config:
+        from_attributes = True
+
+
+class QuizBadgeAwardCreate(QuizBadgeAwardBase):
+    pass
+
+
+class QuizBadgeAwardOut(QuizBadgeAwardBase):
+    id: str
+    awarded_at: dt.datetime
+    created_at: dt.datetime
+    updated_at: dt.datetime
+
+    badge: Optional[BadgeOut] = None  
+    quiz: Optional[QuizOut] = None
+    attempt: Optional[QuizAttemptOut] = None
+    
+    class Config:
+        from_attributes = True

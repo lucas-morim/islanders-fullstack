@@ -18,6 +18,8 @@ from app.api.v1.routers.videos import router as videos_router
 from app.api.v1.routers.question_option import router as question_option_router
 from app.api.v1.routers.question_option_meta import router as question_option_meta_router
 from app.api.v1.routers.dashboard import router as dashboard_router
+from app.api.v1.routers.badges import router as badges_router
+from app.api.v1.routers.quiz_badge_awards import router as quiz_badge_awards_router
 
 api_router = APIRouter()
 
@@ -40,3 +42,5 @@ api_router.include_router(auth_register_router, prefix="/auth", tags=["Auth"])
 api_router.include_router(uploads_router, prefix="/upload", tags=["Upload"])
 api_router.include_router(auth_refresh_router, prefix="/auth", tags=["Auth"])
 api_router.include_router(dashboard_router, prefix="/dashboard", tags=["Dashboard"])
+api_router.include_router(badges_router, prefix="/badges", tags=["Badges"])
+api_router.include_router(quiz_badge_awards_router, prefix="/quiz_badge_awards", tags=["Quiz Badge Awards"])

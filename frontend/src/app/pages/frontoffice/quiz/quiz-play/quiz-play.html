@@ -120,8 +120,23 @@
         </span>
       </p>
 
-      <button
-        (click)="closeScoreModal()"
+      <div *ngIf="badgeAwarded()" class="mt-4">
+        <p class="text-sm font-poppins mb-2">
+          Parabéns! Ganhaste uma badge:
+          <strong>{{ badgeAwarded()?.name }}</strong>
+        </p>
+
+        <img
+          *ngIf="badgeImageUrl()"
+          [src]="badgeImageUrl()"
+          alt="Badge"
+          class="w-20 h-20 mx-auto object-cover"
+          (error)="onBadgeImgError($event)"
+        />
+      </div>
+
+
+      <button (click)="closeScoreModal()"
         class="bg-redIsla text-white font-poppins px-5 py-2 hover:bg-red-800 transition text-sm">
         Continuar
       </button>

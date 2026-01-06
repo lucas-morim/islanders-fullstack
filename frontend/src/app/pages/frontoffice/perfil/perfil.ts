@@ -5,6 +5,8 @@ import { UsersService, UserOut, UserUpdatePayload } from '../../backoffice/user/
 import { RoleService, RoleOut } from '../../backoffice/role/role.service';
 import { AuthState } from '../auth/auth.state';
 import { Router } from '@angular/router';
+import { QuizBadgeAwardService, QuizBadgeAwardOut } from './quiz-badge-award.service';
+import { QuizAttemptService, QuizAttemptOut } from '../quiz/quiz-attempt.service';
 
 @Component({
   selector: 'app-perfil',
@@ -26,8 +28,13 @@ export class Perfil implements OnInit {
   avatarFile: File | null = null;
   avatarChanged = signal(false);
 
+  private attemptsSvc = inject(QuizAttemptService);
+  attempts = signal<QuizAttemptOut[]>([]);
+  attemptsLoading = signal(false);
+  
   user = signal<UserOut | null>(null);
   roles = signal<RoleOut[]>([]);
+  achievementsTab = signal<'resumo' | 'detalhes'>('resumo');
 
   private backendBase = 'http://127.0.0.1:8000';
 
@@ -68,6 +75,36 @@ export class Perfil implements OnInit {
     this.loadProfile();
   }
 
+  badgesAcquired = computed(() => this.awards().length); 
+
+  quizzesDone = computed(() => new Set(this.attempts().filter(a=>a.finished_at).map(a => a.quiz_id)).size);
+
+  avgScore = computed(() => {
+    const done = this.attempts().filter(a => a.finished_at);
+    if (done.length === 0) return 0;
+
+    const sum = done.reduce((acc, a) => acc + (a.score ?? 0), 0);
+    return Math.round((sum / done.length) * 10) / 10; // 1 casa decimal
+  });
+
+
+  private awardsSvc = inject(QuizBadgeAwardService);
+  awards = signal<QuizBadgeAwardOut[]>([]);
+  awardsLoading = signal(false);
+
+  async loadAttempts(userId: string) {
+    this.attemptsLoading.set(true);
+    try {
+      const items = await this.attemptsSvc.listByUser(userId);
+      this.attempts.set(items ?? []);
+    } catch (e) {
+      console.error('Erro ao carregar tentativas', e);
+      this.attempts.set([]);
+    } finally {
+      this.attemptsLoading.set(false);
+    }
+  }
+
   async loadProfile() {
     this.loading.set(true);
     try {
@@ -98,6 +135,13 @@ export class Perfil implements OnInit {
       this.avatarPreview.set(this.avatarSrc);
       this.avatarChanged.set(false);
 
+      await Promise.all([
+        this.loadAwards(userData.id),
+        this.loadAttempts(userData.id),
+      ]);
+
+      
+
     } catch (e) {
       console.error('Erro ao carregar perfil', e);
       alert('Não foi possível carregar os dados do perfil.');
@@ -106,6 +150,18 @@ export class Perfil implements OnInit {
     }
   }
 
+  async loadAwards(userId: string) {
+    this.awardsLoading.set(true);
+    try {
+      const items = await this.awardsSvc.listByUser(userId);
+      this.awards.set(items ?? []);
+    } catch (e) {
+      console.error('Erro ao carregar conquistas', e);
+      this.awards.set([]);
+    } finally {
+      this.awardsLoading.set(false);
+    }
+  }
 
   updateFullName() {
     const first = (this.form.value.firstName || '').trim();
@@ -178,6 +234,51 @@ export class Perfil implements OnInit {
     this.auth.logout();
     this.router.navigate(['/']);
   }
+
+  badgeGroups = computed(() => {
+    const map = new Map<string, {
+      code: string;
+      name: string;
+      image?: string | null;
+      min: number;
+      count: number;
+    }>();
+
+    for (const a of this.awards()) {
+      const b = a.badge;
+      if (!b) continue;
+
+      const key = b.code;
+      const curr = map.get(key);
+
+      if (!curr) {
+        map.set(key, {
+          code: b.code,
+          name: b.name,
+          image: b.image ?? null,
+          min: b.min_score,
+          count: 1,
+        });
+      } else {
+        curr.count += 1;
+      }
+    }
+
+    return Array.from(map.values()).sort((x, y) => x.min - y.min);
+  });
+
+  badgeImageUrl(src?: string | null): string {
+    if (!src) return 'assets/badge-default.png';
+    return src.startsWith('http') ? src : (this.backendBase + src);
+  }
+
+  badgeRangeText(code: string): string {
+    if (code === 'gold') return '100% de respostas corretas';
+    if (code === 'silver') return '80% a 99% de respostas corretas';
+    if (code === 'bronze') return '50% a 79% de respostas corretas';
+    return '';
+  }
+
 
   get avatarSrc(): string {
     const photo = this.form.value.photo;

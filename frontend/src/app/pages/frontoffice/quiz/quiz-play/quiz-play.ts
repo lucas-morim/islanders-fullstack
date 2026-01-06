@@ -7,7 +7,7 @@ import { QuestionService, QuestionOut } from '../../../backoffice/question/quest
 import { OptionService, OptionOut } from '../../../backoffice/question/option.service';
 import { QuestionOptionsService } from '../../../backoffice/question/question-option.service';
 import { AnswerService } from '../answer.service';
-import { QuizAttemptService } from '../quiz-attempt.service';
+import { BadgeOut, QuizAttemptService } from '../quiz-attempt.service';
 
 type QuestionVM = {
   id: string;
@@ -40,7 +40,6 @@ export class QuizPlay implements OnInit {
   loading = signal(false);
   submitting = signal(false);
 
-
   showModal = signal(false);
   modalTitle = signal('');
   modalMessage = signal('');
@@ -56,6 +55,8 @@ export class QuizPlay implements OnInit {
   index = signal(0);
   selectedByQuestion = signal<Record<string, string>>({});
 
+  badgeAwarded = signal<BadgeOut | null>(null);
+
   current = computed(() => this.questions()[this.index()] ?? null);
   canNext = computed(() => this.index() < this.questions().length - 1);
   canPrev = computed(() => this.index() > 0);
@@ -64,6 +65,23 @@ export class QuizPlay implements OnInit {
     this.quizId = this.route.snapshot.paramMap.get('quizId') || '';
     if (this.quizId) this.loadQuiz();
   }
+
+  backendUrl = 'http://127.0.0.1:8000';
+
+  badgeImageUrl = computed(() => {
+    const img = this.badgeAwarded()?.image;
+    if (!img) return null;
+
+
+    if (img.startsWith('http')) return img;
+    
+    return this.backendUrl + img;
+  });
+
+  onBadgeImgError(ev: Event) {
+    (ev.target as HTMLImageElement).src = 'assets/badges/default.png';
+  }
+
 
   async loadQuiz() {
     this.loading.set(true);
@@ -181,7 +199,8 @@ export class QuizPlay implements OnInit {
       );
 
       const finished = await this.attemptsSvc.finish(attempt.id);
-      this.finalScore.set(finished.score);
+      this.finalScore.set(finished.attempt.score);
+      this.badgeAwarded.set(finished.badge_awarded ?? null);
       this.showScoreModal.set(true);
 
     } catch {
@@ -193,6 +212,7 @@ export class QuizPlay implements OnInit {
 
   closeScoreModal() {
     this.showScoreModal.set(false);
+    this.badgeAwarded.set(null);
     this.router.navigate(['/course']);
   }
 
