@@ -62,4 +62,24 @@ export class Header {
     this.router.navigate(['/']);
     this.dropdownOpen.set(false);
   }
+  
+ 
+showLogoutModal = false;
+
+
+openLogoutModal() {
+  this.showLogoutModal = true;
+}
+
+
+closeLogoutModal() {
+  this.showLogoutModal = false;
+}
+
+
+confirmLogout() {
+  this.closeLogoutModal();
+  this.logout(); 
+}
+
 }
