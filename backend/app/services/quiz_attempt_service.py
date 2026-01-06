@@ -41,7 +41,6 @@ class QuizAttemptService:
     async def finish(self, db: AsyncSession, attempt_id: str) -> tuple[QuizAttempt, Badge | None]:
         attempt = await self.get(db, attempt_id)
 
-        # se já finalizou, só devolve (e não reatribui badge)
         if attempt.finished_at is not None:
             return attempt, None
 
@@ -109,7 +108,6 @@ class QuizAttemptService:
             )
         )
 
-        # se não existe award ainda -> cria
         if not existing_award:
             new_award = QuizBadgeAward(
                 user_id=attempt.user_id,
@@ -134,6 +132,10 @@ class QuizAttemptService:
             return badge
 
         return None
+    
+    async def list_by_user(self, db: AsyncSession, user_id: str) -> Sequence[QuizAttempt]:
+        return await self.repo.list_by_user(db, user_id)
+
 
 
 service = QuizAttemptService()

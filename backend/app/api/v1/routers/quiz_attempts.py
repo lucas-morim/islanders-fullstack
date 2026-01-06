@@ -53,6 +53,11 @@ async def update_quiz_attempt(
         finished_at=payload.finished_at,
     )
 
+@router.get("/by_user/{user_id}", response_model=List[QuizAttemptOut])
+async def list_attempts_by_user(user_id: str, db: AsyncSession = Depends(get_db)):
+    return await quiz_attempt_service.list_by_user(db, user_id)
+
+
 
 @router.delete("/{attempt_id}", status_code=status.HTTP_204_NO_CONTENT)
 async def delete_quiz_attempt(

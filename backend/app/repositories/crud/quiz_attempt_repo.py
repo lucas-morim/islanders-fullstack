@@ -34,3 +34,12 @@ class QuizAttemptRepository:
     async def delete(self, db: AsyncSession, attempt: QuizAttempt) -> None:
         await db.delete(attempt)
         await db.commit()
+
+    async def list_by_user(self, db: AsyncSession, user_id: str):
+        stmt = (
+            select(QuizAttempt)
+            .where(QuizAttempt.user_id == user_id)
+            .order_by(QuizAttempt.finished_at.desc().nulls_last())
+        )
+        res = await db.execute(stmt)
+        return res.scalars().all()

@@ -1,4 +1,4 @@
-<div class="min-h-screen flex mt-32 bg-gray-100">
+<div class="min-h-screen flex mt-20 bg-gray-100">
   <aside
     class="w-80 h-[758px] bg-white p-6 flex border-2 flex-col items-center shadow-md mt-10 ml-7"
   >
@@ -205,21 +205,21 @@
 
     <section
       *ngIf="activeTab() === 'perfil'"
-      class="bg-white p-8 shadow-md border border-gray-300 rounded-md"
+      class="bg-white p-7 shadow-md border border-gray-300 rounded-md"
     >
       <h3 class="text-2xl font-semibold mb-6">Estatísticas</h3>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div class="bg-white border p-6 text-center rounded shadow-sm">
           <p class="text-gray-500 mb-2">Badges Adquiridas</p>
-          <p class="text-3xl font-bold text-red-700"></p>
+          <p class="text-3xl font-bold text-red-700">{{ badgesAcquired() }}</p>
         </div>
         <div class="bg-white border p-6 text-center rounded shadow-sm">
           <p class="text-gray-500 mb-2">Quizzes Feitos</p>
-          <p class="text-3xl font-bold text-red-700"></p>
+          <p class="text-3xl font-bold text-red-700">{{ quizzesDone() }}</p>
         </div>
         <div class="bg-white border p-6 text-center rounded shadow-sm">
-          <p class="text-gray-500 mb-2">Acertos</p>
-          <p class="text-3xl font-bold text-red-700"></p>
+          <p class="text-gray-500 mb-2">Nota Média</p>
+          <p class="text-3xl font-bold text-red-700">{{ avgScore() }}%</p>
         </div>
       </div>
     </section>

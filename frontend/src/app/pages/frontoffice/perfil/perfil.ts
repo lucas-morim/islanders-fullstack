@@ -6,6 +6,7 @@ import { RoleService, RoleOut } from '../../backoffice/role/role.service';
 import { AuthState } from '../auth/auth.state';
 import { Router } from '@angular/router';
 import { QuizBadgeAwardService, QuizBadgeAwardOut } from './quiz-badge-award.service';
+import { QuizAttemptService, QuizAttemptOut } from '../quiz/quiz-attempt.service';
 
 @Component({
   selector: 'app-perfil',
@@ -27,6 +28,10 @@ export class Perfil implements OnInit {
   avatarFile: File | null = null;
   avatarChanged = signal(false);
 
+  private attemptsSvc = inject(QuizAttemptService);
+  attempts = signal<QuizAttemptOut[]>([]);
+  attemptsLoading = signal(false);
+  
   user = signal<UserOut | null>(null);
   roles = signal<RoleOut[]>([]);
   achievementsTab = signal<'resumo' | 'detalhes'>('resumo');
@@ -70,10 +75,35 @@ export class Perfil implements OnInit {
     this.loadProfile();
   }
 
+  badgesAcquired = computed(() => this.awards().length); 
+
+  quizzesDone = computed(() => new Set(this.attempts().filter(a=>a.finished_at).map(a => a.quiz_id)).size);
+
+  avgScore = computed(() => {
+    const done = this.attempts().filter(a => a.finished_at);
+    if (done.length === 0) return 0;
+
+    const sum = done.reduce((acc, a) => acc + (a.score ?? 0), 0);
+    return Math.round((sum / done.length) * 10) / 10; // 1 casa decimal
+  });
+
+
   private awardsSvc = inject(QuizBadgeAwardService);
   awards = signal<QuizBadgeAwardOut[]>([]);
   awardsLoading = signal(false);
 
+  async loadAttempts(userId: string) {
+    this.attemptsLoading.set(true);
+    try {
+      const items = await this.attemptsSvc.listByUser(userId);
+      this.attempts.set(items ?? []);
+    } catch (e) {
+      console.error('Erro ao carregar tentativas', e);
+      this.attempts.set([]);
+    } finally {
+      this.attemptsLoading.set(false);
+    }
+  }
 
   async loadProfile() {
     this.loading.set(true);
@@ -104,7 +134,12 @@ export class Perfil implements OnInit {
 
       this.avatarPreview.set(this.avatarSrc);
       this.avatarChanged.set(false);
-      await this.loadAwards(userData.id);
+
+      await Promise.all([
+        this.loadAwards(userData.id),
+        this.loadAttempts(userData.id),
+      ]);
+
       
 
     } catch (e) {

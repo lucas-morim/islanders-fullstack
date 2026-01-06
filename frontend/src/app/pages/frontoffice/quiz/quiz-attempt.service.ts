@@ -44,4 +44,10 @@ export class QuizAttemptService {
   finish(attemptId: string): Promise<FinishAttemptOut> {
     return firstValueFrom(this.http.post<FinishAttemptOut>(`${this.base}/${attemptId}/finish`, {}));
   }
+
+  listByUser(userId: string): Promise<QuizAttemptOut[]> {
+    return firstValueFrom(
+      this.http.get<QuizAttemptOut[]>(`${this.base}/by_user/${userId}`)
+    );
+  }
 }
