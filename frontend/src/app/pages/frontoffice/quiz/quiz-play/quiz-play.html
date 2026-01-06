@@ -1,15 +1,11 @@
 <div class="w-full max-w-[1300px] mx-auto flex flex-col gap-8 pt-10 mt-32">
-
   <audio #bgMusic autoplay loop>
-    <source src="assets/bgQuiz.mp3" type="audio/mpeg">
+    <source src="assets/bgQuiz.mp3" type="audio/mpeg" />
   </audio>
 
   <audio #clickSound src="assets/selected.mp3"></audio>
 
-
-  <div *ngIf="loading()" class="alert alert-info text-sm">
-    Carregando quiz…
-  </div>
+  <div *ngIf="loading()" class="alert alert-info text-sm">Carregando quiz…</div>
 
   <div *ngIf="!loading() && quiz()" class="flex flex-col w-full gap-1">
     <h1 class="text-2xl sm:text-3xl font-poppins text-black">
@@ -20,20 +16,16 @@
       <div class="w-full h-2 bg-gray-300">
         <div
           class="h-2 bg-redIsla transition-all duration-300"
-          [style.width.%]="questions().length ? ((index() + 1) / questions().length) * 100 : 0">
-        </div>
+          [style.width.%]="questions().length ? ((index() + 1) / questions().length) * 100 : 0"
+        ></div>
       </div>
 
-      <div class="text-xs text-black mt-1">
-        {{ index() + 1 }}/{{ questions().length }}
-      </div>
+      <div class="text-xs text-black mt-1">{{ index() + 1 }}/{{ questions().length }}</div>
     </div>
   </div>
 
-
   <ng-container *ngIf="!loading() && questions().length > 0">
     <ng-container *ngIf="current() as q">
-
       <div class="text-xl font-poppins text-black mt-4">
         {{ q.text }}
       </div>
@@ -42,10 +34,10 @@
         <button
           *ngFor="let opt of q.options"
           (click)="pickOption(q.id, opt.id)"
-          class="border border-redIsla px-3 py-2 text-left font-poppins transition text-sm
-                 hover:bg-redIsla hover:text-white"
+          class="border border-redIsla px-3 py-2 text-left font-poppins transition text-sm hover:bg-redIsla hover:text-white"
           [class.bg-redIsla]="selectedByQuestion()[q.id] === opt.id"
-          [class.text-white]="selectedByQuestion()[q.id] === opt.id">
+          [class.text-white]="selectedByQuestion()[q.id] === opt.id"
+        >
           {{ opt.text }}
         </button>
       </div>
@@ -53,7 +45,8 @@
       <div class="flex justify-between items-center mt-6 mb-20 gap-3">
         <button
           (click)="quit()"
-          class="bg-gray-200 text-gray-800 font-poppins px-5 py-2 text-sm hover:bg-gray-300 transition">
+          class="bg-gray-200 text-gray-800 font-poppins px-5 py-2 text-sm hover:bg-gray-300 transition"
+        >
           Sair
         </button>
 
@@ -61,31 +54,31 @@
           <button
             (click)="prev()"
             [disabled]="!canPrev()"
-            class="bg-gray-200 text-gray-800 font-poppins px-5 py-2 text-sm
-                   disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-300 transition">
+            class="bg-gray-200 text-gray-800 font-poppins px-5 py-2 text-sm disabled:opacity-40 disabled:cursor-not-allowed hover:bg-gray-300 transition"
+          >
             Anterior
           </button>
 
           <button
             (click)="canNext() ? next() : finish()"
             [disabled]="submitting()"
-            class="bg-redIsla text-white font-poppins px-5 py-2 text-sm
-                   hover:bg-red-800 transition disabled:opacity-40 disabled:cursor-not-allowed">
-            {{ canNext() ? 'Próxima' : (submitting() ? 'A enviar…' : 'Finalizar') }}
+            class="bg-redIsla text-white font-poppins px-5 py-2 text-sm hover:bg-red-800 transition disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            {{ canNext() ? 'Próxima' : submitting() ? 'A enviar…' : 'Finalizar' }}
           </button>
         </div>
       </div>
-
     </ng-container>
   </ng-container>
-
 
   <div *ngIf="!loading() && questions().length === 0" class="text-black mt-6 mb-6 text-sm">
     Este quiz não possui questões.
   </div>
 
-  
-  <div *ngIf="showModal()" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+  <div
+    *ngIf="showModal()"
+    class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+  >
     <div class="bg-white shadow-lg p-6 max-w-sm w-full text-center">
       <h2 class="text-lg font-poppins mb-3">{{ modalTitle() }}</h2>
       <p class="mb-4 font-poppins text-sm">{{ modalMessage() }}</p>
@@ -93,54 +86,63 @@
       <div class="flex justify-center gap-3">
         <button
           (click)="closeModal()"
-          class="bg-gray-200 text-gray-800 px-4 py-2 hover:bg-gray-300 transition text-sm">
+          class="bg-gray-200 text-gray-800 px-4 py-2 hover:bg-gray-300 transition text-sm"
+        >
           Fechar
         </button>
 
         <button
           *ngIf="modalAction"
           (click)="modalAction()"
-          class="bg-redIsla text-white px-4 py-2 hover:bg-red-800 transition text-sm">
+          class="bg-redIsla text-white px-4 py-2 hover:bg-red-800 transition text-sm"
+        >
           Confirmar
         </button>
       </div>
     </div>
   </div>
 
-  <div *ngIf="showScoreModal()" class="fixed inset-0 flex items-center justify-center z-50">
-    <div class="bg-white shadow-xl p-6 max-w-sm w-full text-center">
-      <h2 class="text-xl font-poppins mb-3 text-green-600">
-        Quiz concluído 🎉
-      </h2>
+  <div *ngIf="showScoreModal()" class="fixed inset-0 z-50">
+    <!-- backdrop -->
+    <div class="absolute inset-0 bg-black/50"></div>
 
-      <p class="text-sm mb-4">
-        A tua pontuação foi:
-        <span class="font-poppins text-xl block mt-1">
-          {{ finalScore() }}%
-        </span>
-      </p>
+    <!-- modal -->
+    <div class="relative min-h-full flex items-center justify-center p-4 sm:p-6">
+      <div
+        class="bg-white shadow-2xl rounded-2xl w-full max-w-lg sm:max-w-xl text-center p-6 sm:p-8"
+      >
+        <h2 class="text-2xl sm:text-3xl font-poppins mb-4 text-green-600">Quiz concluído 🎉</h2>
 
-      <div *ngIf="badgeAwarded()" class="mt-4">
-        <p class="text-sm font-poppins mb-2">
-          Parabéns! Ganhaste uma badge:
-          <strong>{{ badgeAwarded()?.name }}</strong>
-        </p>
+        <div class="space-y-4">
+          <p class="text-base sm:text-lg">
+            A tua pontuação foi:
+            <span class="font-poppins text-3xl sm:text-4xl block mt-2"> {{ finalScore() }}% </span>
+          </p>
 
-        <img
-          *ngIf="badgeImageUrl()"
-          [src]="badgeImageUrl()"
-          alt="Badge"
-          class="w-20 h-20 mx-auto object-cover"
-          (error)="onBadgeImgError($event)"
-        />
+          <div *ngIf="badgeAwarded()" class="pt-2">
+            <p class="text-base font-poppins mb-3">
+              Parabéns! Ganhaste uma badge:
+              <strong>{{ badgeAwarded()?.name }}</strong>
+            </p>
+
+            <img
+              *ngIf="badgeImageUrl()"
+              [src]="badgeImageUrl()"
+              alt="Badge"
+              class="w-24 h-24 sm:w-28 sm:h-28 mx-auto object-contain"
+              (error)="onBadgeImgError($event)"
+            />
+          </div>
+        </div>
+
+        <div class="mt-6 flex flex-col sm:flex-row gap-3 justify-center">
+          <button
+            (click)="closeScoreModal()"
+            class="bg-redIsla text-white font-poppins px-6 py-3 rounded-lg hover:bg-red-800 transition text-base w-full sm:w-auto"
+          >
+            Continuar
+          </button>
+        </div>
       </div>
-
-
-      <button (click)="closeScoreModal()"
-        class="bg-redIsla text-white font-poppins px-5 py-2 hover:bg-red-800 transition text-sm">
-        Continuar
-      </button>
     </div>
   </div>
-
-</div>

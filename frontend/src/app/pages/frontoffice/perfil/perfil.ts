@@ -105,6 +105,34 @@ export class Perfil implements OnInit {
     }
   }
 
+  awardsSorted = computed(() => {
+    const items = [...this.awards()];
+
+    // fallback de ordem se por algum motivo badge.min_score não existir
+    const orderByCode: Record<string, number> = { bronze: 1, silver: 2, gold: 3 };
+
+    return items.sort((a, b) => {
+      // 1) ordenar por badge (min_score é o melhor)
+      const amin = a.badge?.min_score ?? 9999;
+      const bmin = b.badge?.min_score ?? 9999;
+
+      if (amin !== bmin) return amin - bmin;
+
+      // se min_score não existir, tenta por code (bronze/silver/gold)
+      const ac = a.badge?.code ? (orderByCode[a.badge.code] ?? 9999) : 9999;
+      const bc = b.badge?.code ? (orderByCode[b.badge.code] ?? 9999) : 9999;
+
+      if (ac !== bc) return ac - bc;
+
+      // 2) dentro do mesmo badge, ordenar por data (desc)
+      const ad = a.awarded_at ? new Date(a.awarded_at).getTime() : 0;
+      const bd = b.awarded_at ? new Date(b.awarded_at).getTime() : 0;
+
+      return bd - ad;
+    });
+  });
+
+
   async loadProfile() {
     this.loading.set(true);
     try {
