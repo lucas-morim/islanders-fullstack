@@ -24,8 +24,20 @@ class DashboardService:
     async def get_grades_by_user(self, db: AsyncSession):
         return await self.repo.grades_by_user(db)
     
-    async def top_students(self, db):
-        return await self.repo.top_students(db)
+    async def top_students(self, db: AsyncSession, limit: int = 5):
+        # proxy simples para o repo; evita erros se o repo implementar a lógica real
+        if hasattr(self.repo, "top_students"):
+            return await self.repo.top_students(db, limit)
+        # fallback seguro
+        return []
 
+    async def get_users_over_time(self, db: AsyncSession, range_key: str = "1m", role_id: str | None = None):
+        return await self.repo.users_over_time(db, range_key, role_id)
+
+    async def get_quiz_attempts_over_time(self, db: AsyncSession, range_key: str = "1m", quiz_id: str | None = None):
+        return await self.repo.quiz_attempts_over_time(db, range_key, quiz_id)
+    
+    async def get_courses_by_area(self, db: AsyncSession):
+        return await self.repo.courses_by_area(db)
 
 service = DashboardService()

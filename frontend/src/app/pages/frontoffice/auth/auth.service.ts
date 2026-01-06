@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { firstValueFrom } from 'rxjs';
+import { catchError, firstValueFrom, throwError } from 'rxjs';
 
 const API_BASE = 'http://127.0.0.1:8000/api/v1';
 const AUTH_BASE = `${API_BASE}/auth/auth`;
@@ -27,51 +27,153 @@ export interface RegisterPayload {
 export class AuthService {
   private http = inject(HttpClient);
 
+  // --------------------------------------
+  // LOGIN
+  // --------------------------------------
   async login(payload: LoginPayload): Promise<TokenOut> {
-    const res = await firstValueFrom(this.http.post<TokenOut>(`${AUTH_BASE}/login`, payload));
-    if (res.access_token) {
-      localStorage.setItem('access_token', res.access_token);
+    try {
+      const result = await firstValueFrom(
+        this.http.post<TokenOut>(`${AUTH_BASE}/login`, payload).pipe(
+          catchError((err) => {
+            // normalize error into a readable string
+            const raw = err?.error ?? err;
+            let message = 'Erro no login';
+
+            if (err?.status === 401) message = 'Credenciais inválidas';
+
+            if (raw) {
+              if (typeof raw === 'string') {
+                message = raw;
+              } else if (raw.detail) {
+                const d = raw.detail;
+                message =
+                  Array.isArray(d) ? d.join(', ') :
+                  typeof d === 'string' ? d :
+                  tryStringify(d, 'Credenciais inválidas');
+              } else if (raw.message) {
+                const m = raw.message;
+                message = typeof m === 'string' ? m : tryStringify(m, message);
+              } else {
+                message = tryStringify(raw, message);
+              }
+            }
+
+            return throwError(() => new Error(message));
+          })
+        )
+      );
+
+      this.storeTokens(result);
+      return result;
+    } catch (err) {
+      throw err;
     }
-    if (res.refresh_token) {
-      localStorage.setItem('refresh_token', res.refresh_token);
-    }
-    return res;
   }
 
+  // --------------------------------------
+  // REGISTER
+  // --------------------------------------
   async register(payload: RegisterPayload): Promise<TokenOut> {
-    const res = await firstValueFrom(this.http.post<TokenOut>(`${AUTH_BASE}/register`, payload));
-    if (res.access_token) {
-      localStorage.setItem('access_token', res.access_token);
+    try {
+      const result = await firstValueFrom(
+        this.http.post<TokenOut>(`${AUTH_BASE}/register`, payload).pipe(
+          catchError((err) => {
+            const message =
+              err?.error?.detail ??
+              (err.status === 400 ? 'Dados inválidos' : 'Erro no registro');
+            return throwError(() => new Error(message));
+          })
+        )
+      );
+
+      this.storeTokens(result);
+      return result;
+    } catch (err) {
+      throw err;
     }
-    if (res.refresh_token) {
-      localStorage.setItem('refresh_token', res.refresh_token);
-    }
-    return res;
   }
 
-  me(): Promise<any> {
-    const token = localStorage.getItem('access_token');
-    if (!token) return Promise.reject('No token');
+  // --------------------------------------
+  // ME
+  // --------------------------------------
+  async me(): Promise<any> {
+    const token = this.getAccessToken();
+    if (!token) throw new Error('No token');
 
-    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
-    return firstValueFrom(this.http.get(`${AUTH_BASE}/me`, { headers }));
+    const headers = new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+    });
+
+    return firstValueFrom(
+      this.http.get(`${AUTH_BASE}/me`, { headers }).pipe(
+        catchError(() => throwError(() => new Error('Não autorizado')))
+      )
+    );
   }
 
-  async refresh(refreshToken?: string): Promise<TokenOut> {
-    const token = refreshToken || localStorage.getItem('refresh_token');
-    if (!token) return Promise.reject('No refresh token');
-    const res = await firstValueFrom(this.http.post<TokenOut>(`${AUTH_BASE}/refresh`, { refresh_token: token }));
-    if (res.access_token) {
-      localStorage.setItem('access_token', res.access_token);
+  // --------------------------------------
+  // REFRESH TOKEN
+  // --------------------------------------
+  async refresh(refresh?: string): Promise<TokenOut> {
+    const refreshToken = refresh || this.getRefreshToken();
+    if (!refreshToken) throw new Error('No refresh token');
+
+    try {
+      const result = await firstValueFrom(
+        this.http
+          .post<TokenOut>(`${AUTH_BASE}/refresh`, { refresh_token: refreshToken })
+          .pipe(
+            catchError((err) => {
+              const message =
+                err?.error?.detail ??
+                (err.status === 401 ? 'Refresh inválido' : 'Erro no refresh');
+              return throwError(() => new Error(message));
+            })
+          )
+      );
+
+      this.storeTokens(result);
+      return result;
+    } catch (err) {
+      throw err;
     }
-    if (res.refresh_token) {
-      localStorage.setItem('refresh_token', res.refresh_token);
+  }
+
+  // --------------------------------------
+  // HELPERS
+  // --------------------------------------
+  private storeTokens(tokens: TokenOut) {
+    if (tokens.access_token) {
+      localStorage.setItem('access_token', tokens.access_token);
     }
-    return res;
+    if (tokens.refresh_token) {
+      localStorage.setItem('refresh_token', tokens.refresh_token);
+    }
+  }
+
+  getAccessToken() {
+    return localStorage.getItem('access_token');
+  }
+
+  getRefreshToken() {
+    return localStorage.getItem('refresh_token');
   }
 
   logout() {
     localStorage.removeItem('access_token');
     localStorage.removeItem('refresh_token');
+  }
+}
+
+// helper (add above or below class as appropriate)
+function tryStringify(value: any, fallback = ''): string {
+  try {
+    return typeof value === 'string' ? value : JSON.stringify(value);
+  } catch {
+    try {
+      return String(value);
+    } catch {
+      return fallback;
+    }
   }
 }
