@@ -58,7 +58,7 @@ backend/.env
 backend/*.env
 
 
-# =============== GERAL / SISTEMA ===============
+# =============== GERAL / SISTEMA =============== #
 
 .DS_Store
 Thumbs.db
