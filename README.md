@@ -6,7 +6,7 @@
 ![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
 ![PostgreSQL](https://img.shields.io/badge/PostgreSQL-4169E1?style=for-the-badge&logo=postgresql&logoColor=white)
 
-> Projeto académico fullstack que simula uma plataforma de e-learning real, com backoffice de gestão de conteúdo, sistema de quizzes com badges e autenticação com controlo de acessos por role.
+> Academic fullstack project simulating a real e-learning platform, with a content management backoffice, a quiz system with badges, and authentication with role-based access control.
 
 ---
 
@@ -14,17 +14,17 @@
 
 <p align="left">
   <a href="https://youtu.be/sgD6pdATGyI" target="_blank">
-    <img src="./assets/thumbnail_islander.png" alt="Clique para assistir à demonstração" width="900">
+    <img src="./assets/thumbnail_islander.png" alt="Click to watch the demo" width="900">
   </a>
   <br>
-  <ins>Clique na imagem acima para assistir ao vídeo completo no <b>YouTube</b></ins>
+  <ins>Click the image above to watch the full demo on <b>YouTube</b></ins>
 </p>
 
 ---
 
-## 🏗️ Arquitetura do Sistema
+## 🏗️ System Architecture
 
-O sistema é composto por um SPA Angular que comunica com uma API FastAPI via HTTP com autenticação Bearer. O controlo de acesso é aplicado em duas camadas: guards no frontend e `get_current_user` no backend.
+The system consists of an Angular SPA communicating with a FastAPI backend over HTTP using Bearer authentication. Access control is enforced at two levels: route guards on the frontend and `get_current_user` on the backend.
 
 ```mermaid
 flowchart TD
@@ -42,18 +42,18 @@ flowchart TD
 
 ---
 
-## 👤 Fluxos por Role
+## 👤 User Flows by Role
 
 ```mermaid
 flowchart LR
-  subgraph Guest["🔓 Guest (não autenticado)"]
+  subgraph Guest["🔓 Guest (unauthenticated)"]
     G1[Browse courses] --> G2[Course detail]
     G2 --> G3[Watch quiz video]
     G3 -->|Start quiz| G4[→ Login required]
     G4 --> G5[Register / Login]
   end
 
-  subgraph Student["👤 Student (autenticado)"]
+  subgraph Student["👤 Student (authenticated)"]
     S1[Login] --> S2[Browse courses]
     S2 --> S3[Play quiz]
     S3 --> S4[Receive badge]
@@ -72,7 +72,7 @@ flowchart LR
 
 ---
 
-## 🎯 Fluxo de Quiz
+## 🎯 Quiz Flow
 
 ```mermaid
 flowchart TD
@@ -88,88 +88,88 @@ flowchart TD
 
 ---
 
-## 🔐 Roles & Permissões
+## 🔐 Roles & Permissions
 
-| Ação | Guest | Student | Professor | Admin |
-|------|:-----:|:-------:|:---------:|:-----:|
-| Ver cursos e áreas | ✅ | ✅ | ✅ | ✅ |
-| Ver vídeo de quiz | ✅ | ✅ | ✅ | ✅ |
-| Iniciar e jogar quiz | ❌ | ✅ | ✅ | ✅ |
-| Receber badges | ❌ | ✅ | ✅ | ✅ |
-| Aceder ao backoffice | ❌ | ❌ | ✅ | ✅ |
-| Gerir conteúdo (areas, courses, quizzes) | ❌ | ❌ | ✅ | ✅ |
-| Gerir utilizadores e roles | ❌ | ❌ | ❌ | ✅ |
-| Exportar CSV | ❌ | ❌ | ❌ | ✅ |
+| Action | Guest | Student | Professor | Admin |
+|--------|:-----:|:-------:|:---------:|:-----:|
+| Browse courses and areas | ✅ | ✅ | ✅ | ✅ |
+| Watch quiz video | ✅ | ✅ | ✅ | ✅ |
+| Start and play quizzes | ❌ | ✅ | ✅ | ✅ |
+| Receive badges | ❌ | ✅ | ✅ | ✅ |
+| Access backoffice | ❌ | ❌ | ✅ | ✅ |
+| Manage content (areas, courses, quizzes) | ❌ | ❌ | ✅ | ✅ |
+| Export CSV | ❌ | ❌ | ✅ | ✅ |
+| Manage users and roles | ❌ | ❌ | ❌ | ✅ |
 
-> **Nota:** O controlo de role é aplicado via guards no frontend. No backend, a autenticação é validada por `get_current_user`; `require_roles` está implementado em rotas críticas.
+> **Note:** Role enforcement is handled via guards on the frontend. On the backend, authentication is validated through `get_current_user`; `require_roles` is applied on critical routes.
 
 ---
 
-## ✨ Funcionalidades
+## ✨ Features
 
-### Autenticação & Sessão
-- Login, registo e logout com JWT
-- Refresh token automático via HTTP interceptor (em caso de 401)
-- Sessão persistida em localStorage
-- Registo cria utilizador com role **Guest** por defeito
+### Authentication & Session
+- Login, registration and logout with JWT
+- Automatic token refresh via HTTP interceptor (on 401)
+- Session persisted in localStorage
+- Registration assigns the **Guest** role by default
 
-### Frontoffice (público + autenticado)
-- Listagem de cursos com filtros e paginação
-- Detalhe de curso com vídeo associado
-- Sistema de quiz completo: vídeo → tentativa → respostas → score → badge
-- Páginas: home, about, community, courses, course detail, quiz video, quiz play
+### Frontoffice (public + authenticated)
+- Course listing with filters and pagination
+- Course detail page with associated video
+- Full quiz flow: video → attempt → answers → score → badge
+- Pages: home, about, community, courses, course detail, quiz video, quiz play
 
 ### Backoffice (Professor / Admin)
-- Gestão de áreas, modalidades, cursos, vídeos, quizzes e perguntas
-- Gestão de utilizadores e roles (Admin only)
-- Exportação de dados em CSV (users, courses)
-- Upload e exposição de ficheiros via media server
+- Content management: areas, modalities, courses, videos, quizzes and questions
+- User and role management (Admin only)
+- CSV data export (users, courses)
+- File upload and serving via media server
 
-### Sistema de Badges & Awards
-- Badge atribuído automaticamente após conclusão de quiz
-- Rotas e modelos dedicados: `/awards`, `/badges`
+### Badges & Awards
+- Badge automatically awarded after completing a quiz
+- Dedicated routes and models: `/awards`, `/badges`
 
 ---
 
 ## 🧰 Stack
 
 ### Backend
-| Tecnologia | Uso |
-|------------|-----|
-| FastAPI | Framework principal, roteamento por domínio |
-| Python | Linguagem base |
-| PostgreSQL | Base de dados relacional |
+| Technology | Purpose |
+|------------|---------|
+| FastAPI | Main framework, domain-based routing |
+| Python | Core language |
+| PostgreSQL | Relational database |
 | SQLAlchemy | ORM |
-| Pydantic | Validação de schemas |
-| JWT (python-jose) | Autenticação e refresh tokens |
+| Pydantic | Schema validation |
+| JWT (python-jose) | Authentication and token refresh |
 
 ### Frontend
-| Tecnologia | Uso |
-|------------|-----|
-| Angular | Framework SPA |
-| TypeScript | Linguagem base |
-| RxJS | Gestão de streams e HTTP |
+| Technology | Purpose |
+|------------|---------|
+| Angular | SPA framework |
+| TypeScript | Core language |
+| RxJS | Stream and HTTP management |
 | Angular Signals | State management (AuthState) |
-| HTTP Interceptors | Token injection + refresh automático |
+| HTTP Interceptors | Token injection + automatic refresh |
 
 ---
 
-## 📁 Estrutura do Projeto
+## 📁 Project Structure
 
 ### Backend (FastAPI)
 
 ```text
 backend/
 └── app/
-    ├── api/              # Routes por domínio (users, roles, courses, quizzes, awards...)
+    ├── api/              # Domain routes (users, roles, courses, quizzes, awards...)
     ├── core/             # Config, security, settings
-    ├── db/               # Sessão e conexão à base de dados
+    ├── db/               # Database session and connection
     ├── models/           # ORM models (SQLAlchemy)
     ├── repositories/
-    │   └── crud/         # Lógica CRUD por entidade
+    │   └── crud/         # CRUD logic per entity
     ├── schemas/          # Pydantic schemas (request/response)
-    ├── media/            # Uploads e exposição de ficheiros
-    └── main.py           # Entrypoint + registo de routers
+    ├── media/            # File uploads and serving
+    └── main.py           # Entrypoint + router registration
 ```
 
 ### Frontend (Angular)
@@ -182,18 +182,18 @@ frontend/
     │   ├── guards/           # auth.guard, role.guard
     │   ├── state/            # auth.state (signals)
     │   └── layouts/
-    │       ├── front-shell/  # Layout público
-    │       ├── back-shell/   # Layout backoffice
-    │       └── login-shell/  # Layout de autenticação
-    ├── features/             # Módulos por domínio (courses, quiz, backoffice...)
-    └── shared/               # Componentes e utilitários partilhados
+    │       ├── front-shell/  # Public layout
+    │       ├── back-shell/   # Backoffice layout
+    │       └── login-shell/  # Authentication layout
+    ├── features/             # Domain modules (courses, quiz, backoffice...)
+    └── shared/               # Shared components and utilities
 ```
 
 ---
 
-## ⚙️ Instalação & Uso
+## ⚙️ Installation & Usage
 
-### 1. Clonar o repositório
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/lucas-morim/islanders-fullstack.git
@@ -208,8 +208,8 @@ pip install -r requirements.txt
 uvicorn app.main:app --reload
 ```
 
-Disponível em: `http://localhost:8000`  
-Documentação automática: `http://localhost:8000/docs`
+Available at: `http://localhost:8000`  
+Auto-generated docs: `http://localhost:8000/docs`
 
 ### 3. Frontend
 
@@ -219,30 +219,30 @@ npm install
 ng serve
 ```
 
-Disponível em: `http://localhost:4200`
+Available at: `http://localhost:4200`
 
 ---
 
-## 🔀 Versionamento & Workflow Git
+## 🔀 Versioning & Git Workflow
 
-Projeto desenvolvido em equipa com branches por domínio e revisão obrigatória de PR antes de merge.
+Built as a team project with domain-based branching and mandatory PR reviews before merging.
 
-**Convenção de branches:**
+**Branch naming convention:**
 ```
-frontend/feature-name   → trabalho de frontend
-backend/feature-name    → trabalho de backend
+frontend/feature-name   → frontend work
+backend/feature-name    → backend work
 ```
 
-**Regras de equipa:**
-- PRs requerem aprovação do colega antes de merge
-- Separação estrita entre trabalho de frontend e backend
-- Commits descritivos com prefixo de domínio
+**Team rules:**
+- PRs require a teammate's approval before merging
+- Strict separation between frontend and backend work
+- Descriptive commits prefixed by domain
 
 ---
 
 ## 📊 CRUD Status
 
-| Módulo | Create | Read | Update | Delete |
+| Module | Create | Read | Update | Delete |
 |--------|:------:|:----:|:------:|:------:|
 | Users | ✅ | ✅ | ✅ | ✅ |
 | Roles | ✅ | ✅ | ✅ | ✅ |
@@ -258,12 +258,10 @@ backend/feature-name    → trabalho de backend
 
 ---
 
-## 👥 Equipa
+## 👥 Team
 
-Projeto desenvolvido a três, com separação de responsabilidades por domínio e revisão mútua de código.
+Built by three people, with domain-based responsibilities and mutual code review throughout the project.
 
-- **Gonçalo Oliveira**: <https://github.com/goncalo-f-oliveira>
-- **Lucas Morim**: <https://github.com/lucas-morim>
-- **Ruben Teixeira**: <https://github.com/rubenfteixeira>
+[Gonçalo Oliveira](https://github.com/goncalo-f-oliveira) · [Lucas Morim](https://github.com/lucas-morim) · [Ruben Teixeira](https://github.com/rubenfteixeira)
 
-*Projeto académico - ISLA Gaia, 2024/2025*
+*Academic project — ISLA Gaia, 2024/2025*
