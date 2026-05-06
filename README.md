@@ -13,7 +13,7 @@
 ## 🎬 Demo
 
 <p align="left">
-  <a href="https://youtu.be/NT8X4QytvTI" target="_blank">
+  <a href="https://youtu.be/sgD6pdATGyI" target="_blank">
     <img src="./assets/thumbnail_islander.png" alt="Clique para assistir à demonstração" width="900">
   </a>
   <br>
