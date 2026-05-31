@@ -28,3 +28,46 @@
 .dropdown-toggle:hover {
   transform: scale(1.05);
 }
+
+.missions-dropdown {
+  position: relative;
+}
+
+.missions-menu {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition: all 0.2s ease-in-out;
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  margin-top: 0.35rem;
+  min-width: 12rem;
+  background-color: white;
+  border: 1px solid rgba(127, 29, 29, 0.2);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+  transform-origin: top center;
+  z-index: 40;
+  padding: 0.25rem 0;
+  translate: -50% 0;
+}
+
+.missions-dropdown:hover .missions-menu,
+.missions-dropdown:focus-within .missions-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.missions-link {
+  display: block;
+  padding: 0.5rem 1rem;
+  color: #1f2937;
+  font-size: 0.875rem;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.missions-link:hover {
+  background-color: rgba(127, 29, 29, 0.08);
+  color: #7f1d1d;
+}

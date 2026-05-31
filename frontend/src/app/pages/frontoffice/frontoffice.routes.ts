@@ -41,14 +41,16 @@ export const routes: Routes = [
       {
         path: 'perfil',
         loadComponent: () => import('./perfil/perfil').then(c => c.Perfil)
-      }
-
-
-      // QUANDO FOR FEITO É SÓ TIRAR O COMENTÁRIO
-      // {
-      //   path: 'mission',
-      //   loadComponent: () => import('./mission/mission').then(c => c.Mission)
-      // },
+      },
+      {
+        path: 'mission',
+        loadComponent: () => import('./mission/mission').then(c => c.Mission)
+      },
+      {
+        path: 'mission-professor',
+        loadComponent: () =>
+          import('./mission-professor/mission-professor').then(c => c.MissionProfessor)
+      },
 
     ],
   },

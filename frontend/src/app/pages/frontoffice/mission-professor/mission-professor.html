@@ -1,0 +1,58 @@
+<div class="min-h-screen bg-white text-gray-800 font-poppins overflow-x-hidden">
+  <section class="relative w-full h-[360px] sm:h-[460px] md:h-[520px] overflow-hidden">
+    <img
+      src="assets/professor.jpg"
+      alt="Missão Professor"
+      class="absolute inset-0 w-full h-full object-cover"
+      style="object-position: center 20%;"
+    />
+    <div class="absolute inset-0 bg-black/10"></div>
+  </section>
+
+  <section class="max-w-5xl mx-auto text-center px-4 sm:px-6 md:px-8 mt-10 sm:mt-12">
+    <div class="bg-white border border-redIsla/30 shadow-[0_12px_30px_rgba(0,0,0,0.12)] px-6 sm:px-10 py-10">
+      <h1 class="text-3xl sm:text-4xl md:text-5xl font-poppins text-black">Missão Professor</h1>
+      <p class="text-sm sm:text-base text-gray-600 mt-2">Ensino digital no Islaverse</p>
+
+      <button
+        routerLink="/register"
+        class="mt-6 bg-redIsla text-white font-poppins px-8 py-3 hover:bg-red-800 transition"
+      >
+        Torna-te um e-teach.nder!
+      </button>
+
+      <p class="text-base sm:text-lg text-gray-600 mt-6 max-w-2xl mx-auto">
+        Descobre o ambiente de formação online destinado aos docentes.
+      </p>
+    </div>
+  </section>
+
+  <section class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 px-4 sm:px-6 md:px-8 mt-12 mb-16">
+    <div class="border border-redIsla/40 p-6 sm:p-8 flex flex-col gap-4 shadow-[0_8px_20px_rgba(0,0,0,0.08)]">
+      <h2 class="text-xl sm:text-2xl font-semibold text-redIsla">Formação Pedagógica para professores</h2>
+      <img src="assets/conheca_cursos.png" alt="Formação pedagógica" class="w-full h-60 object-cover" />
+      <a
+        href="https://moodle.ensinolusofona.pt"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="mt-auto bg-redIsla text-white font-poppins px-6 py-2 hover:bg-red-800 transition text-center"
+      >
+        Aceder ao Moodle
+      </a>
+    </div>
+
+    <div
+      class="border border-redIsla/40 p-6 sm:p-8 flex flex-col items-center text-center gap-4 shadow-[0_8px_20px_rgba(0,0,0,0.08)]"
+    >
+      <h2 class="text-xl sm:text-2xl font-semibold text-redIsla">Cursos ISLA Online</h2>
+  <img src="assets/student_mission.png" alt="Cursos ISLA" class="w-full h-[17rem] object-cover" />
+
+      <button
+        routerLink="/courses"
+        class="mt-auto w-full border border-redIsla text-redIsla font-poppins px-6 py-2 hover:bg-red-50 transition"
+      >
+        Ver Cursos
+      </button>
+    </div>
+  </section>
+</div>
