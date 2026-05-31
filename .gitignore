@@ -46,6 +46,7 @@ frontend/Thumbs.db
 # =============== PYTHON (backend) ===============
 
 # Python cache (ignores ANY __pycache__ in backend)
+**/__pycache__/
 backend/**/__pycache__/
 backend/**/*.pyc
 
