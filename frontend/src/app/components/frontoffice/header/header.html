@@ -23,6 +23,20 @@
   Saiba Mais
 </a>
 
+      <div class="missions-dropdown relative">
+        <button
+          type="button"
+          [ngClass]="isDarkPage ? 'text-black' : 'text-white'"
+          class="missions-trigger px-3 py-2 sm:px-5 sm:py-2 hover:text-redIsla transition"
+        >
+          Missões
+        </button>
+        <div class="missions-menu">
+          <a routerLink="/mission" class="missions-link">Missão Estudante</a>
+          <a routerLink="/mission-professor" class="missions-link">Missão Professor</a>
+        </div>
+      </div>
+
 <a
   routerLink="/courses"
   [ngClass]="isDarkPage ? 'text-black' : 'text-white'"
